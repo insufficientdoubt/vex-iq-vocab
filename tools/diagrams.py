@@ -980,6 +980,227 @@ def odometry():
     return im
 
 
+# ---------- design process and competition drawings -----------------------------------------
+SKIN, SHIRT, ADULT, NOTE = "#f1c9a5", "#4fb3e3", "#6b7280", "#fff3bf"
+
+
+def person(d, x, y, k=1.0, shirt=SHIRT):
+    """Simple figure standing with feet at (x, y)."""
+    d.rounded_rectangle((x - 70 * k, y - 330 * k, x + 70 * k, y - 120 * k), radius=40 * k, fill=shirt, outline=EDGE, width=5)
+    for dx in (-35, 35):
+        d.rounded_rectangle((x + dx * k - 22 * k, y - 140 * k, x + dx * k + 22 * k, y), radius=14 * k, fill=DARK)
+    d.ellipse((x - 55 * k, y - 450 * k, x + 55 * k, y - 340 * k), fill=SKIN, outline=EDGE, width=5)
+
+
+def clipboard(d, x, y, k=1.0):
+    d.rounded_rectangle((x - 70 * k, y - 95 * k, x + 70 * k, y + 95 * k), radius=10 * k, fill="#c69c6d", outline=EDGE, width=4)
+    d.rectangle((x - 55 * k, y - 70 * k, x + 55 * k, y + 80 * k), fill="white")
+    for i in range(4):
+        d.line((x - 40 * k, y - 40 * k + i * 32 * k, x + 40 * k, y - 40 * k + i * 32 * k), fill=FAINT, width=4)
+    d.rectangle((x - 30 * k, y - 105 * k, x + 30 * k, y - 80 * k), fill=DARK)
+
+
+def mini_robot(d, x, y, k=1.0, fill=PART):
+    """Small side-view robot with its wheels on y."""
+    d.rounded_rectangle((x - 110 * k, y - 150 * k, x + 110 * k, y - 50 * k), radius=12 * k, fill=fill, outline=EDGE, width=5)
+    for dx in (-65, 65):
+        wheel_side(d, x + dx * k, y - 40 * k, 40 * k)
+
+
+def plate(d, x, y, number, w=300, h=110, color="#e03131"):
+    d.rounded_rectangle((x - w / 2, y - h / 2, x + w / 2, y + h / 2), radius=14, fill=color, outline=EDGE, width=5)
+    text(d, (x, y), number, int(h * 0.62), True, "white")
+
+
+def constraint():
+    im, d = canvas()
+    gy = robot_side(d, 330, 820, 520, 330, 80)
+    ground(d, gy)
+    d.rectangle((300, 380, 880, gy), outline=ORANGE, width=6)
+    for x in range(300, 880, 40):
+        d.line((x, 380, x + 20, 380), fill="white", width=8)
+    dim(d, 300, 300, 880, 300, ORANGE)
+    dim(d, 960, 380, 960, gy, ORANGE)
+    text(d, (590, 240), "19 in", 56, True, ORANGE)
+    text(d, (1060, (380 + gy) / 2), "15 in", 56, True, ORANGE)
+    return im
+
+
+def brainstorm():
+    im, d = canvas()
+    # light bulb
+    d.ellipse((470, 380, 730, 640), fill="#ffe066", outline=EDGE, width=6)
+    d.rectangle((540, 630, 660, 720), fill="#c9ced4", outline=EDGE, width=6)
+    for a in range(0, 360, 45):
+        r = math.radians(a)
+        if 60 < a < 120:
+            continue
+        d.line((600 + 160 * math.cos(r), 510 + 160 * math.sin(r), 600 + 210 * math.cos(r), 510 + 210 * math.sin(r)), fill="#f0c419", width=10)
+    notes = [(170, 220, -6), (1000, 230, 5), (150, 640, 4), (1040, 650, -5), (330, 950, -3), (860, 960, 6), (600, 160, 0)]
+    for i, (x, y, deg) in enumerate(notes):
+        poly(d, rot_rect(x, y, 200, 200, deg), NOTE, "#f0c419", 5)
+        if i % 3 == 0:
+            wheel_side(d, x, y, 50)
+        elif i % 3 == 1:
+            gear(d, x, y, 45, 10, "#2f7fd0", hole=False)
+        else:
+            claw_jaws(d, [(x - 30, y + 60), (x + 30, y + 60)], [-100, -80], 110)
+    return im
+
+
+def iterate():
+    im, d = canvas()
+    for i, (x, k) in enumerate([(220, 0.7), (600, 0.85), (980, 1.0)]):
+        mini_robot(d, x, 640, k * 1.3, ["#dee2e6", "#c9ced4", PART][i])
+        if i == 2:
+            bar(d, x + 40, 470, x + 170, 380, 26)
+        text(d, (x, 740), f"v{i + 1}", 60, True, BLUE)
+        if i < 2:
+            arrow(d, x + 120, 560, x + 250, 560, DARK, 8, 30)
+    d.arc((180, 760, 1020, 1100), start=10, end=170, fill=ORANGE, width=10)
+    poly(d, [(187, 880), (150, 950), (224, 950)], ORANGE, ORANGE)   # arc's left end (170°), pointing back up to v1
+    return im
+
+
+def scouting():
+    im, d = canvas()
+    mini_robot(d, 420, 760, 1.9, "#c9ced4")
+    plate(d, 420, 560, "5678B", 260, 90)
+    d.ellipse((470, 300, 830, 660), outline=DARK, width=26)
+    d.line((800, 630, 960, 800), fill=DARK, width=40)
+    clipboard(d, 990, 330, 1.3)
+    return im
+
+
+def pit():
+    im, d = canvas()
+    d.rectangle((120, 640, 1080, 690), fill="#a0785a", outline=EDGE, width=5)
+    for x in (170, 1030):
+        d.rectangle((x - 20, 690, x + 20, 1000), fill="#a0785a", outline=EDGE, width=4)
+    mini_robot(d, 420, 640, 1.6)
+    d.rounded_rectangle((720, 500, 980, 640), radius=10, fill="#e03131", outline=EDGE, width=5)
+    d.rectangle((800, 470, 900, 510), outline=EDGE, width=8)
+    d.rectangle((120, 230, 1080, 330), fill="#f1f3f5", outline=EDGE, width=5)
+    text(d, (600, 280), "1234A", 70, True, DARK)
+    for x in (300, 900):
+        d.line((x, 330, x, 420), fill=EDGE, width=6)
+    return im
+
+
+def match_schedule():
+    im, d = canvas()
+    rows = [("Match", "Time", "Partner"), ("Q1", "9:00", "5678B"), ("Q7", "9:40", "2468C"), ("Q12", "10:15", "1357D"), ("Q18", "10:50", "9999E")]
+    xs, y0, rh = [170, 450, 760, 1030], 220, 150
+    d.rectangle((xs[0], y0 + 2 * rh, xs[-1], y0 + 3 * rh), fill="#ffe8cc")
+    for i, row in enumerate(rows):
+        y = y0 + i * rh
+        if i == 0:
+            d.rectangle((xs[0], y, xs[-1], y + rh), fill=BLUE)
+        for j, cell in enumerate(row):
+            text(d, ((xs[j] + xs[j + 1]) / 2, y + rh / 2), cell, 54, i == 0, "white" if i == 0 else TEXT)
+    for i in range(len(rows) + 1):
+        d.line((xs[0], y0 + i * rh, xs[-1], y0 + i * rh), fill=EDGE, width=4)
+    for x in xs:
+        d.line((x, y0, x, y0 + len(rows) * rh), fill=EDGE, width=4)
+    return im
+
+
+def queuing_area():
+    im, d = canvas()
+    d.rectangle((830, 380, 1130, 980), fill="#f1f3f5", outline=EDGE, width=6)
+    for y in range(440, 980, 75):
+        d.line((830, y, 1130, y), fill="#d5d9de", width=3)
+    for x, shirt in [(170, "#f3b27a"), (360, "#f3b27a"), (560, SHIRT), (720, SHIRT)]:
+        person(d, x, 980, 0.95, shirt)
+    dashed(d, 90, 1030, 780, 1030, DARK, 6)
+    arrow(d, 480, 1100, 800, 1100, ORANGE, 12, 44)
+    return im
+
+
+def driver():
+    im, d = canvas()
+    d.rectangle((640, 520, 1130, 1000), fill="#f1f3f5", outline=EDGE, width=6)
+    poly(d, rot_rect(890, 760, 150, 150, 0), PART)
+    d.polygon([(890, 700), (860, 745), (920, 745)], fill=BLUE)
+    person(d, 330, 1000, 1.25, "#f3b27a")
+    controller_icon(d, 360, 700, 0.75)
+    for r in (70, 120, 170):
+        d.arc((560 - r, 560 - r, 560 + r, 560 + r), start=-40, end=40, fill=ORANGE, width=8)
+    return im
+
+
+def coach():
+    im, d = canvas()
+    d.rectangle((650, 560, 1130, 1000), fill="#f1f3f5", outline=EDGE, width=6)
+    for x in (700, 860):
+        person(d, x, 990, 0.7)
+    dashed(d, 560, 380, 560, 1060, ORANGE, 8)
+    person(d, 280, 1000, 1.4, ADULT)
+    clipboard(d, 400, 620, 1.2)
+    return im
+
+
+def trophy(d, x, y, k=1.0):
+    gold = "#f0c419"
+    d.pieslice((x - 120 * k, y - 160 * k, x + 120 * k, y + 80 * k), 0, 180, fill=gold, outline=EDGE, width=5)
+    d.rectangle((x - 120 * k, y - 160 * k, x + 120 * k, y - 40 * k), fill=gold, outline=EDGE, width=5)
+    for s in (-1, 1):
+        d.arc((x + s * 120 * k - 60 * k, y - 140 * k, x + s * 120 * k + 60 * k, y - 20 * k), start=-90 if s > 0 else 90,
+              end=90 if s > 0 else 270, fill=EDGE, width=int(12 * k))
+    d.rectangle((x - 25 * k, y + 80 * k, x + 25 * k, y + 160 * k), fill=gold, outline=EDGE, width=5)
+    d.rectangle((x - 90 * k, y + 160 * k, x + 90 * k, y + 210 * k), fill="#8e949b", outline=EDGE, width=5)
+
+
+def judge():
+    im, d = canvas()
+    person(d, 360, 1040, 1.45, ADULT)
+    clipboard(d, 520, 640, 1.4)
+    trophy(d, 900, 520, 1.3)
+    return im
+
+
+def alliance_partner():
+    im, d = canvas()
+    field(d, 150, 150, 6, 150)
+    for x, y, fill, num in [(400, 560, "#4fb3e3", "1234A"), (800, 560, "#f3b27a", "5678B")]:
+        d.rounded_rectangle((x - 120, y - 120, x + 120, y + 120), radius=20, fill=fill, outline=EDGE, width=6)
+        plate(d, x, y + 220, num, 260, 90)
+    text(d, (600, 560), "+", 160, True, DARK)
+    return im
+
+
+def game_piece():
+    im, d = canvas()
+    ball(d, 280, 600, 150, "#f0c419")
+    d.polygon([(500, 520), (640, 450), (780, 520), (640, 590)], fill="#74c0fc", outline=EDGE, width=5)
+    d.polygon([(500, 520), (640, 590), (640, 770), (500, 700)], fill="#4fb3e3", outline=EDGE, width=5)
+    d.polygon([(640, 590), (780, 520), (780, 700), (640, 770)], fill="#339af0", outline=EDGE, width=5)
+    d.rounded_rectangle((900, 420, 1020, 780), radius=20, fill="#e03131", outline=EDGE, width=5)
+    d.ellipse((900, 390, 1020, 450), fill="#ff6b6b", outline=EDGE, width=5)
+    return im
+
+
+def game_manual():
+    im, d = canvas()
+    poly(d, [(330, 170), (900, 170), (900, 1030), (330, 1030)], "white", EDGE, 6)
+    d.rectangle((330, 170, 900, 330), fill=BLUE)
+    d.rectangle((400, 225, 830, 275), fill="white")
+    for i, code in enumerate(["<G1>", "<SG2>", "<R9>", "<T4>"]):
+        y = 420 + i * 150
+        text(d, (390, y), code, 46, True, ORANGE, anchor="lm")
+        for j in range(2):
+            d.line((560, y - 20 + j * 45, 840 - j * 80, y - 20 + j * 45), fill=FAINT, width=10)
+    return im
+
+
+def license_plate():
+    im, d = canvas()
+    gy = robot_side(d, 230, 760, 740, 330, 90)
+    ground(d, gy)
+    plate(d, 600, 590, "1234A", 420, 150)
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
@@ -1038,6 +1259,21 @@ DIAGRAMS = {
     "setpoint": setpoint,
     "error (control)": error_control,
     "odometry": odometry,
+    # design process and competition
+    "constraint": constraint,
+    "brainstorm": brainstorm,
+    "iterate": iterate,
+    "scouting": scouting,
+    "pit": pit,
+    "match schedule": match_schedule,
+    "queuing area": queuing_area,
+    "driver": driver,
+    "coach": coach,
+    "judge": judge,
+    "alliance partner": alliance_partner,
+    "game piece": game_piece,
+    "game manual": game_manual,
+    "license plate": license_plate,
 }
 
 
@@ -1047,7 +1283,7 @@ def main():
     for term, fn in DIAGRAMS.items():
         out = ROOT / "images" / f"{ids[term]}.png"
         im = fn()
-        if ids[term].startswith(("CODE-", "ENG-")) and term != "sensor":
+        if ids[term].startswith(("CODE-", "ENG-", "EDP-", "COMP-")) and term != "sensor":
             im = fit(im)
         im.resize((S // 2, S // 2), Image.LANCZOS).quantize(colors=96, method=Image.Quantize.MEDIANCUT).save(out, optimize=True)
         print(f"{ids[term]}  {term}  → images/{out.name}")

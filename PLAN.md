@@ -1,6 +1,6 @@
 # VEX IQ Vocab — Project Plan
 
-Status: **seeding** — Building (77), Coding (106) and Engineering (72) drafted, plus a first set of EDP (12) and COMP (13) terms; all `status=draft`. SEASON and sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
+Status: **seeding** — Building (77), Coding (107) and Engineering (72) drafted, plus a first set of EDP (12) and COMP (13) terms; all `status=draft`. SEASON and sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
 
 This file records decisions, the spec, and how the work was done (§12). Update it when a decision changes. **New AI session? Read §12 first.**
 
@@ -146,14 +146,14 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - [ ] **2. Confirm taxonomy** — ~~VEX kit poster categories~~, ~~VEXcode IQ categories~~ (done); level definitions; ENG/EDP/COMP/SEASON subdomains.
 - [ ] **3. Seed vocab** — AI-drafted, ~250–300 terms, all `status=draft`. One domain at a time, teacher review per domain.
   - [x] BLD — 77 terms (part families from the Competition Kit poster + pneumatics + Smart Motor Mount + Inertial Sensor + AI Vision Sensor), all with images, store SKUs and VEX Library links (BLD-001–005 are diagrams from `tools/diagrams.py`)
-  - [x] CODE — 106 terms (Blocks + Python), VEXcode Chinese, all with reference links; every term has a block drawing or an image
+  - [x] CODE — 107 terms (Blocks + Python), VEXcode Chinese, all with reference links; every term has a block drawing or an image
   - [x] ENG — 72 terms from VEX IQ sources (6 community-sourced, level 3), all with images.
   - [x] `stem_lab` — 80 terms across all domains mapped to the STEM Lab lesson that first teaches them (from every lesson's Lesson Summary PDF).
-  - [ ] EDP · COMP — first terms added as they came up in the VEX IQ sources (12 EDP, 13 COMP, no images). **Still to do:** evaluate both domains as a whole and add what's missing from other sources (game manual, RECF judge guide and notebook rubric, Competition 101 STEM Labs…).
+  - [ ] EDP · COMP — first terms added as they came up in the VEX IQ sources (12 EDP, 13 COMP, all with images). **Still to do:** evaluate both domains as a whole and add what's missing from other sources (game manual, RECF judge guide and notebook rubric, Competition 101 STEM Labs…).
   - [ ] SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.
-- [ ] **6. Images** — BLD, CODE and ENG done (ENG: 32 VEX Library / STEM Lab images, 40 diagrams in `tools/diagrams.py`); EDP/COMP to come. Optional: replace with own photos (student project).
+- [x] **6. Images** — every term has a picture (BLD, CODE, ENG, EDP, COMP). VEX images credited in `images/CREDITS.md`; concept diagrams in `tools/diagrams.py`. SEASON to come with that domain. Optional: replace with own photos (student project).
 - [ ] **7. Generators** — Kahoot, flashcards, handouts. ~~Contact sheet~~ (`tools/contact_sheet.py`). ~~Browser app proof of concept~~ (`app/index.html`).
 - [ ] **8. China access** — Gitee mirror.
 
