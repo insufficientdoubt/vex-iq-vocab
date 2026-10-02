@@ -27,7 +27,7 @@ Goal: students **use the English terms**. Chinese is a support for understanding
 | Programming languages | VEXcode IQ **Blocks + Python**. No C++ for now. |
 | Coding scope | Not every block. Devices, block categories, the words inside commands, and concepts. |
 | Building scope | Part *families* (beam, plate, pin…) with notes on how sizes/types are described — not every size. Grouped by VEX's own kit categories. |
-| Images | Separate files in `images/`, named by ID (`BLD-023.png`). Own photos of kit parts on plain white, square, ~100–200 KB. No VEX product images (repo is public). |
+| Images | Separate files in `images/`, named by ID (`BLD-023.png`), square PNG on white, ≤ ~200 KB. VEX images are used for now (cropped from the kit poster, or store photos), credited in `images/CREDITS.md`; own photos can replace them under the same filename. Check with `python3 tools/contact_sheet.py`. |
 | IDs | Permanent. Never reused or renumbered; retired IDs stay retired. |
 | Overlapping terms | One primary `domain` + free `tags`. If a term means different things in different domains (e.g. drivetrain the mechanism vs. Drivetrain the VEXcode device), it gets **two rows**. |
 | Sentence frames | Separate CSV in the same repo, linked to vocab by ID. |
@@ -132,12 +132,12 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - [x] **1. Scaffold** — `schema.yaml`, `validate.py`, GitHub Action, empty CSVs with headers, README rules for AI tools.
 - [ ] **2. Confirm taxonomy** — ~~VEX kit poster categories~~ (done); VEXcode IQ block categories; level definitions.
 - [ ] **3. Seed vocab** — AI-drafted, ~250–300 terms, all `status=draft`. One domain at a time, teacher review per domain.
-  - [x] BLD — 73 terms (part families from the Competition Kit poster + pneumatics)
+  - [x] BLD — 73 terms (part families from the Competition Kit poster + pneumatics), 65 with images
   - [ ] CODE · ENG · EDP · COMP · SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.
-- [ ] **6. Images** — photograph parts (possible student project), name by ID.
-- [ ] **7. Generators** — Kahoot, flashcards, handouts, contact sheet.
+- [ ] **6. Images** — BLD done from VEX sources; other domains to come. Optional: replace with own photos (student project).
+- [ ] **7. Generators** — Kahoot, flashcards, handouts. ~~Contact sheet~~ (`tools/contact_sheet.py`).
 - [ ] **8. China access** — Gitee mirror.
 
 ## 10. Sources
