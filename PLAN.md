@@ -33,6 +33,7 @@ Goal: students **use the English terms**. Chinese is a support for understanding
 | Links | `ref_url`: one "learn more" link per term — VEX API reference section for CODE, VEX Library article for BLD. |
 | Sources | **VEX first**, for content *and* grouping: VEX IQ materials (VEX Library, IQ STEM Labs and their Lesson Summaries, Hero Bot articles) → VEX EXP/V5 articles when the idea carries over to IQ → community sources only for terms VEX doesn't cover. Community-sourced terms are always level 3 and tagged `advanced; community-sourced`; their `ref_url` points to the community source. |
 | Engineering scope | Mechanisms and concepts, not parts: don't repeat a part BLD already has (omni wheel, flywheel, tank tread…) or a concept CODE already has (torque CODE-037, velocity CODE-021, motor group CODE-031); link to them with `confused_with` or in `explanation`. Gear ratio is explained as done with gears or sprockets (no pulleys). Controller drive modes (tank/arcade) are in ENG, tagged `controller`. |
+| Teaching order | `stem_lab` records where VEX's IQ (2nd gen) STEM Labs first teach a term, as `<unit>.<lesson>`. Units are numbered in the order of VEX's Cumulative Pacing Guide (the 36-, 24- and 14-week plans all use it): 1 Tug of War, 2 Team Freeze Tag, 3 Robot Soccer, 4 Cube Collector, 5 Up and Over, 6 Treasure Hunt, 7 Castle Crasher, 8 Competition 101 (current season, now VEX IQ Level Up). This is a *suggested* order (VEX says units can be used in different sequences), and it differs from the order VEX's catalog lists them in. Only a term the lesson actually teaches (defines, explains or lists in its concepts) counts, not every part used in a build. If several lessons teach it, use the earliest in pacing order. Use it with `level` to decide when to introduce a term. Teacher reference only: not shown in the student app; `app/lessons.html` lists terms by lesson. |
 | Building scope | Part *families* (beam, plate, pin…) with notes on how sizes/types are described — not every size. Grouped by VEX's own kit categories. |
 | Images | Concept images must not show the term's own name (it would give away quiz answers) — applies to new images; the five BLD diagrams (BLD-001–005) keep their labels by decision, and VEXcode screenshots may show real button labels. Separate files in `images/`, named by ID (`BLD-023.png`), square PNG on white, ≤ ~200 KB. VEX images are used for now (cropped from the kit poster, or store photos), credited in `images/CREDITS.md`; own photos can replace them under the same filename. Check with `python3 tools/contact_sheet.py`. |
 | IDs | Permanent. Never reused or renumbered; retired IDs stay retired. |
@@ -56,7 +57,7 @@ vex-iq-vocab/
   images/            ← <ID>.png, extras as <ID>-a.png, <ID>-b.png
   sources/           ← reference data pulled from VEX sources (not validated, not edited by hand)
   tools/             ← diagrams.py (draws concept images), contact_sheet.py; later: Kahoot, flashcards, handouts
-  app/               ← index.html (browser app, served on GitHub Pages), vendor/scratchblocks.min.js
+  app/               ← index.html (student-facing browser app, served on GitHub Pages), lessons.html (teacher reference: vocab by STEM Lab lesson, not linked from the app), vendor/scratchblocks.min.js
   index.html, .nojekyll  ← GitHub Pages: root redirects to app/
   .github/workflows/validate.yml
 ```
@@ -82,6 +83,7 @@ vex-iq-vocab/
 | `season` | | SEASON domain only, e.g. `2026-27`. |
 | `image` | | Filename in `images/`, or blank if none yet. |
 | `ref_url` | | One https link to learn more: VEX API reference (CODE), VEX Library article (BLD, ENG), VEX IQ STEM Lab page (ENG/EDP/COMP), game manual (COMP/SEASON). Non-VEX links only on `community-sourced` rows. |
+| `stem_lab` | | `<unit>.<lesson>` (e.g. `1.3`) of the VEX IQ (2nd gen) STEM Lab lesson that first **teaches** the term. Must exist in `sources/iq-stem-labs.csv`, which holds the unit/lesson names, concepts and links. Blank if no lab teaches it. |
 | `store_skus` | | BLD only: vexstore.cn SKUs that contain this part, `;`-separated, for re-ordering. Must exist in `sources/vexstore-cn-iq-parts.csv`. Usually packs, so one SKU can cover several parts and one part can come in several SKUs. |
 | `status` | yes | `draft` → `reviewed` → `verified`. |
 
@@ -146,6 +148,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
   - [x] BLD — 77 terms (part families from the Competition Kit poster + pneumatics + Smart Motor Mount + Inertial Sensor + AI Vision Sensor), all with images, store SKUs and VEX Library links (BLD-001–005 are diagrams from `tools/diagrams.py`)
   - [x] CODE — 106 terms (Blocks + Python), VEXcode Chinese, all with reference links; every term has a block drawing or an image
   - [x] ENG — 72 terms from VEX IQ sources (6 community-sourced, level 3). No images yet.
+  - [x] `stem_lab` — 80 terms across all domains mapped to the STEM Lab lesson that first teaches them (from every lesson's Lesson Summary PDF).
   - [ ] EDP · COMP — first terms added as they came up in the VEX IQ sources (12 EDP, 13 COMP, no images). **Still to do:** evaluate both domains as a whole and add what's missing from other sources (game manual, RECF judge guide and notebook rubric, Competition 101 STEM Labs…).
   - [ ] SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
@@ -163,6 +166,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 | VEXcode IQ Chinese UI text | CODE `zh`. Loaded by the reference site's block renderer: `/assets/scratchblocks/translations-all.js` → language `zh_cn` (keys like `iq2DriveFor`, `brakeTypeHold`, plus `dropdowns` and `palette`). |
 | [VEX Library](https://kb.vex.com/hc/en-us) | BLD and ENG `ref_url`s; ENG terms and grouping (IQ › Mechanical: drivetrains, assemblies, arms, claws, gears/sprockets, wheels, motor groups; Competition Robots: Hero Bots). Search with `/api/v2/help_center/articles/search.json?query=…` from a browser on kb.vex.com; list a whole category with `/api/v2/help_center/en-us/categories/<id>/articles.json` (IQ = 360002324792). |
 | [VEX IQ STEM Labs](https://education.vex.com/stemlabs/iq) | ENG/EDP/COMP definitions. The KB article "IQ (2nd gen) STEM Lab Unit Concepts" maps every unit to its concepts. Each lesson's *Learn* page links a **Lesson Summary PDF** on content.vexrobotics.com with VEX's kid-level definitions (force, traction, gear train, mechanical advantage, center of mass, manipulator, intake, claw, scouting, path planning, autonomous…); the PDFs download fine with curl. education.vex.com itself needs the browser. Competition 101 (VEX IQ Level Up) has the event vocabulary. |
+| [VEX IQ Cumulative Pacing Guide](https://docs.google.com/spreadsheets/d/1QmNfN8X9Trpr8UhcZAGPa-akSaPDrFxsoluerQ0AMQk) | STEM Lab unit order for `stem_lab` → `sources/iq-stem-labs.csv`. A Google Sheet, so each tab exports with `/export?format=csv&gid=<tab id>` (curl works). The link.vex.com download links are blocked to scripts. |
 | [Purdue SIGBots wiki](https://wiki.purduesigbots.com) | Community source, only for level-3 terms VEX doesn't cover (bang-bang, PID, proportional control, setpoint, error, odometry). curl works. Alternative for PID: George Gillard, *An Introduction to PID Controllers*. |
 | [vexstore.cn IQ products](https://www.vexstore.cn/iq?vex_classroom=IQ) | Official Chinese part names → `sources/vexstore-cn-iq-parts.csv`. Pulled from the store's public search index (Algolia), which returns every IQ product with its Chinese name and pack contents in one request. Re-pull the same way when the catalog changes. |
 
@@ -188,7 +192,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 **How rows were added** (so new domains follow the same pattern)
 - Seed a domain with a one-off Python script that builds rows (IDs assigned in order, `confused_with` written as term names and resolved to IDs, cross-domain refs as raw IDs like `BLD-001`), then appends to `data/vocab.csv` with `csv.DictWriter(..., lineterminator="\n")`. Keep column order from the CSV header. Run `python3 validate.py` after every change; it catches >75-char definitions, bad IDs, missing images, unknown SKUs, stray spaces.
 - Small additions: append one row the same way; next ID = last ID in that domain + 1. Never renumber.
-- Columns are in this order: id, term_en, aka, zh, short_def, explanation, example, confused_with, blocks, python, domain, subdomain, tags, level, season, image, ref_url, store_skus, status.
+- Columns are in this order: id, term_en, aka, zh, short_def, explanation, example, confused_with, blocks, python, domain, subdomain, tags, level, season, image, ref_url, stem_lab, store_skus, status.
 
 **Images**
 - Square PNG, white background, 600×600, quantized to keep ≤ ~200 KB. `python3 tools/contact_sheet.py <DOMAIN>` → `build/contact-sheet-<DOMAIN>.png` (build/ is git-ignored) to eyeball them.

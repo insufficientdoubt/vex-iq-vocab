@@ -1,0 +1,47 @@
+id,unit,unit_name,lesson,lesson_name,concepts,url
+1.1,1,Tug of War,1,Introduction,What is an engineering notebook?,https://education.vex.com/stemlabs/iq/tug-of-war/lesson-1-introduction/introduction
+1.2,1,Tug of War,2,Pulling Objects with the BaseBot,What is force?,https://education.vex.com/stemlabs/iq/tug-of-war/lesson-2-pulling-objects-with-the-basebot/learn
+1.3,1,Tug of War,3,Using a Gear Train,"Gears, force and mechanical advantage",https://education.vex.com/stemlabs/iq/tug-of-war/lesson-3-using-a-gear-train/learn
+1.4,1,Tug of War,4,Adding Mass,Center of mass,https://education.vex.com/stemlabs/iq/tug-of-war/lesson-4-adding-mass/learn
+1.5,1,Tug of War,5,Tug of War Competition,Getting ready to compete; applying the engineering design process; collaborative decision making,https://education.vex.com/stemlabs/iq/tug-of-war/lesson-5-tug-of-war-competition/compete
+1.6,1,Tug of War,6,Conclusion,Self reflection and debrief conversation,https://education.vex.com/stemlabs/iq/tug-of-war/lesson-6-conclusion/introduction
+2.1,2,Team Freeze Tag,1,Introduction,What is an engineering notebook?,https://education.vex.com/stemlabs/iq/team-freeze-tag/lesson-1-introduction/introduction
+2.2,2,Team Freeze Tag,2,Driving with the IQ Controller,Driver Control program; controller configurations,https://education.vex.com/stemlabs/iq/team-freeze-tag/lesson-2-driving-with-the-iq-controller/learn
+2.3,2,Team Freeze Tag,3,Changing the Wheels,Understanding VEX IQ wheels,https://education.vex.com/stemlabs/iq/team-freeze-tag/lesson-3-changing-the-wheels/learn
+2.4,2,Team Freeze Tag,4,Adding the Bumper Switch and Touch LED,Using the Bumper Switch; using the Touch LED; assign Drivetrain to Controller joysticks,https://education.vex.com/stemlabs/iq/team-freeze-tag/lesson-4-adding-the-bumper-switch-and-touch-led/learn
+2.5,2,Team Freeze Tag,5,Team Freeze Tag Competition,Getting ready to compete; applying the engineering design process; collaborative decision making,https://education.vex.com/stemlabs/iq/team-freeze-tag/lesson-5-team-freeze-tag-competition/compete
+2.6,2,Team Freeze Tag,6,Conclusion,Self reflection and debrief conversation,https://education.vex.com/stemlabs/iq/team-freeze-tag/lesson-6-conclusion/introduction
+3.1,3,Robot Soccer,1,Introduction,What is an engineering notebook?,https://education.vex.com/stemlabs/iq/robot-soccer/lesson-1-introduction/introduction
+3.2,3,Robot Soccer,2,Manipulators,Manipulators; intake design; motor groups; assign Drivetrain to Controller joysticks,https://education.vex.com/stemlabs/iq/robot-soccer/lesson-2-manipulators/learn
+3.3,3,Robot Soccer,3,Robot Soccer Competition,Getting ready to compete; applying the engineering design process; collaborative decision making,https://education.vex.com/stemlabs/iq/robot-soccer/lesson-3-robot-soccer-competition/compete
+3.4,3,Robot Soccer,4,Conclusion,Self reflection and debrief conversation,https://education.vex.com/stemlabs/iq/robot-soccer/lesson-4-conclusion/introduction
+4.1,4,Cube Collector,1,Introduction,What is an engineering notebook?,https://education.vex.com/stemlabs/iq/cube-collector/lesson-1-introduction/introduction
+4.2,4,Cube Collector,2,Driver Control,Driver Control program,https://education.vex.com/stemlabs/iq/cube-collector/lesson-2-driver-control/learn
+4.3,4,Cube Collector,3,Coding for Autonomous Movements,Path planning; spin for blocks; preparing for autonomous challenges,https://education.vex.com/stemlabs/iq/cube-collector/lesson-3-coding-for-autonomous-movements/learn
+4.4,4,Cube Collector,4,Using Multiple Programs (Autonomous & Driver),Custom driver control (Blocks and Python); using multiple project slots,https://education.vex.com/stemlabs/iq/cube-collector/lesson-4-using-multiple-programs-autonomous-driver/learn
+4.5,4,Cube Collector,5,Cube Collector Competition,Getting ready to compete; applying the engineering design process; collaborative decision making,https://education.vex.com/stemlabs/iq/cube-collector/lesson-5-cube-collector-competition/compete
+4.6,4,Cube Collector,6,Conclusion,Self reflection and debrief conversation,https://education.vex.com/stemlabs/iq/cube-collector/lesson-6-conclusion/introduction
+5.1,5,Up and Over,1,Introduction,What is an engineering notebook?,https://education.vex.com/stemlabs/iq/up-and-over/lesson-1-introduction/introduction
+5.2,5,Up and Over,2,Claw Design,Claw design; what is scouting?,https://education.vex.com/stemlabs/iq/up-and-over/lesson-2-claw-design/learn
+5.3,5,Up and Over,3,Arm Designs,Arm design,https://education.vex.com/stemlabs/iq/up-and-over/lesson-3-arm-designs/learn
+5.4,5,Up and Over,4,Motor Groups,Motor groups; choosing a driver,https://education.vex.com/stemlabs/iq/up-and-over/lesson-4-motor-groups/learn
+5.5,5,Up and Over,5,Up and Over Competition,Getting ready to compete; applying the engineering design process; collaborative decision making,https://education.vex.com/stemlabs/iq/up-and-over/lesson-5-up-and-over-competition/compete
+5.6,5,Up and Over,6,Conclusion,Self reflection and debrief conversation,https://education.vex.com/stemlabs/iq/up-and-over/lesson-6-conclusion/introduction
+6.1,6,Treasure Hunt,1,Introduction,What is an engineering notebook?,https://education.vex.com/stemlabs/iq/treasure-hunt/lesson-1-introduction/introduction
+6.2,6,Treasure Hunt,2,Claw No Sensor,Coding the Drivetrain; spin for blocks; path planning,https://education.vex.com/stemlabs/iq/treasure-hunt/lesson-2-claw-no-sensor/learn
+6.3,6,Treasure Hunt,3,Claw With Sensor,Optical Sensor (Blocks and Python); if then block; repeat block,https://education.vex.com/stemlabs/iq/treasure-hunt/lesson-3-claw-with-sensor/learn
+6.4,6,Treasure Hunt,4,Treasure Hunt Competition,Getting ready to compete; applying the engineering design process; collaborative decision making,https://education.vex.com/stemlabs/iq/treasure-hunt/lesson-4-treasure-hunt-competition/compete
+6.5,6,Treasure Hunt,5,Conclusion,Self reflection and debrief conversation,https://education.vex.com/stemlabs/iq/treasure-hunt/lesson-5-conclusion/introduction
+7.1,7,Castle Crasher,1,Introduction,What is an engineering notebook?,https://education.vex.com/stemlabs/iq/castle-crasher/lesson-1-introduction/introduction
+7.2,7,Castle Crasher,2,Castle Crasher No Sensors,Coding the Drivetrain; calculating turns; adjusting velocity; path planning,https://education.vex.com/stemlabs/iq/castle-crasher/lesson-2-castle-crasher-no-sensors/learn
+7.3,7,Castle Crasher,3,Castle Crasher + Distance Sensor,Distance Sensor (Blocks and Python); wait until block,https://education.vex.com/stemlabs/iq/castle-crasher/lesson-3-castle-crasher-distance-sensor/learn
+7.4,7,Castle Crasher,4,Creating Algorithms,Optical Sensor (Blocks and Python); algorithms,https://education.vex.com/stemlabs/iq/castle-crasher/lesson-4-creating-algorithms/learn
+7.5,7,Castle Crasher,5,Castle Crasher Competition,Getting ready to compete; applying the engineering design process; collaborative decision making,https://education.vex.com/stemlabs/iq/castle-crasher/lesson-5-castle-crasher-competition/compete
+7.6,7,Castle Crasher,6,Conclusion,Self reflection and debrief conversation,https://education.vex.com/stemlabs/iq/castle-crasher/lesson-6-conclusion/introduction
+8.1,8,Competition 101: VEX IQ Level Up,1,Getting Started with Your Team,Game unveil; virtual skills; team culture; season goals,https://education.vex.com/stemlabs/iq/competition-101-vex-iq-level-up/getting-started-with-your-team/session-1-getting-started-with-your-team
+8.2,8,Competition 101: VEX IQ Level Up,2,Building Your First Robot,Building the Hero Bot; virtual driving and coding skills; game rules,https://education.vex.com/stemlabs/iq/competition-101-vex-iq-level-up/building-your-first-robot/vex-iq-session-2
+8.3,8,Competition 101: VEX IQ Level Up,3,Driving Your Robot,Using the Driver Control program,https://education.vex.com/stemlabs/iq/competition-101-vex-iq-level-up/driving-your-robot/session-3-driving-your-robot
+8.4,8,Competition 101: VEX IQ Level Up,4,Creating Your First Strategy,Developing strategies; collaborative decision making,https://education.vex.com/stemlabs/iq/competition-101-vex-iq-level-up/creating-your-first-strategy/vex-iq-session-4
+8.5,8,Competition 101: VEX IQ Level Up,5,Improving Your Robot,Improving a robot based on your strategy,https://education.vex.com/stemlabs/iq/competition-101-vex-iq-level-up/improving-your-robot/vex-iq-session-5
+8.6,8,Competition 101: VEX IQ Level Up,6,Preparing for Your First Competition,Pit; inspection; Teamwork Challenge matches; notebook judging and interviews,https://education.vex.com/stemlabs/iq/competition-101-vex-iq-level-up/preparing-for-your-first-competition/vex-iq-session-6
+8.7,8,Competition 101: VEX IQ Level Up,7,Reflecting on Your First Competition,Individual and team reflection,https://education.vex.com/stemlabs/iq/competition-101-vex-iq-level-up/reflecting-on-your-first-competition/viqrc-session-7

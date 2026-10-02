@@ -23,6 +23,8 @@ python3 -m http.server 8000
 
 then open http://localhost:8000/app/
 
+`app/lessons.html` is a teacher reference: the vocab grouped by the VEX IQ STEM Lab lesson that first teaches each term (`stem_lab` column), in VEX's suggested pacing order. It isn't linked from the student app.
+
 ## Rules for humans and AI tools
 
 1. **The CSVs in `data/` are the source of truth.** Edit them directly; never edit generated output.
