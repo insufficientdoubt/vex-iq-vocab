@@ -1,6 +1,6 @@
 # VEX IQ Vocab — Project Plan
 
-Status: **planning** (nothing built yet). This file records decisions and the spec. Update it when a decision changes.
+Status: **scaffolded** — empty CSVs, schema and validator in place; ready to seed. This file records decisions and the spec. Update it when a decision changes.
 
 ## 1. Purpose
 
@@ -31,6 +31,7 @@ Goal: students **use the English terms**. Chinese is a support for understanding
 | IDs | Permanent. Never reused or renumbered; retired IDs stay retired. |
 | Overlapping terms | One primary `domain` + free `tags`. If a term means different things in different domains (e.g. drivetrain the mechanism vs. Drivetrain the VEXcode device), it gets **two rows**. |
 | Sentence frames | Separate CSV in the same repo, linked to vocab by ID. |
+| Blocks vs Python | Same meaning, different syntax → **one row**, with the `blocks` and `python` columns. Terms that exist in only one language (indentation, `def`, `import`, hat block, My Blocks) get their own row, tagged `python` or `blocks`. |
 | Mirroring for China | Later (Gitee). Student-facing apps should bundle a data snapshot rather than fetch from GitHub live. |
 | Privacy | Repo is public: no student names or data, ever. |
 
@@ -74,16 +75,16 @@ vex-iq-vocab/
 
 ## 5. Domains
 
-Subdomains are provisional — verify against the VEX IQ kit poster and VEXcode IQ before seeding.
+Subdomains are provisional — verify against the VEX IQ kit poster and VEXcode IQ before seeding. The allowed values live in `schema.yaml`; change them there.
 
 | Prefix | Domain | Covers | Provisional subdomains |
 |---|---|---|---|
-| `BLD` | Building | Physical parts: competition kit + extensions we actually use (e.g. pneumatics) | VEX kit categories (structure, motion, connectors/hardware, electronics, pneumatics, tools…) |
-| `CODE` | Coding | VEXcode IQ: devices, block categories, command words, programming concepts | devices, block categories, commands, concepts |
-| `ENG` | Engineering | Mechanisms and design/control techniques: intake, DR4B, cascade lift, arm, claw, catapult, drivetrain (mechanism), gear ratio, torque, autonomous routine, PID… | mechanisms, drivetrains, mechanical concepts, control techniques |
+| `BLD` | Building | Physical parts: competition kit + extensions we actually use (e.g. pneumatics) | structure, motion, connectors, electronics, pneumatics, tools (to be matched to VEX kit categories) |
+| `CODE` | Coding | VEXcode IQ: devices, block categories, command words, programming concepts | devices, block-categories, commands, concepts |
+| `ENG` | Engineering | Mechanisms and design/control techniques: intake, DR4B, cascade lift, arm, claw, catapult, drivetrain (mechanism), gear ratio, torque, autonomous routine, PID… | mechanisms, drivetrains, mechanical-concepts, control-techniques |
 | `EDP` | Design process | Engineering design process + engineering notebook + judge interview vocabulary | process, notebook, interview |
 | `COMP` | Competition | Season-independent: coach, referee, match, Teamwork Challenge, Driver/Autonomous Coding Skills, scrimmage, regionals, nationals, Worlds… | events, roles, matches, rules, awards |
-| `SEASON` | Season game | This year's game elements and scoring. Tagged with `season` so they can be retired. | game elements, scoring, field |
+| `SEASON` | Season game | This year's game elements and scoring. Tagged with `season` so they can be retired. | game-elements, scoring, field |
 
 VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together), not opposing alliances. Avoid VRC/V5 terms that don't apply to IQ.
 
@@ -104,7 +105,8 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 
 ## 7. Validation rules (`validate.py`)
 
-- UTF-8 without BOM; header row matches schema exactly.
+- UTF-8 without BOM, LF line endings; header row matches schema exactly.
+- No leading/trailing spaces in cells.
 - `id` unique, correct format, prefix matches `domain`.
 - Required columns non-empty (respecting `status` for `zh`).
 - `domain`, `subdomain`, `level`, `status`, `situation`, `function` in allowed lists — with "did you mean…" suggestions.
@@ -126,7 +128,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 ## 9. Roadmap
 
 - [x] **0. Plan** — this document; public GitHub repo created.
-- [ ] **1. Scaffold** — `schema.yaml`, `validate.py`, GitHub Action, empty CSVs with headers, README rules for AI tools.
+- [x] **1. Scaffold** — `schema.yaml`, `validate.py`, GitHub Action, empty CSVs with headers, README rules for AI tools.
 - [ ] **2. Confirm taxonomy** — check VEX kit poster categories and VEXcode IQ block categories; finalize subdomains and level definitions.
 - [ ] **3. Seed vocab** — AI-drafted, ~250–300 terms, all `status=draft`. One domain at a time, teacher review per domain.
 - [ ] **4. Seed frames** — starter set across all situations.

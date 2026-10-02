@@ -1,0 +1,53 @@
+# Column definitions and allowed values for data/*.csv.
+# validate.py reads this file. Change allowed values here, not in the script.
+# Subdomain lists are PROVISIONAL until confirmed against VEX sources (PLAN.md §9 step 2).
+
+levels: [1, 2, 3]          # 1 = everyone, 2 = role-specific, 3 = expert
+statuses: [draft, reviewed, verified]
+list_separator: ";"
+
+vocab:
+  file: data/vocab.csv
+  id_pattern: "^(BLD|CODE|ENG|EDP|COMP|SEASON)-\\d{3}$"
+  columns:
+    - {name: id,            required: true}
+    - {name: term_en,       required: true}
+    - {name: aka}
+    - {name: zh,            required_when_status: [verified]}
+    - {name: short_def,     required: true, max_length: 75}
+    - {name: explanation}
+    - {name: example,       warn_if_missing_when_status: [verified]}
+    - {name: confused_with, list: true, refs: vocab}
+    - {name: blocks,        only_for_domains: [CODE]}
+    - {name: python,        only_for_domains: [CODE]}
+    - {name: domain,        required: true}
+    - {name: subdomain,     required: true}
+    - {name: tags,          list: true}
+    - {name: level,         required: true}
+    - {name: season,        only_for_domains: [SEASON], required_for_domains: [SEASON], pattern: "^\\d{4}-\\d{2}$"}
+    - {name: image,         file_in: images}
+    - {name: status,        required: true}
+
+  # Domain = ID prefix.
+  domains:
+    BLD:    [structure, motion, connectors, electronics, pneumatics, tools]
+    CODE:   [devices, block-categories, commands, concepts]
+    ENG:    [mechanisms, drivetrains, mechanical-concepts, control-techniques]
+    EDP:    [process, notebook, interview]
+    COMP:   [events, roles, matches, rules, awards]
+    SEASON: [game-elements, scoring, field]
+
+frames:
+  file: data/frames.csv
+  id_pattern: "^FRM-\\d{3}$"
+  columns:
+    - {name: id,        required: true}
+    - {name: situation, required: true, allowed: [planning, building, coding, driving, scouting, interview, referee, notebook]}
+    - {name: function,  required: true, allowed: [agree, disagree, propose, ask-for-help, explain, clarify, report]}
+    - {name: frame_en,  required: true}
+    - {name: zh,        required_when_status: [verified]}
+    - {name: example}
+    - {name: level,     required: true}
+    - {name: vocab_ids, list: true, refs: vocab}
+    - {name: notes}
+    - {name: status,    required: true}

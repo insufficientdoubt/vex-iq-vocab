@@ -2,9 +2,9 @@
 
 A bilingual (English / Simplified Chinese) vocabulary list and sentence-frame bank for middle-school VEX IQ robotics, built to be the single source for flashcards, Kahoots, handouts and other classroom materials.
 
-> **Status: planning.** See [PLAN.md](PLAN.md) for decisions, the data spec and the roadmap.
+> **Status: scaffolded, not yet seeded.** See [PLAN.md](PLAN.md) for decisions, the data spec and the roadmap.
 
-## What's here (planned)
+## What's here
 
 - `data/vocab.csv` — terms across building, coding, engineering, design process, competition and the current season game.
 - `data/frames.csv` — sentence frames for planning, collaboration, driving, judge interviews and talking to referees.
@@ -21,4 +21,5 @@ A bilingual (English / Simplified Chinese) vocabulary list and sentence-frame ba
 6. **Chinese translations:** official VEX Chinese terms first, then established community terms, literal translation last.
 7. **VEX IQ only.** Don't import VRC/V5 terms that don't apply.
 8. **No student data** — this repo is public.
-9. Run `python validate.py` before committing.
+9. Run `python3 validate.py` before committing (needs `pip install pyyaml`). GitHub runs it on every push too.
+10. Allowed domains, subdomains, levels and statuses live in `schema.yaml` — change them there.
