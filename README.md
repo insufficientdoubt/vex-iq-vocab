@@ -30,8 +30,9 @@ then open http://localhost:8000/app/
 3. **Chinese appears in reference materials, never in review materials** (quizzes, flashcards, Kahoots).
 4. **`short_def` must stand on its own in simple English, ≤ 75 characters.**
 5. **IDs are permanent.** Never reuse or renumber.
-6. **Chinese translations:** official VEX Chinese terms first, then established community terms, literal translation last.
+6. **Chinese translations:** official VEX Chinese terms first (store names for parts, VEXcode's Chinese interface for coding), then established community terms, literal translation last. Don't use the machine-translated Chinese on api.vex.com.
 7. **VEX IQ only.** Don't import VRC/V5 terms that don't apply.
 8. **No student data** — this repo is public.
 9. Run `python3 validate.py` before committing (needs `pip install pyyaml`). GitHub runs it on every push too.
-10. Allowed domains, subdomains, levels and statuses live in `schema.yaml` — change them there.
+10. `blocks` uses scratchblocks syntax, copied from VEX's API reference where possible.
+11. Allowed domains, subdomains, levels and statuses live in `schema.yaml` — change them there.

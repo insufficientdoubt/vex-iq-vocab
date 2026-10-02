@@ -61,6 +61,12 @@
   a.chip:hover { background: var(--accent-soft); color: var(--accent); }
   .back { display: inline-block; margin-bottom: 10px; color: var(--accent); text-decoration: none; }
   .hide-zh .zh-text { display: none; }
+  .thumb .sb { width: 100%; height: 100%; display: grid; place-items: center; padding: 8px; }
+  .thumb .sb svg { max-width: 100%; max-height: 100%; height: auto; }
+  .blocks-big { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px; overflow-x: auto; }
+  pre.py { margin: 0; background: var(--chip); border-radius: 6px; padding: 8px 10px; overflow-x: auto; font-size: 14px; }
+  .learn { display: inline-block; margin-top: 14px; color: var(--accent); font-weight: 600; text-decoration: none; }
+  .learn:hover { text-decoration: underline; }
   .error { background: #fde8e8; color: #8a1c1c; padding: 12px; border-radius: 8px; }
   @media (max-width: 700px) {
     .layout { grid-template-columns: 1fr; }
@@ -81,6 +87,7 @@
   <nav id="nav"></nav>
   <main id="main"></main>
 </div>
+<script src="vendor/scratchblocks.min.js"></script>
 <script>
 // Where the data lives, relative to this page (app/ sits next to data/ and images/).
 const DATA = "../data/vocab.csv", IMAGES = "../images/";
@@ -110,10 +117,47 @@ function parseCSV(text) {
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const list = s => s.split(";").map(x => x.trim()).filter(Boolean);
 const SUB_NAMES = { "pins-standoffs": "Pins & Standoffs", "beams-plates": "Beams & Plates",
-                    "sprockets-chain": "Sprockets & Chain" };
+                    "sprockets-chain": "Sprockets & Chain", "screen-console": "Screen & Console",
+                    "functions": "My Blocks & Functions" };
 const titleSub = s => SUB_NAMES[s] || s.replace(/-/g, " ").replace(/^./, c => c.toUpperCase());
 const thumb = r => `<div class="thumb">${r.image ? `<img src="${IMAGES}${esc(r.image)}${ver}" alt="${esc(r.term_en)}" loading="lazy">`
-                                                 : `<span class="none">no image</span>`}</div>`;
+                                         : r.blocks ? `<div class="sb" data-blocks="${esc(r.id)}"></div>`
+                                         : `<span class="none">no image</span>`}</div>`;
+
+// ---- Drawing VEXcode blocks with scratchblocks -------------------------------------------
+// VEX-specific blocks aren't in Scratch, so scratchblocks doesn't know their color. We give each
+// one the Scratch category whose color VEXcode uses, picked from the subdomain or the first word.
+const SUB_CATEGORY = { drivetrain: "motion", motion: "motion", sensing: "sensing", vision: "sensing",
+  controller: "sensing", "screen-console": "looks", events: "events", control: "control",
+  operators: "operators", variables: "variables", functions: "custom" };
+function categoryFor(line, sub) {
+  if (/^when /.test(line)) return "events hat";
+  if (/^(drive|turn|spin|stop driving|set drive|set \[Motor)/.test(line)) return "motion";
+  return SUB_CATEGORY[sub] || "sensing";
+}
+function blockSVG(r) {
+  if (!window.scratchblocks) return null;
+  const doc = scratchblocks.parse(r.blocks, { languages: ["en"] });
+  // Recolor every block scratchblocks didn't recognize ("obsolete" = red), including nested ones.
+  const fix = (node, top) => {
+    if (!node || typeof node !== "object") return;
+    if (node.info && node.info.category === "obsolete") {
+      const text = (node.children || []).map(c => c.value ?? c.label?.value ?? "").join(" ").trim();
+      const cat = top ? categoryFor(text, r.subdomain) : "sensing";
+      node.info.category = cat.split(" ")[0];
+      if (cat.endsWith("hat")) node.info.shape = "hat";
+    }
+    (node.children || []).forEach(c => fix(c, false));
+    (node.blocks || []).forEach(b => fix(b, true));
+  };
+  doc.scripts.forEach(sc => fix(sc, true));
+  return scratchblocks.render(doc, { style: "scratch3", scale: 0.75 });
+}
+function drawBlocks(root) {
+  root.querySelectorAll("[data-blocks]").forEach(el => {
+    try { const svg = blockSVG(byId[el.dataset.blocks]); if (svg) el.replaceChildren(svg); } catch (e) { el.textContent = byId[el.dataset.blocks].blocks; }
+  });
+}
 
 function buildNav(active) {
   const tree = {};
@@ -136,6 +180,7 @@ function showGrid(title, items) {
         <span class="zh zh-text">${esc(r.zh)}</span>
         <span><span class="lvl lvl-${r.level}">L${r.level}</span></span>
       </a>`).join("")}</div>`;
+  drawBlocks(document.getElementById("main"));
 }
 
 function showDetail(r) {
@@ -154,14 +199,16 @@ function showDetail(r) {
         <dl>
           ${field("Also called", list(r.aka).map(a => `<span class="chip">${esc(a)}</span>`).join(""))}
           ${field("Confused with", refs)}
-          ${field("Blocks", r.blocks && `<code>${esc(r.blocks)}</code>`)}
-          ${field("Python", r.python && `<code>${esc(r.python)}</code>`)}
+          ${field("Blocks", r.blocks && `<div class="blocks-big" data-blocks="${esc(r.id)}">${esc(r.blocks)}</div>`)}
+          ${field("Python", r.python && `<pre class="py"><code>${esc(r.python)}</code></pre>`)}
           ${field("Tags", list(r.tags).map(t => `<span class="chip">${esc(t)}</span>`).join(""))}
           ${field("Store SKUs", list(r.store_skus).map(s => `<span class="chip">${esc(s)}</span>`).join(""))}
           ${field("ID · status", `${esc(r.id)} · ${esc(r.status)}`)}
         </dl>
+        ${r.ref_url ? `<a class="learn" href="${esc(r.ref_url)}" target="_blank" rel="noopener">Learn more ↗</a>` : ""}
       </div>
     </div>`;
+  drawBlocks(document.getElementById("main"));
 }
 
 function route() {

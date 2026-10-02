@@ -1,7 +1,8 @@
 # Column definitions and allowed values for data/*.csv.
 # validate.py reads this file. Change allowed values here, not in the script.
 # BLD subdomains follow the VEX IQ Competition Kit poster categories, plus "general" (naming/size words)
-# and "pneumatics" (separate kit). Other subdomain lists are PROVISIONAL until confirmed (PLAN.md §9 step 2).
+# and "pneumatics" (separate kit). CODE subdomains follow the VEXcode IQ categories, plus basics, python, concepts.
+# Other subdomain lists are PROVISIONAL until confirmed (PLAN.md §9 step 2).
 
 levels: [1, 2, 3]          # 1 = everyone, 2 = role-specific, 3 = expert
 statuses: [draft, reviewed, verified]
@@ -27,13 +28,14 @@ vocab:
     - {name: level,         required: true}
     - {name: season,        only_for_domains: [SEASON], required_for_domains: [SEASON], pattern: "^\\d{4}-\\d{2}$"}
     - {name: image,         file_in: images}
+    - {name: ref_url,       pattern: "^https://"}  # one 'learn more' link: VEX API reference, VEX Library article, game manual…
     - {name: store_skus,    list: true, only_for_domains: [BLD], in_file: {path: sources/vexstore-cn-iq-parts.csv, column: sku}}  # vexstore.cn SKUs, for re-ordering
     - {name: status,        required: true}
 
   # Domain = ID prefix.
   domains:
     BLD:    [general, electronics, specialty, shafts, connectors, pins-standoffs, wheels, beams-plates, gears, sprockets-chain, cams, linear-motion, pneumatics]
-    CODE:   [devices, block-categories, commands, concepts]
+    CODE:   [basics, drivetrain, motion, sensing, vision, controller, screen-console, events, control, operators, variables, functions, python, concepts]
     ENG:    [mechanisms, drivetrains, mechanical-concepts, control-techniques]
     EDP:    [process, notebook, interview]
     COMP:   [events, roles, matches, rules, awards]

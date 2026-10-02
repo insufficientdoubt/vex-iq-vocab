@@ -10,3 +10,5 @@ Images © VEX Robotics / Innovation First, Inc., used for non-commercial classro
 | BLD-076 | [VEX Library: Understanding Inertial Sensor Data from the VEX IQ (2nd gen) Brain](https://kb.vex.com/hc/en-us/articles/4409666542100-Understanding-Inertial-Sensor-Data-from-the-VEX-IQ-2nd-gen-Brain) |
 
 Own photos may replace these later; keep the same `<ID>.png` filename.
+
+Block pictures in the app are drawn by [scratchblocks](https://scratchblocks.github.io/) (MIT, `app/vendor/`).
