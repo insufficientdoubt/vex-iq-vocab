@@ -1,6 +1,8 @@
 # VEX IQ Vocab — Project Plan
 
-Status: **seeding** — Building (BLD) and Coding (CODE) drafted; ENG, EDP, COMP, SEASON to come. This file records decisions and the spec. Update it when a decision changes.
+Status: **seeding** — Building (77 terms) and Coding (106 terms) drafted, all `status=draft`; ENG, EDP, COMP, SEASON and sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
+
+This file records decisions, the spec, and how the work was done (§12). Update it when a decision changes. **New AI session? Read §12 first.**
 
 ## 1. Purpose
 
@@ -27,11 +29,10 @@ Goal: students **use the English terms**. Chinese is a support for understanding
 | Programming languages | VEXcode IQ **Blocks + Python**. No C++ for now. |
 | Coding scope | ~105 terms in three tiers: (1) categories, devices, block types; (2) the words inside commands; (3) programming concepts. Not every block: `ref_url` points to the full VEX reference. 2nd-gen sensors only; AI Vision Sensor included. |
 | Coding Chinese | From **VEXcode IQ's own Chinese interface** (the block text students see), not the machine-translated Chinese API site, which is unreliable (e.g. Motors → 汽车). VEXcode uses some unusual terms (heading = 归位角度, rotation = 转向); we follow VEXcode and mention alternatives in `explanation`. |
-| Block pictures | The `blocks` column holds block text in [scratchblocks](https://scratchblocks.github.io/) syntax, as used on VEX's reference site (e.g. `drive [forward v] for (200) [mm v] ▶`). The app draws it; no screenshots. scratchblocks is vendored in `app/vendor/` (MIT). |
+| Block pictures | The `blocks` column holds block text in [scratchblocks](https://scratchblocks.github.io/) syntax, as used on VEX's reference site (e.g. `drive [forward v] for (200) [mm v] ▶`). Multi-line scripts are allowed (newlines inside the quoted cell; C blocks end with `end`). The app draws it; no screenshots. scratchblocks is vendored in `app/vendor/` (MIT). A CODE term needs either an `image` or `blocks`; the card shows the image if both. |
 | Links | `ref_url`: one "learn more" link per term — VEX API reference section for CODE, VEX Library article for BLD. |
-| Coding scope | Not every block. Devices, block categories, the words inside commands, and concepts. |
 | Building scope | Part *families* (beam, plate, pin…) with notes on how sizes/types are described — not every size. Grouped by VEX's own kit categories. |
-| Images | Concept images must not show the term's own name (it would give away quiz answers). Separate files in `images/`, named by ID (`BLD-023.png`), square PNG on white, ≤ ~200 KB. VEX images are used for now (cropped from the kit poster, or store photos), credited in `images/CREDITS.md`; own photos can replace them under the same filename. Check with `python3 tools/contact_sheet.py`. |
+| Images | Concept images must not show the term's own name (it would give away quiz answers) — applies to new images; the five BLD diagrams (BLD-001–005) keep their labels by decision, and VEXcode screenshots may show real button labels. Separate files in `images/`, named by ID (`BLD-023.png`), square PNG on white, ≤ ~200 KB. VEX images are used for now (cropped from the kit poster, or store photos), credited in `images/CREDITS.md`; own photos can replace them under the same filename. Check with `python3 tools/contact_sheet.py`. |
 | IDs | Permanent. Never reused or renumbered; retired IDs stay retired. |
 | Overlapping terms | One primary `domain` + free `tags`. If a term means different things in different domains (e.g. drivetrain the mechanism vs. Drivetrain the VEXcode device), it gets **two rows**. |
 | Sentence frames | Separate CSV in the same repo, linked to vocab by ID. |
@@ -52,7 +53,9 @@ vex-iq-vocab/
     frames.csv
   images/            ← <ID>.png, extras as <ID>-a.png, <ID>-b.png
   sources/           ← reference data pulled from VEX sources (not validated, not edited by hand)
-  tools/             ← generators (Kahoot, flashcards, handouts…)
+  tools/             ← diagrams.py (draws concept images), contact_sheet.py; later: Kahoot, flashcards, handouts
+  app/               ← index.html (browser app, served on GitHub Pages), vendor/scratchblocks.min.js
+  index.html, .nojekyll  ← GitHub Pages: root redirects to app/
   .github/workflows/validate.yml
 ```
 
@@ -82,7 +85,7 @@ vex-iq-vocab/
 
 ## 5. Domains
 
-Subdomains are provisional — verify against the VEX IQ kit poster and VEXcode IQ before seeding. The allowed values live in `schema.yaml`; change them there.
+BLD and CODE subdomains are confirmed; ENG/EDP/COMP/SEASON are provisional — confirm with the teacher before seeding. The allowed values live in `schema.yaml`; change them there (the app's sidebar order = order of first appearance in the CSV; display names for hyphenated subdomains are in `SUB_NAMES` in `app/index.html`).
 
 | Prefix | Domain | Covers | Provisional subdomains |
 |---|---|---|---|
@@ -136,14 +139,14 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 
 - [x] **0. Plan** — this document; public GitHub repo created.
 - [x] **1. Scaffold** — `schema.yaml`, `validate.py`, GitHub Action, empty CSVs with headers, README rules for AI tools.
-- [ ] **2. Confirm taxonomy** — ~~VEX kit poster categories~~ (done); VEXcode IQ block categories; level definitions.
+- [ ] **2. Confirm taxonomy** — ~~VEX kit poster categories~~, ~~VEXcode IQ categories~~ (done); level definitions; ENG/EDP/COMP/SEASON subdomains.
 - [ ] **3. Seed vocab** — AI-drafted, ~250–300 terms, all `status=draft`. One domain at a time, teacher review per domain.
-  - [x] BLD — 76 terms (part families from the Competition Kit poster + pneumatics + Smart Motor Mount + Inertial Sensor), all 76 with images (BLD-001–005 are diagrams from `tools/diagrams.py`)
+  - [x] BLD — 77 terms (part families from the Competition Kit poster + pneumatics + Smart Motor Mount + Inertial Sensor + AI Vision Sensor), all with images, store SKUs and VEX Library links (BLD-001–005 are diagrams from `tools/diagrams.py`)
   - [x] CODE — 106 terms (Blocks + Python), VEXcode Chinese, all with reference links; every term has a block drawing or an image
   - [ ] ENG · EDP · COMP · SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.
-- [ ] **6. Images** — BLD done from VEX sources; other domains to come. Optional: replace with own photos (student project).
+- [ ] **6. Images** — BLD and CODE done; other domains to come. Optional: replace with own photos (student project).
 - [ ] **7. Generators** — Kahoot, flashcards, handouts. ~~Contact sheet~~ (`tools/contact_sheet.py`). ~~Browser app proof of concept~~ (`app/index.html`).
 - [ ] **8. China access** — Gitee mirror.
 
@@ -160,7 +163,41 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 ## 11. Open questions
 
 - Level definitions: is "role-specific" the right meaning for level 2?
-- Exact VEX IQ kit categories and which extension kits to include beyond pneumatics.
+- Which extension kits beyond pneumatics (currently: pneumatics, Smart Motor Mount, AI Vision Sensor; skipped: hybrid/bevel/crown/differential gears, pulleys, turntables).
 - Current season game name and elements (for SEASON domain).
 - Who reviews the Chinese?
 - Content license (e.g. CC BY-NC-SA 4.0) — matters if other teachers reuse it.
+- Teacher review still needed (all `draft`): especially the Chinese not taken from an official source — BLD: 孔距 (pitch), 智能端口, 凸轮, 凸轮从动件, 齿数, 接口; CODE: block-type names (堆叠积木, 帽子积木, C形积木, 报告积木) and the six `concepts` terms. Also level assignments.
+- Unverified fact claims in drafts: "continuous racks can be joined end to end" (BLD-075); IQ and V5 share the same square shaft size (SKU 276-1149 listed for `shaft`).
+
+## 12. Working notes (handoff for the next session)
+
+**Where things are**
+- Local repo: `~/Projects/vex-iq-vocab` → GitHub `insufficientdoubt/vex-iq-vocab` (public), branch `main`, GitHub Pages from `main` root.
+- Every push runs `validate.py` (GitHub Action) and rebuilds Pages (1–2 min). The app re-checks `vocab.csv` on every load and versions image URLs, so updates show without cache problems (users may need one hard refresh after app changes).
+- Run the app locally: `python3 -m http.server 8000` in the repo, open `http://localhost:8000/app/`.
+
+**How rows were added** (so new domains follow the same pattern)
+- Seed a domain with a one-off Python script that builds rows (IDs assigned in order, `confused_with` written as term names and resolved to IDs, cross-domain refs as raw IDs like `BLD-001`), then appends to `data/vocab.csv` with `csv.DictWriter(..., lineterminator="\n")`. Keep column order from the CSV header. Run `python3 validate.py` after every change; it catches >75-char definitions, bad IDs, missing images, unknown SKUs, stray spaces.
+- Small additions: append one row the same way; next ID = last ID in that domain + 1. Never renumber.
+- Columns are in this order: id, term_en, aka, zh, short_def, explanation, example, confused_with, blocks, python, domain, subdomain, tags, level, season, image, ref_url, store_skus, status.
+
+**Images**
+- Square PNG, white background, 600×600, quantized to keep ≤ ~200 KB. `python3 tools/contact_sheet.py <DOMAIN>` → `build/contact-sheet-<DOMAIN>.png` (build/ is git-ignored) to eyeball them.
+- Concept drawings: add a function to `tools/diagrams.py` and an entry in `DIAGRAMS` (keyed by `term_en`), then `python3 tools/diagrams.py` (redraws all). CODE drawings are auto-cropped/centered by `fit()`. Use shapes, not ✓/✗ glyphs (Arial lacks them).
+- Kit-part drawings were cropped from the poster PDF rendered at 300 dpi (vector art, no embedded images): find the label with `pdftotext -bbox-layout`, take the nearest non-white blob; small/crowded parts needed manual boxes.
+- VEX Library screenshots: article images are at `https://kb.vex.com/hc/article_attachments/<id>` and download fine with curl; find them via the Help Center API (article `body` HTML lists `<img src alt>`).
+- Credit every non-original image in `images/CREDITS.md`.
+
+**Fetching from VEX sites (gotchas)**
+- vexrobotics.com, vexstore.cn, api.vex.com and kb.vex.com sit behind Cloudflare: curl/WebFetch get 403. Use the in-app browser and run `fetch()` from a page on the same site. If a "verify you are human" checkbox appears, don't click it — ask the user. (The store sometimes passes on its own after a few seconds.)
+- vexstore.cn: on the IQ listing page, `window.algoliaConfig` gives the public search key; query `<indexName>_products` with `filters=vex_classroom:IQ`, `hitsPerPage=1000`. Product image URLs: strip the `/cache/<hash>/` part for full size. Images download fine with curl.
+- api.vex.com: HTML pages are blocked even to in-page fetch; use `/iq2/searchindex.js` (titles + anchors, to verify `ref_url` anchors) and `/iq2/_sources/home/<page>.md.txt` (block text in ```` ```{code-block} scratchblock ```` fences, Python usage lines).
+- VEXcode Chinese: on api.vex.com, load `/assets/scratchblocks/translations-all.js` with a fake `scratchblocks.loadLanguages` to capture the language objects; use `zh_cn.commands` (`iq2*`, `common*`, `brakeType*`, …), `zh_cn.dropdowns`, `zh_cn.palette`.
+- `git push` occasionally fails with an SSL error from China; just retry.
+
+**Next steps**
+1. ENG (mechanisms, drivetrain types, mechanical concepts, control techniques incl. autonomous, driver control, PID) — confirm subdomains and scope with the teacher first. Note the planned two-row split: `drivetrain` the mechanism (ENG) vs `Drivetrain (in code)` (CODE-013).
+2. EDP, COMP (VEX IQ Robotics Competition terms; Teamwork Challenge is cooperative), SEASON (current game; `season` column required).
+3. Sentence frames (`data/frames.csv`), including respectful referee questions and judge-interview frames.
+4. Generators: Kahoot import, flashcards, handouts (reference = with Chinese, review = without).
