@@ -24,12 +24,16 @@
            border-radius: 8px; background: var(--bg); color: var(--text); font: inherit; }
   header label { color: var(--muted); font-size: 14px; white-space: nowrap; }
   .layout { display: grid; grid-template-columns: 230px 1fr; min-height: calc(100vh - 53px); }
-  nav { border-right: 1px solid var(--line); padding: 10px 8px; background: var(--panel); overflow-y: auto; }
+  nav { border-right: 1px solid var(--line); padding: 10px 8px; background: var(--panel); overflow-y: auto;
+        position: sticky; top: 53px; align-self: start; max-height: calc(100vh - 53px); }
   nav a { display: flex; justify-content: space-between; padding: 5px 10px; border-radius: 6px; color: var(--text);
           text-decoration: none; font-size: 14px; }
   nav a:hover { background: var(--chip); }
   nav a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
-  nav a.domain { font-weight: 600; margin-top: 8px; }
+  nav a.domain { font-weight: 600; margin-top: 4px; }
+  nav a.domain::before { content: "▸"; display: inline-block; width: 14px; color: var(--muted); font-weight: 400; }
+  nav a.domain.open::before { content: "▾"; }
+  nav a.domain > span:first-child { flex: 1; }
   nav a.sub { padding-left: 22px; color: var(--muted); }
   nav a.sub.active { color: var(--accent); }
   nav .count { color: var(--muted); font-weight: 400; font-size: 12px; }
@@ -70,8 +74,11 @@
   .error { background: #fde8e8; color: #8a1c1c; padding: 12px; border-radius: 8px; }
   @media (max-width: 700px) {
     .layout { grid-template-columns: 1fr; }
-    nav { border-right: 0; border-bottom: 1px solid var(--line); display: flex; overflow-x: auto; gap: 4px; padding: 6px; }
-    nav a { white-space: nowrap; margin: 0; }
+    nav { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--line);
+          display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; }
+    nav a { white-space: nowrap; margin: 0; gap: 6px; background: var(--chip); }
+    nav a.domain::before { display: none; }
+    nav .subs { flex-basis: 100%; display: flex; gap: 4px; overflow-x: auto; padding-top: 2px; }
     nav a.sub { padding-left: 10px; }
     .detail { grid-template-columns: 1fr; }
   }
@@ -164,11 +171,16 @@ function buildNav(active) {
   const tree = {};
   for (const r of rows) ((tree[r.domain] ??= {})[r.subdomain] ??= []).push(r);
   let html = `<a href="#" class="${active === "" ? "active" : ""}">All <span class="count">${rows.length}</span></a>`;
+  // Accordion: every domain is listed, but only the open one (the domain being viewed) shows its subdomains.
+  const open = (active || "").split("/")[0];
   for (const [d, subs] of Object.entries(tree)) {
     const n = Object.values(subs).flat().length;
-    html += `<a href="#${d}" class="domain ${active === d ? "active" : ""}">${esc(DOMAIN_NAMES[d] || d)} <span class="count">${n}</span></a>`;
+    html += `<a href="#${d}" class="domain ${d === open ? "open" : ""} ${active === d ? "active" : ""}"><span>${esc(DOMAIN_NAMES[d] || d)}</span> <span class="count">${n}</span></a>`;
+    if (d !== open) continue;
+    html += `<div class="subs">`;
     for (const [s, items] of Object.entries(subs))
       html += `<a href="#${d}/${s}" class="sub ${active === d + "/" + s ? "active" : ""}">${esc(titleSub(s))} <span class="count">${items.length}</span></a>`;
+    html += `</div>`;
   }
   document.getElementById("nav").innerHTML = html;
 }
