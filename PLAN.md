@@ -72,6 +72,7 @@ vex-iq-vocab/
 | `level` | yes | 1 = everyone, 2 = role-specific (builders / coders / drivers), 3 = expert. |
 | `season` | | SEASON domain only, e.g. `2026-27`. |
 | `image` | | Filename in `images/`, or blank if none yet. |
+| `store_skus` | | BLD only: vexstore.cn SKUs that contain this part, `;`-separated, for re-ordering. Must exist in `sources/vexstore-cn-iq-parts.csv`. Usually packs, so one SKU can cover several parts and one part can come in several SKUs. |
 | `status` | yes | `draft` → `reviewed` → `verified`. |
 
 ## 5. Domains

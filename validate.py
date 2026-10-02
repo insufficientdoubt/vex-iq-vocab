@@ -35,6 +35,18 @@ def split_list(cell, sep):
     return [part.strip() for part in cell.split(sep) if part.strip()]
 
 
+_lookups = {}
+
+
+def lookup(rel_path, column):
+    """Set of values in one column of a reference CSV (cached)."""
+    key = (rel_path, column)
+    if key not in _lookups:
+        with open(ROOT / rel_path, encoding="utf-8") as f:
+            _lookups[key] = {row[column] for row in csv.DictReader(f)}
+    return _lookups[key]
+
+
 def read_csv(path):
     """Return (header, rows) or None if the file can't be parsed safely."""
     raw = path.read_bytes()
@@ -155,6 +167,11 @@ def check_table(key, schema):
                 err(where, f"{col} is only used for {', '.join(c['only_for_domains'])} rows")
             if "file_in" in c and not (ROOT / c["file_in"] / value).is_file():
                 err(where, f"{col} file {c['file_in']}/{value} not found")
+            if "in_file" in c:
+                known = lookup(c["in_file"]["path"], c["in_file"]["column"])
+                for item in split_list(value, sep):
+                    if item not in known:
+                        err(where, f'{col} "{item}" not found in {c["in_file"]["path"]}')
             if c.get("refs"):
                 for ref in split_list(value, sep):
                     deferred_refs.append((where, col, ref))
@@ -176,7 +193,7 @@ def main():
     image_dir = ROOT / "images"
     if image_dir.is_dir():
         for f in sorted(image_dir.iterdir()):
-            if f.name.startswith("."):
+            if f.name.startswith(".") or f.suffix.lower() not in (".png", ".jpg", ".jpeg"):
                 continue
             base = re.sub(r"-[a-z]$", "", f.stem)
             if base not in vocab_ids:

@@ -27,6 +27,7 @@ vocab:
     - {name: level,         required: true}
     - {name: season,        only_for_domains: [SEASON], required_for_domains: [SEASON], pattern: "^\\d{4}-\\d{2}$"}
     - {name: image,         file_in: images}
+    - {name: store_skus,    list: true, only_for_domains: [BLD], in_file: {path: sources/vexstore-cn-iq-parts.csv, column: sku}}  # vexstore.cn SKUs, for re-ordering
     - {name: status,        required: true}
 
   # Domain = ID prefix.
