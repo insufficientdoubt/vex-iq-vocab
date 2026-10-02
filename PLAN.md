@@ -147,13 +147,13 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - [ ] **3. Seed vocab** — AI-drafted, ~250–300 terms, all `status=draft`. One domain at a time, teacher review per domain.
   - [x] BLD — 77 terms (part families from the Competition Kit poster + pneumatics + Smart Motor Mount + Inertial Sensor + AI Vision Sensor), all with images, store SKUs and VEX Library links (BLD-001–005 are diagrams from `tools/diagrams.py`)
   - [x] CODE — 106 terms (Blocks + Python), VEXcode Chinese, all with reference links; every term has a block drawing or an image
-  - [x] ENG — 72 terms from VEX IQ sources (6 community-sourced, level 3). No images yet.
+  - [x] ENG — 72 terms from VEX IQ sources (6 community-sourced, level 3), all with images.
   - [x] `stem_lab` — 80 terms across all domains mapped to the STEM Lab lesson that first teaches them (from every lesson's Lesson Summary PDF).
   - [ ] EDP · COMP — first terms added as they came up in the VEX IQ sources (12 EDP, 13 COMP, no images). **Still to do:** evaluate both domains as a whole and add what's missing from other sources (game manual, RECF judge guide and notebook rubric, Competition 101 STEM Labs…).
   - [ ] SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.
-- [ ] **6. Images** — BLD and CODE done; ENG/EDP/COMP to come (diagrams via `tools/diagrams.py`; VEX Library article images for mechanisms). Optional: replace with own photos (student project).
+- [ ] **6. Images** — BLD, CODE and ENG done (ENG: 32 VEX Library / STEM Lab images, 40 diagrams in `tools/diagrams.py`); EDP/COMP to come. Optional: replace with own photos (student project).
 - [ ] **7. Generators** — Kahoot, flashcards, handouts. ~~Contact sheet~~ (`tools/contact_sheet.py`). ~~Browser app proof of concept~~ (`app/index.html`).
 - [ ] **8. China access** — Gitee mirror.
 
@@ -209,7 +209,6 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - `git push` occasionally fails with an SSL error from China; just retry.
 
 **Next steps**
-1. ENG images (concept diagrams and mechanism pictures from VEX Library articles).
-2. EDP and COMP: holistic review and fill-in from other sources (game manual, RECF judging, notebook rubric). SEASON (current game; `season` column required).
-3. Sentence frames (`data/frames.csv`), including respectful referee questions and judge-interview frames.
-4. Generators: Kahoot import, flashcards, handouts (reference = with Chinese, review = without).
+1. EDP and COMP: holistic review and fill-in from other sources (game manual, RECF judging, notebook rubric). SEASON (current game; `season` column required).
+2. Sentence frames (`data/frames.csv`), including respectful referee questions and judge-interview frames.
+3. Generators: Kahoot import, flashcards, handouts (reference = with Chinese, review = without).

@@ -352,6 +352,634 @@ def sensor():
     return im
 
 
+# ---------- engineering concept drawings ---------------------------------------------------
+# Labels never name the term itself (or its aka), so the pictures work in quizzes.
+DARK, LIGHTBLUE, LIGHTORANGE, GROUND = "#2b2f33", "#e7f1fb", "#fde3cc", "#8a9099"
+
+
+def arrow(d, x1, y1, x2, y2, color=BLUE, w=10, head=34):
+    ang = math.atan2(y2 - y1, x2 - x1)
+    bx, by = x2 - head * 0.8 * math.cos(ang), y2 - head * 0.8 * math.sin(ang)
+    d.line((x1, y1, bx, by), fill=color, width=w)
+    d.polygon([(x2, y2), (x2 - head * math.cos(ang - 0.45), y2 - head * math.sin(ang - 0.45)),
+               (x2 - head * math.cos(ang + 0.45), y2 - head * math.sin(ang + 0.45))], fill=color)
+
+
+def spin(d, cx, cy, r, start, end, color=BLUE, w=8, head=30):
+    """Curved arrow around (cx, cy) from angle start to end (degrees, clockwise if end > start)."""
+    lo, hi = min(start, end), max(start, end)
+    d.arc((cx - r, cy - r, cx + r, cy + r), start=lo, end=hi, fill=color, width=w)
+    a = math.radians(end)
+    tip = (cx + r * math.cos(a), cy + r * math.sin(a))
+    sgn = 1 if end > start else -1
+    tan = a + sgn * math.pi / 2
+    back = (tip[0] - head * math.cos(tan), tip[1] - head * math.sin(tan))
+    nx, ny = math.cos(a) * head * 0.45, math.sin(a) * head * 0.45
+    d.polygon([tip, (back[0] + nx, back[1] + ny), (back[0] - nx, back[1] - ny)], fill=color)
+
+
+def gear(d, cx, cy, r, n, fill="#2f7fd0", hole=True):
+    pts, step = [], 2 * math.pi / n
+    for i in range(n):
+        for frac, rad in [(0.0, r - 22), (0.18, r + 18), (0.42, r + 18), (0.6, r - 22)]:
+            a = step * (i + frac) - math.pi / 2
+            pts.append((cx + rad * math.cos(a), cy + rad * math.sin(a)))
+    d.polygon(pts, fill=fill, outline=EDGE, width=5)
+    if hole:
+        d.rectangle((cx - 22, cy - 22, cx + 22, cy + 22), fill=HOLE, outline=EDGE, width=5)
+
+
+def poly(d, pts, fill=PART, outline=EDGE, width=5):
+    d.polygon(pts, fill=fill, outline=outline, width=width)
+
+
+def rot_rect(cx, cy, w, h, deg):
+    a = math.radians(deg)
+    c, s = math.cos(a), math.sin(a)
+    return [(cx + x * c - y * s, cy + x * s + y * c) for x, y in [(-w / 2, -h / 2), (w / 2, -h / 2), (w / 2, h / 2), (-w / 2, h / 2)]]
+
+
+def bar(d, x1, y1, x2, y2, w=44, fill=PART):
+    """A beam between two pivot points, with pivot holes at the ends."""
+    ang = math.degrees(math.atan2(y2 - y1, x2 - x1))
+    L = math.hypot(x2 - x1, y2 - y1)
+    poly(d, rot_rect((x1 + x2) / 2, (y1 + y2) / 2, L + w, w, ang), fill)
+    for x, y in ((x1, y1), (x2, y2)):
+        d.ellipse((x - 11, y - 11, x + 11, y + 11), fill=HOLE, outline=EDGE, width=4)
+
+
+def wheel_side(d, cx, cy, r, tire=DARK):
+    d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=tire)
+    d.ellipse((cx - r * 0.6, cy - r * 0.6, cx + r * 0.6, cy + r * 0.6), fill=PART, outline=EDGE, width=4)
+    d.rectangle((cx - 10, cy - 10, cx + 10, cy + 10), fill=HOLE, outline=EDGE, width=3)
+
+
+def ground(d, y, x1=80, x2=S - 80):
+    d.line((x1, y, x2, y), fill=GROUND, width=8)
+    for x in range(int(x1), int(x2), 50):
+        d.line((x, y + 6, x - 24, y + 32), fill=GROUND, width=4)
+
+
+def robot_side(d, x, y, w, h, r=70, wheels=2):
+    """Side view: body box with its bottom at y, wheels below. Returns the ground line y."""
+    d.rounded_rectangle((x, y - h, x + w, y), radius=16, fill=PART, outline=EDGE, width=6)
+    gy = y + r * 0.35 + r
+    xs = [x + r * 0.9, x + w - r * 0.9] if wheels == 2 else [x + w / 2]
+    for cx in xs:
+        wheel_side(d, cx, gy - r, r)
+    return gy
+
+
+def robot_top(d, cx, cy, w, h, fill=PART, front=True, outline=EDGE):
+    d.rounded_rectangle((cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2), radius=18, fill=fill, outline=outline, width=6)
+    if front:
+        d.polygon([(cx, cy - h / 2 + 18), (cx - 30, cy - h / 2 + 62), (cx + 30, cy - h / 2 + 62)], fill=BLUE)
+
+
+def omni_top(d, cx, cy, deg, w=50, h=150):
+    poly(d, rot_rect(cx, cy, w, h, deg), DARK)
+    a = math.radians(deg)
+    for t in (-0.32, 0, 0.32):                     # rollers across the wheel
+        px, py = cx - math.sin(a) * h * t, cy + math.cos(a) * h * t
+        d.line((px - math.cos(a) * w * 0.42, py - math.sin(a) * w * 0.42,
+                px + math.cos(a) * w * 0.42, py + math.sin(a) * w * 0.42), fill="#c9ced4", width=6)
+
+
+def ball(d, cx, cy, r=45, color=ORANGE):
+    d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=color, outline=EDGE, width=5)
+
+
+def field(d, x0, y0, n=6, cell=150):
+    d.rectangle((x0, y0, x0 + n * cell, y0 + n * cell), fill="#f1f3f5", outline=EDGE, width=6)
+    for i in range(1, n):
+        d.line((x0 + i * cell, y0, x0 + i * cell, y0 + n * cell), fill="#d5d9de", width=3)
+        d.line((x0, y0 + i * cell, x0 + n * cell, y0 + i * cell), fill="#d5d9de", width=3)
+
+
+def controller_icon(d, cx, cy, k=1.0, fill="#4fb3e3"):
+    w, h = 300 * k, 170 * k
+    d.rounded_rectangle((cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 3), radius=60 * k, fill=fill, outline=EDGE, width=5)
+    for sx in (-1, 1):
+        d.ellipse((cx + sx * 90 * k - 30 * k, cy - 30 * k, cx + sx * 90 * k + 30 * k, cy + 30 * k), fill="white", outline=EDGE, width=4)
+        poly(d, [(cx + sx * 150 * k, cy), (cx + sx * 110 * k, cy + 95 * k), (cx + sx * 40 * k, cy + 40 * k)], fill, EDGE, 0)
+
+
+def axes(d, x0, y0, x1, y1):
+    arrow(d, x0, y0, x1 + 30, y0, DARK, 6, 26)
+    arrow(d, x0, y0, x0, y1 - 30, DARK, 6, 26)
+
+
+# --- drivetrains ---
+def chassis():
+    im, d = canvas()
+    beam(d, 260, 260, 9, 1, 75)
+    beam(d, 260, 860, 9, 1, 75)
+    for x in (260, 860):
+        beam(d, x, 335, 1, 7, 75)
+    beam(d, 335, 560, 7, 1, 75, fill="#8e949b")
+    for x in (200, 935):
+        for y in (330, 720):
+            d.rounded_rectangle((x, y, x + 65, y + 150), radius=14, fill=DARK)
+    return im
+
+
+def holonomic_drive():
+    im, d = canvas()
+    d.rounded_rectangle((380, 380, 820, 820), radius=30, fill=PART, outline=EDGE, width=6)
+    for cx, cy, deg in [(600, 360, 90), (600, 840, 90), (360, 600, 0), (840, 600, 0)]:
+        omni_top(d, cx, cy, deg)
+    for k in range(8):
+        a = math.radians(k * 45)
+        arrow(d, 600 + 110 * math.cos(a), 600 + 110 * math.sin(a), 600 + 200 * math.cos(a), 600 + 200 * math.sin(a), ORANGE, 9, 30)
+    return im
+
+
+def omni_directional():
+    im, d = canvas()
+    for (x, y) in [(240, 320), (960, 320), (240, 880), (960, 880), (600, 220), (600, 980), (180, 600), (1020, 600)]:
+        robot_top(d, x, y, 150, 150, fill="#eef0f2", outline=FAINT)
+        dashed(d, 600, 600, x, y, ORANGE, 6)
+    robot_top(d, 600, 600, 220, 220)
+    return im
+
+
+def footprint():
+    im, d = canvas()
+    poly(d, [(300, 300), (900, 300), (900, 900), (300, 900)], "#fde3cc", ORANGE, 6)
+    d.rounded_rectangle((380, 380, 820, 820), radius=20, fill=PART, outline=EDGE, width=6)
+    for x in (300, 900):
+        for y in (300, 900):
+            d.rounded_rectangle((x - 40, y - 85, x + 40, y + 85), radius=14, fill=DARK)
+            d.ellipse((x - 16, y - 16, x + 16, y + 16), fill=ORANGE)
+    dim(d, 300, 1030, 900, 1030, ORANGE)
+    dim(d, 1050, 300, 1050, 900, ORANGE)
+    return im
+
+
+def ground_clearance():
+    im, d = canvas()
+    d.rounded_rectangle((260, 380, 940, 640), radius=20, fill=PART, outline=EDGE, width=6)
+    for cx in (360, 840):
+        wheel_side(d, cx, 720, 150)
+    ground(d, 870)
+    dashed(d, 560, 640, 760, 640, ORANGE, 5)
+    dim(d, 660, 650, 660, 862, ORANGE)
+    return im
+
+
+# --- manipulators ---
+def shield():
+    im, d = canvas()
+    gy = robot_side(d, 330, 760, 520, 260, 80)
+    ground(d, gy)
+    poly(d, [(290, 430), (890, 430), (890, 470), (290, 470)], "#4fb3e3")
+    for bx, by, ax, ay in [(470, 230, 380, 120), (720, 210, 820, 100)]:
+        ball(d, bx, by, 50)
+        arrow(d, bx, by + 70, bx, 400, DARK, 6, 26)
+        arrow(d, bx, 400, ax, ay + 40, ORANGE, 8, 30)
+    return im
+
+
+def game_piece_slide():
+    im, d = canvas()
+    gy = robot_side(d, 140, 820, 420, 300, 80)
+    ground(d, gy)
+    poly(d, [(520, 470), (960, 690), (960, 730), (520, 510)], "#4fb3e3")
+    d.rectangle((930, 730, 1110, gy), fill="#e9ecef", outline=EDGE, width=6)
+    ball(d, 650, 470, 48)
+    arrow(d, 720, 470, 880, 560, ORANGE, 8, 30)
+    return im
+
+
+def basket():
+    im, d = canvas()
+    gy = robot_side(d, 260, 840, 680, 220, 85)
+    ground(d, gy)
+    poly(d, [(330, 360), (870, 360), (830, 620), (370, 620)], "#dbe9f7", BLUE, 8)
+    for x, y in [(470, 545), (600, 545), (730, 545), (535, 450), (665, 450)]:
+        ball(d, x, y, 55)
+    return im
+
+
+def outtake():
+    im, d = canvas()
+    robot_top(d, 600, 860, 520, 360, front=False)
+    for cx, s, e in [(420, 30, 330), (780, 150, 210)]:
+        d.ellipse((cx - 85, 545, cx + 85, 715), fill=DARK)
+        d.ellipse((cx - 40, 590, cx + 40, 670), fill=PART, outline=EDGE, width=4)
+    spin(d, 420, 630, 125, 200, 320, ORANGE)
+    spin(d, 780, 630, 125, 340, 220, ORANGE)
+    ball(d, 600, 410, 80)
+    arrow(d, 600, 300, 600, 110, ORANGE, 12, 44)
+    return im
+
+
+def conveyor():
+    im, d = canvas()
+    a = math.radians(-35)
+    x1, y1, x2, y2 = 260, 900, 940, 900 + 680 * math.tan(a)
+    for x, y in ((x1, y1), (x2, y2)):
+        d.ellipse((x - 70, y - 70, x + 70, y + 70), fill=PART, outline=EDGE, width=6)
+    nx, ny = -math.sin(a) * 70, math.cos(a) * 70
+    d.line((x1 + nx, y1 - ny, x2 + nx, y2 - ny), fill=DARK, width=16)
+    d.line((x1 - nx, y1 + ny, x2 - nx, y2 + ny), fill=DARK, width=16)
+    for t in (0.2, 0.5, 0.8):
+        px, py = x1 + (x2 - x1) * t + nx, y1 + (y2 - y1) * t - ny
+        d.line((px, py, px + nx * 1.1, py - ny * 1.1), fill=ORANGE, width=14)
+        ball(d, px + nx * 0.9 + 60 * math.cos(a), py - ny * 0.9 + 60 * math.sin(a) - 20, 42)
+    arrow(d, 420, 640, 700, 640 + 280 * math.tan(a), BLUE, 10, 36)
+    return im
+
+
+def claw_jaws(d, pivots, angles, length=330, fill=PART):
+    for (px, py), ang in zip(pivots, angles):
+        a = math.radians(ang)
+        bar(d, px, py, px + length * math.cos(a), py + length * math.sin(a), 46, fill)
+
+
+def single_sided_claw():
+    im, d = canvas()
+    d.rectangle((300, 820, 900, 900), fill=PART, outline=EDGE, width=6)
+    claw_jaws(d, [(420, 780)], [-90])                    # fixed side
+    claw_jaws(d, [(780, 780)], [-112], fill="#f3b27a")    # moving side
+    spin(d, 780, 780, 210, 248, 228, ORANGE)
+    d.rectangle((480, 470, 620, 610), fill="#4fb3e3", outline=EDGE, width=6)
+    return im
+
+
+def double_sided_claw():
+    im, d = canvas()
+    gear(d, 510, 820, 90, 12, "#2f7fd0")
+    gear(d, 690, 820, 90, 12, "#2f7fd0")
+    claw_jaws(d, [(510, 820), (690, 820)], [-100, -80], 420, "#f3b27a")
+    spin(d, 510, 820, 300, 262, 242, ORANGE)
+    spin(d, 690, 820, 300, 278, 298, ORANGE)
+    d.rectangle((530, 440, 670, 580), fill="#4fb3e3", outline=EDGE, width=6)
+    return im
+
+
+def roller_claw():
+    im, d = canvas()
+    for x in (330, 870):
+        bar(d, x, 900, x, 420, 46)
+    for cx, s, e in [(330, 160, 40), (870, 20, 140)]:
+        d.ellipse((cx - 130, 290, cx + 130, 550), fill=DARK)
+        d.ellipse((cx - 55, 365, cx + 55, 475), fill=PART, outline=EDGE, width=4)
+    spin(d, 330, 420, 175, 140, 40, ORANGE)
+    spin(d, 870, 420, 175, 40, 140, ORANGE)
+    ball(d, 600, 330, 75, "#4fb3e3")
+    arrow(d, 600, 440, 600, 760, BLUE, 12, 44)
+    return im
+
+
+def tower():
+    im, d = canvas()
+    gy = robot_side(d, 200, 860, 700, 140, 85)
+    ground(d, gy)
+    d.rectangle((420, 330, 520, 720), fill="#f3b27a", outline=ORANGE, width=8)
+    bar(d, 470, 380, 980, 560, 44)
+    gear(d, 470, 380, 60, 12, "#2f7fd0")
+    return im
+
+
+def linkage(d, base, length, ang_deg, gap=150, fill=PART):
+    """Parallelogram arm: two parallel bars from a tower. Returns the far end points (top, bottom)."""
+    bx, by = base
+    a = math.radians(ang_deg)
+    ends = []
+    for dy in (0, gap):
+        ex, ey = bx + length * math.cos(a), by + dy - length * math.sin(a)
+        bar(d, bx, by + dy, ex, ey, 40, fill)
+        ends.append((ex, ey))
+    bar(d, ends[0][0], ends[0][1], ends[1][0], ends[1][1], 40, "#8e949b")
+    return ends
+
+
+def six_bar():
+    im, d = canvas()
+    d.rectangle((150, 560, 230, 1000), fill="#8e949b", outline=EDGE, width=6)
+    (tx, ty), (bx, by) = linkage(d, (190, 700), 380, 35)
+    linkage(d, (tx, ty - 150), 380, 35, gap=150, fill="#f3b27a")
+    bar(d, tx, ty - 150, tx, ty, 40, "#8e949b")
+    return im
+
+
+def chain_bar():
+    im, d = canvas()
+    d.rectangle((210, 520, 290, 1000), fill="#8e949b", outline=EDGE, width=6)
+    x1, y1, x2, y2 = 250, 640, 830, 360
+    for x, y in ((x1, y1), (x2, y2)):
+        gear(d, x, y, 80, 16, "#2f7fd0")
+    a = math.atan2(y2 - y1, x2 - x1)
+    nx, ny = -math.sin(a) * 95, math.cos(a) * 95
+    for s in (1, -1):
+        dashed(d, x1 + s * nx, y1 + s * ny, x2 + s * nx, y2 + s * ny, DARK, 12, 18)
+    bar(d, x1, y1, x2, y2, 40, PART)
+    d.rectangle((x2 - 30, y2 + 60, x2 + 160, y2 + 110), fill="#f3b27a", outline=EDGE, width=5)
+    return im
+
+
+def linear_slide():
+    im, d = canvas()
+    d.rectangle((480, 150, 560, 1000), fill=PART, outline=EDGE, width=6)
+    for y in range(170, 990, 40):
+        d.polygon([(560, y), (590, y + 10), (590, y + 25), (560, y + 35)], fill="#2f7fd0", outline=EDGE)
+    d.rounded_rectangle((590, 420, 820, 640), radius=16, fill="#f3b27a", outline=EDGE, width=6)
+    gear(d, 640, 530, 50, 10, "#2f7fd0")
+    arrow(d, 900, 640, 900, 260, ORANGE, 12, 44)
+    return im
+
+
+def cascade_lift():
+    im, d = canvas()
+    for i, (x, top, fill) in enumerate([(360, 360, "#8e949b"), (440, 220, PART), (520, 90, "#f3b27a")]):
+        d.rectangle((x, top, x + 300, 1000 - i * 60), fill=fill, outline=EDGE, width=6)
+    for x in (400, 480):
+        dashed(d, x + 40, 300, x + 40, 900, DARK, 10, 18)
+    arrow(d, 960, 700, 960, 200, ORANGE, 12, 44)
+    return im
+
+
+def scissor_lift():
+    im, d = canvas()
+    xl, xr, h = 330, 870, 210
+    y = 980
+    for i in range(3):
+        bar(d, xl, y, xr, y - h, 40)
+        bar(d, xr, y, xl, y - h, 40, "#8e949b")
+        y -= h
+    d.rectangle((xl - 60, y - 50, xr + 60, y), fill="#f3b27a", outline=EDGE, width=6)
+    d.rectangle((xl - 60, 980, xr + 60, 1030), fill=PART, outline=EDGE, width=6)
+    arrow(d, 1030, 900, 1030, 300, ORANGE, 12, 44)
+    return im
+
+
+def flywheel_launcher():
+    im, d = canvas()
+    d.rectangle((150, 760, 880, 800), fill=PART, outline=EDGE, width=6)
+    wheel_side(d, 700, 580, 160, "#c2255c")
+    spin(d, 700, 580, 220, 200, 320, BLUE, 10, 36)
+    ball(d, 470, 715, 45)
+    arrow(d, 260, 715, 390, 715, DARK, 6, 24)
+    ball(d, 990, 360, 45)
+    for k in range(3):
+        d.line((900 - k * 50, 450 + k * 30, 950 - k * 50, 410 + k * 30), fill=ORANGE, width=8)
+    arrow(d, 1010, 330, 1110, 240, ORANGE, 10, 36)
+    return im
+
+
+# --- power transfer ---
+def gear_pair(d, small_fill, big_fill, motor=True):
+    gear(d, 400, 600, 110, 12, small_fill)
+    gear(d, 740, 600, 240, 36, big_fill)
+    if motor:
+        d.rounded_rectangle((300, 150, 500, 420), radius=24, fill="#c9ced4", outline=EDGE, width=6)
+        d.line((400, 420, 400, 580), fill=EDGE, width=14)
+    spin(d, 400, 600, 175, 300, 360, DARK, 7, 26)
+    spin(d, 740, 600, 300, 240, 180, DARK, 7, 26)
+
+
+def driving_gear():
+    im, d = canvas()
+    gear_pair(d, ORANGE, "#c9ced4")
+    return im
+
+
+def driven_gear():
+    im, d = canvas()
+    gear_pair(d, "#c9ced4", ORANGE)
+    bar(d, 740, 600, 1100, 300, 40, "#8e949b")
+    return im
+
+
+def gear_ratio():
+    im, d = canvas()
+    gear_pair(d, "#2f7fd0", "#2f7fd0")
+    text(d, (400, 820), "12T", 56, True, ORANGE)
+    text(d, (740, 920), "36T", 56, True, ORANGE)
+    text(d, (600, 1080), "3 : 1", 96, True)
+    return im
+
+
+def mechanical_advantage():
+    im, d = canvas()
+    ground(d, 900)
+    poly(d, [(420, 900), (360, 790), (480, 790)], "#8e949b")
+    poly(d, rot_rect(600, 760, 900, 34, -10), "#f3b27a")
+    d.rectangle((150, 640, 350, 790), fill=DARK)
+    arrow(d, 1010, 520, 1010, 640, BLUE, 10, 36)
+    arrow(d, 250, 760, 250, 480, ORANGE, 22, 64)
+    return im
+
+
+def compound_gear_ratio():
+    im, d = canvas()
+    gear(d, 240, 420, 80, 12)
+    gear(d, 520, 420, 200, 36)
+    gear(d, 520, 420, 80, 12, ORANGE, hole=True)
+    gear(d, 520, 880, 80, 12, ORANGE)
+    dashed(d, 520, 520, 520, 780, DARK, 6)
+    gear(d, 860, 880, 260, 60)
+    text(d, (380, 120), "3 : 1", 60, True, BLUE)
+    text(d, (860, 540), "5 : 1", 60, True, BLUE)
+    text(d, (220, 900), "15 : 1", 72, True)
+    return im
+
+
+def idler_gear():
+    im, d = canvas()
+    for cx, fill in [(250, "#2f7fd0"), (600, ORANGE), (950, "#2f7fd0")]:
+        gear(d, cx, 600, 150, 18, fill)
+    spin(d, 250, 600, 230, 200, 330, DARK, 7, 26)
+    spin(d, 600, 600, 230, 150, 30, ORANGE, 8, 30)        # middle gear turns the other way (arrow below)
+    spin(d, 950, 600, 230, 200, 330, DARK, 7, 26)
+    return im
+
+
+# --- forces ---
+def force():
+    im, d = canvas()
+    ground(d, 900)
+    d.rectangle((440, 650, 760, 900), fill="#4fb3e3", outline=EDGE, width=6)
+    arrow(d, 120, 775, 420, 775, ORANGE, 16, 56)
+    d.line((760, 700, 1000, 560), fill=DARK, width=6)
+    arrow(d, 1000, 560, 1120, 490, BLUE, 16, 56)
+    return im
+
+
+def unbalanced_force():
+    im, d = canvas()
+    ground(d, 860)
+    d.rectangle((470, 610, 730, 860), fill="#4fb3e3", outline=EDGE, width=6)
+    arrow(d, 470, 735, 330, 735, BLUE, 14, 48)
+    arrow(d, 730, 735, 1120, 735, ORANGE, 24, 72)
+    dashed(d, 520, 1000, 900, 1000, ORANGE, 8)
+    arrow(d, 880, 1000, 960, 1000, ORANGE, 10, 36)
+    return im
+
+
+def traction():
+    im, d = canvas()
+    ground(d, 900)
+    wheel_side(d, 600, 640, 260)
+    spin(d, 600, 640, 330, 200, 300, DARK, 9, 34)
+    arrow(d, 600, 930, 340, 930, BLUE, 12, 44)
+    arrow(d, 600, 640, 1000, 640, ORANGE, 16, 56)
+    return im
+
+
+def friction():
+    im, d = canvas()
+    d.line((80, 800, S - 80, 800), fill=GROUND, width=8)
+    for x in range(100, S - 100, 40):
+        d.line((x, 800, x + 20, 820), fill=GROUND, width=5)
+    d.rectangle((420, 560, 780, 800), fill="#4fb3e3", outline=EDGE, width=6)
+    arrow(d, 600, 680, 1020, 680, BLUE, 14, 48)
+    arrow(d, 600, 790, 300, 790, ORANGE, 14, 48)
+    return im
+
+
+def mass():
+    im, d = canvas()
+    px, py, half, tilt = 600, 430, 430, math.radians(-12)        # beam dips toward the heavier side (left)
+    ends = [(px - half * math.cos(tilt), py - half * math.sin(tilt)), (px + half * math.cos(tilt), py + half * math.sin(tilt))]
+    poly(d, [(px, py), (px - 60, 960), (px + 60, 960)], "#8e949b")
+    d.rectangle((px - 200, 960, px + 200, 1010), fill="#8e949b")
+    poly(d, rot_rect(px, py, 2 * half + 60, 26, math.degrees(tilt)), DARK)
+    for (ex, ey), size, fill in zip(ends, (240, 120), ("#4fb3e3", "#f3b27a")):
+        d.rectangle((ex - size / 2, ey - 14 - size, ex + size / 2, ey - 14), fill=fill, outline=EDGE, width=6)
+    return im
+
+
+def center_of_mass():
+    im, d = canvas()
+    gy = robot_side(d, 240, 820, 720, 250, 85)
+    ground(d, gy)
+    bar(d, 760, 560, 1060, 360, 40)
+    cx, cy, r = 560, 690, 50
+    d.ellipse((cx - r, cy - r, cx + r, cy + r), fill="white", outline=DARK, width=6)
+    d.pieslice((cx - r, cy - r, cx + r, cy + r), 180, 270, fill=DARK)
+    d.pieslice((cx - r, cy - r, cx + r, cy + r), 0, 90, fill=DARK)
+    dashed(d, cx, cy + r, cx, gy, ORANGE, 6)
+    return im
+
+
+# --- control techniques ---
+def autonomous():
+    im, d = canvas()
+    field(d, 150, 150, 6, 150)
+    pts = [(300, 900), (300, 450), (750, 450), (750, 300), (900, 300)]
+    for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
+        dashed(d, x1, y1, x2, y2, BLUE, 10, 22)
+    for i, (x, y) in enumerate(pts[1:], 1):
+        d.ellipse((x - 32, y - 32, x + 32, y + 32), fill=BLUE)
+        text(d, (x, y), str(i), 38, True, "white")
+    robot_top(d, 300, 940, 130, 130)
+    controller_icon(d, 900, 900, 0.7, "#c9ced4")
+    d.line((780, 800, 1020, 1000), fill=RED, width=16)
+    d.line((780, 1000, 1020, 800), fill=RED, width=16)
+    return im
+
+
+def starting_position():
+    im, d = canvas()
+    field(d, 150, 150, 6, 150)
+    x, y = 300, 750
+    for (cx, cy), (dx, dy) in [((x, y), (1, 1)), ((x + 300, y), (-1, 1)), ((x, y + 300), (1, -1)), ((x + 300, y + 300), (-1, -1))]:
+        d.line((cx, cy, cx + dx * 80, cy), fill=ORANGE, width=14)
+        d.line((cx, cy, cx, cy + dy * 80), fill=ORANGE, width=14)
+    robot_top(d, x + 150, y + 150, 220, 220)
+    dashed(d, x + 150, y - 40, x + 150, 300, BLUE, 8)
+    return im
+
+
+def graph_frame(d):
+    axes(d, 150, 1000, 1080, 150)
+    dashed(d, 150, 400, 1080, 400, ORANGE, 6)
+    d.ellipse((1060, 380, 1100, 420), fill=ORANGE)
+
+
+def bang_bang_control():
+    im, d = canvas()
+    graph_frame(d)
+    pts = [(150, 1000), (480, 360)]
+    x, up = 480, False
+    while x < 1060:
+        pts.append((x + 70, 450 if up else 350)); x += 70; up = not up
+    d.line(pts, fill=BLUE, width=10, joint="curve")
+    return im
+
+
+def pid_control():
+    im, d = canvas()
+    graph_frame(d)
+    pts = []
+    for i in range(200):
+        t = i / 199 * 6
+        y = 1 - math.exp(-t) * (math.cos(1.6 * t) + 0.6 * math.sin(1.6 * t))
+        pts.append((150 + i / 199 * 900, 1000 - 600 * y))
+    d.line(pts, fill=BLUE, width=10, joint="curve")
+    return im
+
+
+def proportional_control():
+    im, d = canvas()
+    d.line((1000, 200, 1000, 1000), fill=ORANGE, width=10)
+    poly(d, [(1000, 200), (1100, 240), (1000, 280)], ORANGE, ORANGE)
+    for (x, y, L) in [(200, 330, 420), (540, 600, 240), (820, 870, 90)]:
+        robot_top(d, x, y, 120, 120, front=False)
+        arrow(d, x + 75, y, x + 75 + L, y, BLUE, 16 if L > 200 else 12, 56 if L > 200 else 40)
+    return im
+
+
+def number_line(d, robot_at, flag_hi):
+    y = 700
+    d.line((120, y, 1080, y), fill=DARK, width=8)
+    for i, v in enumerate(range(0, 700, 100)):
+        x = 150 + i * 150
+        d.line((x, y - 20, x, y + 20), fill=DARK, width=5)
+        text(d, (x, y + 60), str(v), 40)
+    xr = 150 + robot_at / 100 * 150
+    robot_top(d, xr, y - 110, 130, 130, front=False)
+    xf = 150 + 5 * 150
+    d.line((xf, y, xf, y - 300), fill=ORANGE if flag_hi else DARK, width=10)
+    poly(d, [(xf, y - 300), (xf + 140, y - 255), (xf, y - 210)], ORANGE if flag_hi else "#c9ced4", EDGE, 4)
+    return xr, xf, y
+
+
+def setpoint():
+    im, d = canvas()
+    xr, xf, y = number_line(d, 200, True)
+    d.ellipse((xf - 26, y - 26, xf + 26, y + 26), fill=ORANGE)
+    text(d, (xf, y + 140), "500 mm", 56, True, ORANGE)
+    return im
+
+
+def error_control():
+    im, d = canvas()
+    xr, xf, y = number_line(d, 200, False)
+    dim(d, xr, y + 150, xf, y + 150, ORANGE)
+    text(d, ((xr + xf) / 2, y + 220), "300 mm", 56, True, ORANGE)
+    return im
+
+
+def odometry():
+    im, d = canvas()
+    field(d, 150, 150, 6, 150)
+    arrow(d, 150, 1050, 1080, 1050, DARK, 6, 26)
+    arrow(d, 150, 1050, 150, 120, DARK, 6, 26)
+    pts = [(260, 980), (330, 820), (460, 700), (620, 640), (760, 520)]
+    for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
+        dashed(d, x1, y1, x2, y2, BLUE, 8, 18)
+    x, y = pts[-1]
+    dashed(d, x, y, x, 1050, ORANGE, 5)
+    dashed(d, x, y, 150, y, ORANGE, 5)
+    poly(d, rot_rect(x, y, 120, 120, 40), PART)
+    arrow(d, x, y, x + 150 * math.cos(math.radians(-50)), y + 150 * math.sin(math.radians(-50)), BLUE, 10, 36)
+    text(d, (x + 90, y + 120), "(x, y)", 56, True, ORANGE, anchor="lm")
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
@@ -369,6 +997,47 @@ DIAGRAMS = {
     "pseudocode": pseudocode,
     "bug": bug,
     "sensor": sensor,
+    # engineering
+    "chassis": chassis,
+    "holonomic drive": holonomic_drive,
+    "omni-directional": omni_directional,
+    "footprint": footprint,
+    "ground clearance": ground_clearance,
+    "shield": shield,
+    "game piece slide": game_piece_slide,
+    "basket": basket,
+    "outtake": outtake,
+    "conveyor": conveyor,
+    "single-sided claw": single_sided_claw,
+    "double-sided claw": double_sided_claw,
+    "roller claw": roller_claw,
+    "tower": tower,
+    "6-bar": six_bar,
+    "chain-bar": chain_bar,
+    "linear slide": linear_slide,
+    "cascade lift": cascade_lift,
+    "scissor lift": scissor_lift,
+    "flywheel launcher": flywheel_launcher,
+    "driving gear": driving_gear,
+    "driven gear": driven_gear,
+    "gear ratio": gear_ratio,
+    "mechanical advantage": mechanical_advantage,
+    "compound gear ratio": compound_gear_ratio,
+    "idler gear": idler_gear,
+    "force": force,
+    "unbalanced force": unbalanced_force,
+    "traction": traction,
+    "friction": friction,
+    "mass": mass,
+    "center of mass": center_of_mass,
+    "autonomous": autonomous,
+    "starting position": starting_position,
+    "bang-bang control": bang_bang_control,
+    "PID control": pid_control,
+    "proportional control": proportional_control,
+    "setpoint": setpoint,
+    "error (control)": error_control,
+    "odometry": odometry,
 }
 
 
@@ -378,7 +1047,7 @@ def main():
     for term, fn in DIAGRAMS.items():
         out = ROOT / "images" / f"{ids[term]}.png"
         im = fn()
-        if ids[term].startswith("CODE-") and term != "sensor":
+        if ids[term].startswith(("CODE-", "ENG-")) and term != "sensor":
             im = fit(im)
         im.resize((S // 2, S // 2), Image.LANCZOS).quantize(colors=96, method=Image.Quantize.MEDIANCUT).save(out, optimize=True)
         print(f"{ids[term]}  {term}  → images/{out.name}")

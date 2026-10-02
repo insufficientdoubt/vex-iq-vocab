@@ -9,6 +9,9 @@ Images © VEX Robotics / Innovation First, Inc., used for non-commercial classro
 | BLD-001 – BLD-005 | Diagrams drawn by `tools/diagrams.py` (edit the script and re-run to change them) |
 | CODE-041, CODE-074, CODE-089, CODE-095, CODE-096, CODE-098 – CODE-100, CODE-102 – CODE-104 | Drawn by `tools/diagrams.py` (CODE-041 combines the BLD sensor images) |
 | CODE-001, 003, 004, 011, 013, 053 – 055, 061, 094, 106 | Screenshots from VEX Library articles (VEXcode IQ toolbar, Devices menu, Print Console, AI Vision Utility, error prompt) |
+| ENG-001, 003, 004, 006, 007, 008, 015 – 017, 021, 024, 028, 031, 036, 040, 042, 049 – 051, 062 – 064 | VEX Library articles: Selecting a VEX IQ Drivetrain, Selecting a VEX IQ Assembly, Building VEX IQ Robot Arms, Using VEX IQ Plastic Gears, Chain & Sprockets, and Pulleys, Building with VEX IQ Motor Groups, and the Hero Bot articles (Huey, Swish). Black/green backgrounds replaced with white. |
+| ENG-012 – 014, 030, 032, 035, 058, 061, 065, 066 | VEX IQ (2nd gen) STEM Lab Lesson Summaries (Robot Soccer, Up and Over, Cube Collector, Castle Crasher) |
+| ENG diagrams (the other 40 ENG images) | Drawn by `tools/diagrams.py` |
 | BLD-076 | [VEX Library: Understanding Inertial Sensor Data from the VEX IQ (2nd gen) Brain](https://kb.vex.com/hc/en-us/articles/4409666542100-Understanding-Inertial-Sensor-Data-from-the-VEX-IQ-2nd-gen-Brain) |
 
 Own photos may replace these later; keep the same `<ID>.png` filename.
