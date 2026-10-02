@@ -175,12 +175,200 @@ def tooth_count():
     return im
 
 
+# ---------- coding concept cards ----------------------------------------------------------
+GREEN, RED, CODEBG, KEYWORD = "#2f9e44", "#d6336c", "#f4f6f8", "#7048e8"
+
+
+def mono(size, bold=False):
+    for f, i in [("/System/Library/Fonts/Menlo.ttc", 1 if bold else 0),
+                 ("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 0)]:
+        if Path(f).exists():
+            return ImageFont.truetype(f, size, index=i)
+    return ImageFont.load_default()
+
+
+def code_card(d, lines, top=330, size=50, marks=(), keywords=()):
+    """Draw Python lines in an editor-style panel. marks = [(line, col_from, col_to, color)] highlights."""
+    f = mono(size)
+    cw, lh = f.getlength("M"), size * 1.55
+    width = max(len(l) for l in lines) * cw + 120
+    x0 = (S - width) / 2
+    d.rounded_rectangle((x0, top, x0 + width, top + len(lines) * lh + 70), radius=24, fill=CODEBG, outline=FAINT, width=4)
+    x, y = x0 + 60, top + 35
+    for (ln, a, b, color) in marks:
+        d.rounded_rectangle((x + a * cw - 6, y + ln * lh - 6, x + b * cw + 6, y + ln * lh + size + 10), radius=10, fill=color)
+    for i, line in enumerate(lines):
+        d.text((x, y + i * lh), line, font=f, fill=TEXT)
+        for kw in keywords:                                  # recolor keywords
+            j = line.find(kw)
+            if j >= 0 and (j == 0 or not line[j - 1].isalnum()):
+                d.text((x + j * cw, y + i * lh), kw, font=mono(size, True), fill=KEYWORD)
+    return x, y, cw, lh
+
+
+def title(d, s, sub=None):
+    """Deliberately draws nothing: an image that names its own term would give away quiz answers."""
+
+
+def fit(im, margin=70):
+    """Crop to the drawing and scale it to fill the square, so small drawings are readable on cards."""
+    box = Image.eval(im.convert("L"), lambda v: 255 - v).getbbox()
+    if not box:
+        return im
+    part = im.crop(box)
+    k = min((S - 2 * margin) / part.width, (S - 2 * margin) / part.height, 1.6)
+    part = part.resize((int(part.width * k), int(part.height * k)), Image.LANCZOS)
+    out = Image.new("RGB", (S, S), "white")
+    out.paste(part, ((S - part.width) // 2, (S - part.height) // 2))
+    return out
+
+
+def while_loop():
+    im, d = canvas()
+    title(d, "while", "repeats as long as the condition is True")
+    code_card(d, ["while bumper_1.pressing():", "    intake.spin(FORWARD)", "intake.stop()"], top=380,
+              marks=[(0, 6, 25, "#d3f9d8")], keywords=["while"])
+    text(d, (600, 850), "green part = the condition", 42, fill=GREEN)
+    text(d, (600, 920), "the indented line repeats", 42)
+    return im
+
+
+def indentation():
+    im, d = canvas()
+    title(d, "indentation", "spaces that show what is inside")
+    x, y, cw, lh = code_card(d, ["while True:", "    drivetrain.drive(FORWARD)", "    wait(1, SECONDS)", "brain.screen.print(\"done\")"],
+                             top=380, marks=[(1, 0, 4, "#ffd8a8"), (2, 0, 4, "#ffd8a8")], keywords=["while", "True"])
+    text(d, (600, 930), "orange = 4 spaces → inside the loop", 42, fill=ORANGE)
+    return im
+
+
+def colon():
+    im, d = canvas()
+    title(d, "colon  :", "ends the first line of a loop, if or function")
+    code_card(d, ["if bumper_1.pressing():", "    drivetrain.stop()", "", "while True:", "", "def drive_square():"], top=330,
+              marks=[(0, 22, 23, "#ffc9c9"), (3, 10, 11, "#ffc9c9"), (5, 18, 19, "#ffc9c9")], keywords=["if", "while", "True", "def"])
+    return im
+
+
+def import_():
+    im, d = canvas()
+    title(d, "import", "load extra code into your program")
+    code_card(d, ["from vex import *", "import random", "", "n = random.randint(1, 3)"], top=380,
+              marks=[(0, 9, 15, "#e5dbff"), (1, 0, 6, "#e5dbff")], keywords=["from", "import"])
+    text(d, (600, 960), "VEXcode adds the first line for you", 42)
+    return im
+
+
+def string():
+    im, d = canvas()
+    title(d, "string", "text, written inside quotes")
+    code_card(d, ["name = \"Ready!\"", "brain.screen.print(\"Score: \")"], top=420,
+              marks=[(0, 7, 15, "#d3f9d8"), (1, 19, 28, "#d3f9d8")])
+    text(d, (600, 800), "\"5\" is text     5 is a number", 46, True, BLUE)
+    return im
+
+
+def int_float():
+    im, d = canvas()
+    title(d, "integer / float", "two kinds of numbers")
+    code_card(d, ["count = 3", "distance = 3.5"], top=400, size=60, marks=[(0, 8, 9, "#d0ebff"), (1, 11, 14, "#ffd8a8")])
+    text(d, (420, 780), "integer", 56, True, BLUE)
+    text(d, (420, 845), "whole number", 40, fill=BLUE)
+    text(d, (800, 780), "float", 56, True, ORANGE)
+    text(d, (800, 845), "has a decimal point", 40, fill=ORANGE)
+    return im
+
+
+def true_false():
+    im, d = canvas()
+    title(d, "True / False", "the only two Boolean values")
+    for cx, word, color in [(330, "True", GREEN), (870, "False", RED)]:
+        d.rounded_rectangle((cx - 220, 420, cx + 220, 820), radius=40, fill=color)
+        if word == "True":
+            d.line([(cx - 70, 560), (cx - 15, 615), (cx + 85, 500)], fill="white", width=26, joint="curve")
+        else:
+            d.line((cx - 65, 495, cx + 65, 625), fill="white", width=26)
+            d.line((cx - 65, 625, cx + 65, 495), fill="white", width=26)
+        text(d, (cx, 730), word, 80, True, "white")
+    text(d, (600, 960), "Is the bumper pressed?  →  True or False", 44)
+    return im
+
+
+def boxes_flow(d, steps, top=330, h=120, color=BLUE):
+    for i, s in enumerate(steps):
+        y = top + i * (h + 60)
+        d.rounded_rectangle((260, y, 940, y + h), radius=28, fill="#e7f1fb", outline=color, width=6)
+        text(d, (330, y + h / 2), str(i + 1), 60, True, color)
+        text(d, (390, y + h / 2), s, 50, anchor="lm")
+        if i < len(steps) - 1:
+            d.line((600, y + h, 600, y + h + 50), fill=color, width=8)
+            d.polygon([(580, y + h + 30), (620, y + h + 30), (600, y + h + 56)], fill=color)
+
+
+def algorithm():
+    im, d = canvas()
+    title(d, "algorithm", "a step-by-step plan")
+    boxes_flow(d, ["Find the ball", "Drive to it", "Close the claw", "Score it"], top=320)
+    return im
+
+
+def pseudocode():
+    im, d = canvas()
+    title(d, "pseudocode", "a plan in plain words, not real code")
+    d.rounded_rectangle((180, 330, 1020, 900), radius=24, fill="#fff9db", outline="#f0c419", width=5)
+    for i in range(7):
+        d.line((210, 430 + i * 72, 990, 430 + i * 72), fill="#f3e3a1", width=3)
+    for i, (indent, line) in enumerate([(0, "repeat 4 times:"), (1, "drive forward 300 mm"), (1, "turn right 90°"),
+                                         (0, "if I see a ball:"), (1, "close the claw"), (0, "go home")]):
+        text(d, (240 + indent * 70, 405 + i * 72), line, 46, anchor="lm")
+    return im
+
+
+def bug():
+    im, d = canvas()
+    title(d, "bug", "a mistake that makes the robot do the wrong thing")
+    code_card(d, ["drivetrain.drive_for(FORWARD, 300, MM)", "drivetrain.turn_for(LEFT, 90, DEGREES)", "drivetrain.drive_for(FORWARD, 300, MM)"],
+              top=340, size=36, marks=[(1, 20, 24, "#ffc9c9")])
+    text(d, (600, 610), "should be RIGHT!", 50, True, RED)
+    # plan vs. what happened
+    sx, sy = 600, 1050
+    d.line((sx, sy, sx, 830), fill=GREEN, width=10)
+    dashed(d, sx, 830, sx + 220, 830, GREEN, w=10, dash=22)
+    d.line((sx, 830, sx - 220, 830), fill=RED, width=10)
+    d.polygon([(sx + 250, 830), (sx + 215, 810), (sx + 215, 850)], fill=GREEN)
+    d.polygon([(sx - 250, 830), (sx - 215, 810), (sx - 215, 850)], fill=RED)
+    text(d, (sx + 230, 780), "planned", 40, True, GREEN)
+    text(d, (sx - 230, 780), "actual", 40, True, RED)
+    return im
+
+
+def sensor():
+    """2x2 grid of the sensor part photos already in images/."""
+    im, _ = canvas()
+    for i, pid in enumerate(["BLD-013", "BLD-014", "BLD-015", "BLD-016"]):
+        p = ROOT / "images" / f"{pid}.png"
+        part = Image.open(p).convert("RGB").resize((560, 560))
+        im.paste(part, (20 + (i % 2) * 600, 20 + (i // 2) * 600))
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
     "offset": offset,
     "travel": travel,
     "tooth count": tooth_count,
+    "while": while_loop,
+    "indentation": indentation,
+    "colon": colon,
+    "import": import_,
+    "string": string,
+    "integer / float": int_float,
+    "True / False": true_false,
+    "algorithm": algorithm,
+    "pseudocode": pseudocode,
+    "bug": bug,
+    "sensor": sensor,
 }
 
 
@@ -189,7 +377,10 @@ def main():
     ids = {r["term_en"]: r["id"] for r in csv.DictReader(open(ROOT / "data/vocab.csv", encoding="utf-8"))}
     for term, fn in DIAGRAMS.items():
         out = ROOT / "images" / f"{ids[term]}.png"
-        fn().resize((S // 2, S // 2), Image.LANCZOS).quantize(colors=96, method=Image.Quantize.MEDIANCUT).save(out, optimize=True)
+        im = fn()
+        if ids[term].startswith("CODE-") and term != "sensor":
+            im = fit(im)
+        im.resize((S // 2, S // 2), Image.LANCZOS).quantize(colors=96, method=Image.Quantize.MEDIANCUT).save(out, optimize=True)
         print(f"{ids[term]}  {term}  → images/{out.name}")
 
 

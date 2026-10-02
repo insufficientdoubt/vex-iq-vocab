@@ -31,7 +31,7 @@ Goal: students **use the English terms**. Chinese is a support for understanding
 | Links | `ref_url`: one "learn more" link per term — VEX API reference section for CODE, VEX Library article for BLD. |
 | Coding scope | Not every block. Devices, block categories, the words inside commands, and concepts. |
 | Building scope | Part *families* (beam, plate, pin…) with notes on how sizes/types are described — not every size. Grouped by VEX's own kit categories. |
-| Images | Separate files in `images/`, named by ID (`BLD-023.png`), square PNG on white, ≤ ~200 KB. VEX images are used for now (cropped from the kit poster, or store photos), credited in `images/CREDITS.md`; own photos can replace them under the same filename. Check with `python3 tools/contact_sheet.py`. |
+| Images | Concept images must not show the term's own name (it would give away quiz answers). Separate files in `images/`, named by ID (`BLD-023.png`), square PNG on white, ≤ ~200 KB. VEX images are used for now (cropped from the kit poster, or store photos), credited in `images/CREDITS.md`; own photos can replace them under the same filename. Check with `python3 tools/contact_sheet.py`. |
 | IDs | Permanent. Never reused or renumbered; retired IDs stay retired. |
 | Overlapping terms | One primary `domain` + free `tags`. If a term means different things in different domains (e.g. drivetrain the mechanism vs. Drivetrain the VEXcode device), it gets **two rows**. |
 | Sentence frames | Separate CSV in the same repo, linked to vocab by ID. |
@@ -139,7 +139,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - [ ] **2. Confirm taxonomy** — ~~VEX kit poster categories~~ (done); VEXcode IQ block categories; level definitions.
 - [ ] **3. Seed vocab** — AI-drafted, ~250–300 terms, all `status=draft`. One domain at a time, teacher review per domain.
   - [x] BLD — 76 terms (part families from the Competition Kit poster + pneumatics + Smart Motor Mount + Inertial Sensor), all 76 with images (BLD-001–005 are diagrams from `tools/diagrams.py`)
-  - [x] CODE — 106 terms (Blocks + Python), VEXcode Chinese, all with reference links
+  - [x] CODE — 106 terms (Blocks + Python), VEXcode Chinese, all with reference links; every term has a block drawing or an image
   - [ ] ENG · EDP · COMP · SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.

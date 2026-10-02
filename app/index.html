@@ -141,6 +141,7 @@ function blockSVG(r) {
   // Recolor every block scratchblocks didn't recognize ("obsolete" = red), including nested ones.
   const fix = (node, top) => {
     if (!node || typeof node !== "object") return;
+    if (node.info && node.info.category === "custom-arg") node.info.category = "custom";   // no scratch3 color for it
     if (node.info && node.info.category === "obsolete") {
       const text = (node.children || []).map(c => c.value ?? c.label?.value ?? "").join(" ").trim();
       const cat = top ? categoryFor(text, r.subdomain) : "sensing";
