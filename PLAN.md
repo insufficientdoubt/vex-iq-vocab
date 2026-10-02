@@ -1,6 +1,6 @@
 # VEX IQ Vocab — Project Plan
 
-Status: **seeding** — Building (77 terms) and Coding (106 terms) drafted, all `status=draft`; ENG, EDP, COMP, SEASON and sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
+Status: **seeding** — Building (77), Coding (106) and Engineering (72) drafted, plus a first set of EDP (12) and COMP (13) terms; all `status=draft`. SEASON and sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
 
 This file records decisions, the spec, and how the work was done (§12). Update it when a decision changes. **New AI session? Read §12 first.**
 
@@ -31,6 +31,8 @@ Goal: students **use the English terms**. Chinese is a support for understanding
 | Coding Chinese | From **VEXcode IQ's own Chinese interface** (the block text students see), not the machine-translated Chinese API site, which is unreliable (e.g. Motors → 汽车). VEXcode uses some unusual terms (heading = 归位角度, rotation = 转向); we follow VEXcode and mention alternatives in `explanation`. |
 | Block pictures | The `blocks` column holds block text in [scratchblocks](https://scratchblocks.github.io/) syntax, as used on VEX's reference site (e.g. `drive [forward v] for (200) [mm v] ▶`). Multi-line scripts are allowed (newlines inside the quoted cell; C blocks end with `end`). The app draws it; no screenshots. scratchblocks is vendored in `app/vendor/` (MIT). A CODE term needs either an `image` or `blocks`; the card shows the image if both. |
 | Links | `ref_url`: one "learn more" link per term — VEX API reference section for CODE, VEX Library article for BLD. |
+| Sources | **VEX first**, for content *and* grouping: VEX IQ materials (VEX Library, IQ STEM Labs and their Lesson Summaries, Hero Bot articles) → VEX EXP/V5 articles when the idea carries over to IQ → community sources only for terms VEX doesn't cover. Community-sourced terms are always level 3 and tagged `advanced; community-sourced`; their `ref_url` points to the community source. |
+| Engineering scope | Mechanisms and concepts, not parts: don't repeat a part BLD already has (omni wheel, flywheel, tank tread…) or a concept CODE already has (torque CODE-037, velocity CODE-021, motor group CODE-031); link to them with `confused_with` or in `explanation`. Gear ratio is explained as done with gears or sprockets (no pulleys). Controller drive modes (tank/arcade) are in ENG, tagged `controller`. |
 | Building scope | Part *families* (beam, plate, pin…) with notes on how sizes/types are described — not every size. Grouped by VEX's own kit categories. |
 | Images | Concept images must not show the term's own name (it would give away quiz answers) — applies to new images; the five BLD diagrams (BLD-001–005) keep their labels by decision, and VEXcode screenshots may show real button labels. Separate files in `images/`, named by ID (`BLD-023.png`), square PNG on white, ≤ ~200 KB. VEX images are used for now (cropped from the kit poster, or store photos), credited in `images/CREDITS.md`; own photos can replace them under the same filename. Check with `python3 tools/contact_sheet.py`. |
 | IDs | Permanent. Never reused or renumbered; retired IDs stay retired. |
@@ -79,19 +81,19 @@ vex-iq-vocab/
 | `level` | yes | 1 = everyone, 2 = role-specific (builders / coders / drivers), 3 = expert. |
 | `season` | | SEASON domain only, e.g. `2026-27`. |
 | `image` | | Filename in `images/`, or blank if none yet. |
-| `ref_url` | | One https link to learn more: VEX API reference (CODE), VEX Library article (BLD), game manual (COMP/SEASON). |
+| `ref_url` | | One https link to learn more: VEX API reference (CODE), VEX Library article (BLD, ENG), VEX IQ STEM Lab page (ENG/EDP/COMP), game manual (COMP/SEASON). Non-VEX links only on `community-sourced` rows. |
 | `store_skus` | | BLD only: vexstore.cn SKUs that contain this part, `;`-separated, for re-ordering. Must exist in `sources/vexstore-cn-iq-parts.csv`. Usually packs, so one SKU can cover several parts and one part can come in several SKUs. |
 | `status` | yes | `draft` → `reviewed` → `verified`. |
 
 ## 5. Domains
 
-BLD and CODE subdomains are confirmed; ENG/EDP/COMP/SEASON are provisional — confirm with the teacher before seeding. The allowed values live in `schema.yaml`; change them there (the app's sidebar order = order of first appearance in the CSV; display names for hyphenated subdomains are in `SUB_NAMES` in `app/index.html`).
+BLD, CODE and ENG subdomains are confirmed; EDP/COMP/SEASON are provisional — confirm with the teacher before seeding. The allowed values live in `schema.yaml`; change them there (the app's sidebar order = order of first appearance in the CSV; display names for hyphenated subdomains are in `SUB_NAMES` in `app/index.html`).
 
 | Prefix | Domain | Covers | Provisional subdomains |
 |---|---|---|---|
 | `BLD` | Building | Physical parts: competition kit + extensions we actually use (e.g. pneumatics) | general, electronics, specialty, shafts, connectors, pins-standoffs, wheels, beams-plates, gears, sprockets-chain, cams, linear-motion, pneumatics — **confirmed**: Competition Kit poster categories + `general` (size/naming words) + `pneumatics` |
 | `CODE` | Coding | VEXcode IQ: devices, block categories, command words, programming concepts | basics, drivetrain, motion, sensing, vision, controller, screen-console, events, control, operators, variables, functions, python, concepts — **confirmed**, follows VEXcode's categories |
-| `ENG` | Engineering | Mechanisms and design/control techniques: intake, DR4B, cascade lift, arm, claw, catapult, drivetrain (mechanism), gear ratio, torque, autonomous routine, PID… | mechanisms, drivetrains, mechanical-concepts, control-techniques |
+| `ENG` | Engineering | Mechanisms, mechanical concepts and driving/control techniques: drivetrain types, manipulators (arms, claws, intakes, lifts, launchers), gear ratio, force, center of mass, autonomous, path planning, PID… | drivetrains, manipulators, power-transfer, forces, control-techniques — **confirmed**: follows the VEX Library IQ Mechanical articles (drivetrains, assemblies, motion) and the IQ STEM Lab concepts (force, mechanical advantage, center of mass, path planning) |
 | `EDP` | Design process | Engineering design process + engineering notebook + judge interview vocabulary | process, notebook, interview |
 | `COMP` | Competition | Season-independent: coach, referee, match, Teamwork Challenge, Driver/Autonomous Coding Skills, scrimmage, regionals, nationals, Worlds… | events, roles, matches, rules, awards |
 | `SEASON` | Season game | This year's game elements and scoring. Tagged with `season` so they can be retired. | game-elements, scoring, field |
@@ -143,10 +145,12 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - [ ] **3. Seed vocab** — AI-drafted, ~250–300 terms, all `status=draft`. One domain at a time, teacher review per domain.
   - [x] BLD — 77 terms (part families from the Competition Kit poster + pneumatics + Smart Motor Mount + Inertial Sensor + AI Vision Sensor), all with images, store SKUs and VEX Library links (BLD-001–005 are diagrams from `tools/diagrams.py`)
   - [x] CODE — 106 terms (Blocks + Python), VEXcode Chinese, all with reference links; every term has a block drawing or an image
-  - [ ] ENG · EDP · COMP · SEASON
+  - [x] ENG — 72 terms from VEX IQ sources (6 community-sourced, level 3). No images yet.
+  - [ ] EDP · COMP — first terms added as they came up in the VEX IQ sources (12 EDP, 13 COMP, no images). **Still to do:** evaluate both domains as a whole and add what's missing from other sources (game manual, RECF judge guide and notebook rubric, Competition 101 STEM Labs…).
+  - [ ] SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.
-- [ ] **6. Images** — BLD and CODE done; other domains to come. Optional: replace with own photos (student project).
+- [ ] **6. Images** — BLD and CODE done; ENG/EDP/COMP to come (diagrams via `tools/diagrams.py`; VEX Library article images for mechanisms). Optional: replace with own photos (student project).
 - [ ] **7. Generators** — Kahoot, flashcards, handouts. ~~Contact sheet~~ (`tools/contact_sheet.py`). ~~Browser app proof of concept~~ (`app/index.html`).
 - [ ] **8. China access** — Gitee mirror.
 
@@ -157,7 +161,9 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 | [VEX IQ Competition Kit poster (PDF)](https://content.vexrobotics.com/vexpro/pdf/IQ-Competition-Kit-111521.pdf) | BLD subdomains and English part names |
 | [VEX IQ (2nd gen) API reference](https://api.vex.com/iq2/home/index.html) | CODE terms, block text, Python names, `ref_url`s. The site publishes `/iq2/searchindex.js` (every page + section anchor) and `/iq2/_sources/<page>.md.txt` (raw page source). Both must be fetched from a browser on that site (bot protection blocks scripts). |
 | VEXcode IQ Chinese UI text | CODE `zh`. Loaded by the reference site's block renderer: `/assets/scratchblocks/translations-all.js` → language `zh_cn` (keys like `iq2DriveFor`, `brakeTypeHold`, plus `dropdowns` and `palette`). |
-| [VEX Library](https://kb.vex.com/hc/en-us) | BLD `ref_url`s. Search with `/api/v2/help_center/articles/search.json?query=…` from a browser on kb.vex.com. |
+| [VEX Library](https://kb.vex.com/hc/en-us) | BLD and ENG `ref_url`s; ENG terms and grouping (IQ › Mechanical: drivetrains, assemblies, arms, claws, gears/sprockets, wheels, motor groups; Competition Robots: Hero Bots). Search with `/api/v2/help_center/articles/search.json?query=…` from a browser on kb.vex.com; list a whole category with `/api/v2/help_center/en-us/categories/<id>/articles.json` (IQ = 360002324792). |
+| [VEX IQ STEM Labs](https://education.vex.com/stemlabs/iq) | ENG/EDP/COMP definitions. The KB article "IQ (2nd gen) STEM Lab Unit Concepts" maps every unit to its concepts. Each lesson's *Learn* page links a **Lesson Summary PDF** on content.vexrobotics.com with VEX's kid-level definitions (force, traction, gear train, mechanical advantage, center of mass, manipulator, intake, claw, scouting, path planning, autonomous…); the PDFs download fine with curl. education.vex.com itself needs the browser. Competition 101 (VEX IQ Level Up) has the event vocabulary. |
+| [Purdue SIGBots wiki](https://wiki.purduesigbots.com) | Community source, only for level-3 terms VEX doesn't cover (bang-bang, PID, proportional control, setpoint, error, odometry). curl works. Alternative for PID: George Gillard, *An Introduction to PID Controllers*. |
 | [vexstore.cn IQ products](https://www.vexstore.cn/iq?vex_classroom=IQ) | Official Chinese part names → `sources/vexstore-cn-iq-parts.csv`. Pulled from the store's public search index (Algolia), which returns every IQ product with its Chinese name and pack contents in one request. Re-pull the same way when the catalog changes. |
 
 ## 11. Open questions
@@ -167,6 +173,8 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - Current season game name and elements (for SEASON domain).
 - Who reviews the Chinese?
 - Content license (e.g. CC BY-NC-SA 4.0) — matters if other teachers reuse it.
+- EDP and COMP: evaluate holistically before calling them done — the current terms are only the ones that came up in the VEX IQ engineering sources. Check against the game manual, RECF judging materials and the notebook rubric.
+- ENG Chinese is all unofficial (no VEX Chinese source found for mechanism names): check especially 操作机构, 被动/主动机构, 搜集器 (intake, from the store's Intake Flap name), 双反四连杆, 链条连杆臂, 级联升降, 剪叉升降, 投石器, 支撑面积 (footprint), 手动控制 / 自动, 坦克模式 / 街机模式, 开关控制. EDP/COMP: 操作手 (driver), 维修区 (pit), 队号牌, 团队协作挑战赛, 联盟队友, 评委.
 - Teacher review still needed (all `draft`): especially the Chinese not taken from an official source — BLD: 孔距 (pitch), 智能端口, 凸轮, 凸轮从动件, 齿数, 接口; CODE: block-type names (堆叠积木, 帽子积木, C形积木, 报告积木) and the six `concepts` terms. Also level assignments.
 - Unverified fact claims in drafts: "continuous racks can be joined end to end" (BLD-075); IQ and V5 share the same square shaft size (SKU 276-1149 listed for `shaft`).
 
@@ -197,7 +205,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - `git push` occasionally fails with an SSL error from China; just retry.
 
 **Next steps**
-1. ENG (mechanisms, drivetrain types, mechanical concepts, control techniques incl. autonomous, driver control, PID) — confirm subdomains and scope with the teacher first. Note the planned two-row split: `drivetrain` the mechanism (ENG) vs `Drivetrain (in code)` (CODE-013).
-2. EDP, COMP (VEX IQ Robotics Competition terms; Teamwork Challenge is cooperative), SEASON (current game; `season` column required).
+1. ENG images (concept diagrams and mechanism pictures from VEX Library articles).
+2. EDP and COMP: holistic review and fill-in from other sources (game manual, RECF judging, notebook rubric). SEASON (current game; `season` column required).
 3. Sentence frames (`data/frames.csv`), including respectful referee questions and judge-interview frames.
 4. Generators: Kahoot import, flashcards, handouts (reference = with Chinese, review = without).

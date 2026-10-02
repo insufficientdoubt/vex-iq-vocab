@@ -2,7 +2,8 @@
 # validate.py reads this file. Change allowed values here, not in the script.
 # BLD subdomains follow the VEX IQ Competition Kit poster categories, plus "general" (naming/size words)
 # and "pneumatics" (separate kit). CODE subdomains follow the VEXcode IQ categories, plus basics, python, concepts.
-# Other subdomain lists are PROVISIONAL until confirmed (PLAN.md §9 step 2).
+# ENG subdomains follow the VEX Library's IQ Mechanical articles and the IQ STEM Lab concepts.
+# EDP/COMP/SEASON subdomain lists are PROVISIONAL until confirmed (PLAN.md §9 step 2).
 
 levels: [1, 2, 3]          # 1 = everyone, 2 = role-specific, 3 = expert
 statuses: [draft, reviewed, verified]
@@ -36,7 +37,7 @@ vocab:
   domains:
     BLD:    [general, electronics, specialty, shafts, connectors, pins-standoffs, wheels, beams-plates, gears, sprockets-chain, cams, linear-motion, pneumatics]
     CODE:   [basics, drivetrain, motion, sensing, vision, controller, screen-console, events, control, operators, variables, functions, python, concepts]
-    ENG:    [mechanisms, drivetrains, mechanical-concepts, control-techniques]
+    ENG:    [drivetrains, manipulators, power-transfer, forces, control-techniques]
     EDP:    [process, notebook, interview]
     COMP:   [events, roles, matches, rules, awards]
     SEASON: [game-elements, scoring, field]
