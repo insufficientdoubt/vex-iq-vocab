@@ -87,7 +87,7 @@ const DATA = "../data/vocab.csv", IMAGES = "../images/";
 const DOMAIN_NAMES = { BLD: "Building", CODE: "Coding", ENG: "Engineering", EDP: "Design process",
                        COMP: "Competition", SEASON: "Season game" };
 
-let rows = [], byId = {};
+let rows = [], byId = {}, ver = "";
 
 // Minimal RFC 4180 CSV parser (quoted fields, "" escapes, newlines in quotes).
 function parseCSV(text) {
@@ -112,7 +112,7 @@ const list = s => s.split(";").map(x => x.trim()).filter(Boolean);
 const SUB_NAMES = { "pins-standoffs": "Pins & Standoffs", "beams-plates": "Beams & Plates",
                     "sprockets-chain": "Sprockets & Chain" };
 const titleSub = s => SUB_NAMES[s] || s.replace(/-/g, " ").replace(/^./, c => c.toUpperCase());
-const thumb = r => `<div class="thumb">${r.image ? `<img src="${IMAGES}${esc(r.image)}" alt="${esc(r.term_en)}" loading="lazy">`
+const thumb = r => `<div class="thumb">${r.image ? `<img src="${IMAGES}${esc(r.image)}${ver}" alt="${esc(r.term_en)}" loading="lazy">`
                                                  : `<span class="none">no image</span>`}</div>`;
 
 function buildNav(active) {
@@ -189,7 +189,13 @@ zhBox.addEventListener("change", applyZh); applyZh();
 document.getElementById("q").addEventListener("input", route);
 addEventListener("hashchange", () => { document.getElementById("q").value = ""; route(); });
 
-fetch(DATA).then(r => { if (!r.ok) throw new Error(`${DATA}: HTTP ${r.status}`); return r.text(); })
+// "no-cache" makes the browser check for a newer CSV on every load (GitHub Pages otherwise lets it
+// reuse a copy for 10 minutes). Image URLs carry the CSV's date so replaced images refresh too.
+fetch(DATA, { cache: "no-cache" }).then(r => {
+    if (!r.ok) throw new Error(`${DATA}: HTTP ${r.status}`);
+    const lm = r.headers.get("last-modified");
+    if (lm) ver = "?v=" + Date.parse(lm);
+    return r.text(); })
   .then(t => { rows = parseCSV(t); byId = Object.fromEntries(rows.map(r => [r.id, r])); route(); })
   .catch(e => { document.getElementById("main").innerHTML =
     `<div class="error">Couldn't load the vocab list (${esc(e.message)}).<br>Open this page through a web server, not as a file — e.g. run <code>python3 -m http.server</code> in the repo folder and go to <code>http://localhost:8000/app/</code>.</div>`; });
