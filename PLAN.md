@@ -133,7 +133,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - [x] **1. Scaffold** — `schema.yaml`, `validate.py`, GitHub Action, empty CSVs with headers, README rules for AI tools.
 - [ ] **2. Confirm taxonomy** — ~~VEX kit poster categories~~ (done); VEXcode IQ block categories; level definitions.
 - [ ] **3. Seed vocab** — AI-drafted, ~250–300 terms, all `status=draft`. One domain at a time, teacher review per domain.
-  - [x] BLD — 74 terms (part families from the Competition Kit poster + pneumatics + Smart Motor Mount), 66 with images
+  - [x] BLD — 75 terms (part families from the Competition Kit poster + pneumatics + Smart Motor Mount), 67 with images
   - [ ] CODE · ENG · EDP · COMP · SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.
