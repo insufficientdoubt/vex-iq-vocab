@@ -11,6 +11,16 @@ A bilingual (English / Simplified Chinese) vocabulary list and sentence-frame ba
 - `images/` — one photo per term, named by ID (`BLD-023.png`).
 - `schema.yaml` + `validate.py` — column rules, checked automatically on every push.
 
+## Browse the list
+
+`app/index.html` is a simple browser for the vocab list: an index by domain and subdomain, search (English or 中文), and a page per term. It reads `data/vocab.csv` directly, so it always shows the current data. It needs a web server, not a double-click:
+
+```
+python3 -m http.server 8000
+```
+
+then open http://localhost:8000/app/
+
 ## Rules for humans and AI tools
 
 1. **The CSVs in `data/` are the source of truth.** Edit them directly; never edit generated output.

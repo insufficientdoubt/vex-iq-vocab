@@ -138,7 +138,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.
 - [ ] **6. Images** — BLD done from VEX sources; other domains to come. Optional: replace with own photos (student project).
-- [ ] **7. Generators** — Kahoot, flashcards, handouts. ~~Contact sheet~~ (`tools/contact_sheet.py`).
+- [ ] **7. Generators** — Kahoot, flashcards, handouts. ~~Contact sheet~~ (`tools/contact_sheet.py`). ~~Browser app proof of concept~~ (`app/index.html`).
 - [ ] **8. China access** — Gitee mirror.
 
 ## 10. Sources

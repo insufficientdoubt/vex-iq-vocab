@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VEX IQ Vocab</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #fff; --text: #1b1f24; --muted: #667085; --line: #e3e6ea;
+    --accent: #0a6cc4; --accent-soft: #e6f0fa; --chip: #f0f2f5;
+    --l1: #2f9e44; --l2: #e8890c; --l3: #c2255c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14171b; --panel: #1d2126; --text: #e8eaed; --muted: #9aa3ad; --line: #2c3238;
+            --accent: #5aa9f0; --accent-soft: #1f3347; --chip: #262b31; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.45 system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+         background: var(--bg); color: var(--text); }
+  header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; background: var(--panel);
+           border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; flex-wrap: wrap; }
+  header h1 { font-size: 17px; margin: 0; white-space: nowrap; }
+  header input[type=search] { flex: 1; min-width: 160px; padding: 7px 10px; border: 1px solid var(--line);
+           border-radius: 8px; background: var(--bg); color: var(--text); font: inherit; }
+  header label { color: var(--muted); font-size: 14px; white-space: nowrap; }
+  .layout { display: grid; grid-template-columns: 230px 1fr; min-height: calc(100vh - 53px); }
+  nav { border-right: 1px solid var(--line); padding: 10px 8px; background: var(--panel); overflow-y: auto; }
+  nav a { display: flex; justify-content: space-between; padding: 5px 10px; border-radius: 6px; color: var(--text);
+          text-decoration: none; font-size: 14px; }
+  nav a:hover { background: var(--chip); }
+  nav a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  nav a.domain { font-weight: 600; margin-top: 8px; }
+  nav a.sub { padding-left: 22px; color: var(--muted); }
+  nav a.sub.active { color: var(--accent); }
+  nav .count { color: var(--muted); font-weight: 400; font-size: 12px; }
+  main { padding: 16px; overflow-y: auto; }
+  main h2 { margin: 0 0 12px; font-size: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px;
+          cursor: pointer; display: flex; flex-direction: column; gap: 4px; text-align: left; font: inherit; color: inherit;
+          text-decoration: none; }
+  .card:hover { border-color: var(--accent); }
+  .thumb { aspect-ratio: 1; background: #fff; border-radius: 6px; display: grid; place-items: center; overflow: hidden; }
+  .thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .thumb .none { color: #aab; font-size: 13px; }
+  .card .en { font-weight: 600; }
+  .card .zh { color: var(--muted); }
+  .lvl { display: inline-block; font-size: 11px; font-weight: 700; color: #fff; border-radius: 4px; padding: 0 5px; }
+  .lvl-1 { background: var(--l1); } .lvl-2 { background: var(--l2); } .lvl-3 { background: var(--l3); }
+  .detail { display: grid; grid-template-columns: minmax(200px, 340px) 1fr; gap: 20px; background: var(--panel);
+            border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .detail .thumb { border: 1px solid var(--line); }
+  .detail h2 { font-size: 26px; margin: 0; }
+  .detail .zh { font-size: 22px; color: var(--muted); margin: 2px 0 10px; }
+  .detail .short { font-size: 17px; margin: 0 0 10px; }
+  .detail dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 14px 0 0; font-size: 14px; }
+  .detail dt { color: var(--muted); }
+  .detail dd { margin: 0; }
+  .chip { display: inline-block; background: var(--chip); border-radius: 6px; padding: 1px 7px; margin: 0 4px 4px 0;
+          font-size: 13px; color: var(--text); text-decoration: none; }
+  a.chip:hover { background: var(--accent-soft); color: var(--accent); }
+  .back { display: inline-block; margin-bottom: 10px; color: var(--accent); text-decoration: none; }
+  .hide-zh .zh-text { display: none; }
+  .error { background: #fde8e8; color: #8a1c1c; padding: 12px; border-radius: 8px; }
+  @media (max-width: 700px) {
+    .layout { grid-template-columns: 1fr; }
+    nav { border-right: 0; border-bottom: 1px solid var(--line); display: flex; overflow-x: auto; gap: 4px; padding: 6px; }
+    nav a { white-space: nowrap; margin: 0; }
+    nav a.sub { padding-left: 10px; }
+    .detail { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>VEX IQ Vocab</h1>
+  <input type="search" id="q" placeholder="Search English, 中文, definitions…">
+  <label><input type="checkbox" id="zh" checked> 中文</label>
+</header>
+<div class="layout">
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+<script>
+// Where the data lives, relative to this page (app/ sits next to data/ and images/).
+const DATA = "../data/vocab.csv", IMAGES = "../images/";
+const DOMAIN_NAMES = { BLD: "Building", CODE: "Coding", ENG: "Engineering", EDP: "Design process",
+                       COMP: "Competition", SEASON: "Season game" };
+
+let rows = [], byId = {};
+
+// Minimal RFC 4180 CSV parser (quoted fields, "" escapes, newlines in quotes).
+function parseCSV(text) {
+  const out = []; let row = [], field = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+      else field += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n") { row.push(field); out.push(row); row = []; field = ""; }
+    else if (c !== "\r") field += c;
+  }
+  if (field || row.length) { row.push(field); out.push(row); }
+  const [head, ...body] = out;
+  return body.filter(r => r.some(Boolean)).map(r => Object.fromEntries(head.map((h, i) => [h, r[i] ?? ""])));
+}
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const list = s => s.split(";").map(x => x.trim()).filter(Boolean);
+const SUB_NAMES = { "pins-standoffs": "Pins & Standoffs", "beams-plates": "Beams & Plates",
+                    "sprockets-chain": "Sprockets & Chain" };
+const titleSub = s => SUB_NAMES[s] || s.replace(/-/g, " ").replace(/^./, c => c.toUpperCase());
+const thumb = r => `<div class="thumb">${r.image ? `<img src="${IMAGES}${esc(r.image)}" alt="${esc(r.term_en)}" loading="lazy">`
+                                                 : `<span class="none">no image</span>`}</div>`;
+
+function buildNav(active) {
+  const tree = {};
+  for (const r of rows) ((tree[r.domain] ??= {})[r.subdomain] ??= []).push(r);
+  let html = `<a href="#" class="${active === "" ? "active" : ""}">All <span class="count">${rows.length}</span></a>`;
+  for (const [d, subs] of Object.entries(tree)) {
+    const n = Object.values(subs).flat().length;
+    html += `<a href="#${d}" class="domain ${active === d ? "active" : ""}">${esc(DOMAIN_NAMES[d] || d)} <span class="count">${n}</span></a>`;
+    for (const [s, items] of Object.entries(subs))
+      html += `<a href="#${d}/${s}" class="sub ${active === d + "/" + s ? "active" : ""}">${esc(titleSub(s))} <span class="count">${items.length}</span></a>`;
+  }
+  document.getElementById("nav").innerHTML = html;
+}
+
+function showGrid(title, items) {
+  document.getElementById("main").innerHTML = `<h2>${esc(title)} <span class="count" style="color:var(--muted);font-weight:400">${items.length}</span></h2>
+    <div class="grid">${items.map(r => `
+      <a class="card" href="#id=${r.id}">${thumb(r)}
+        <span class="en">${esc(r.term_en)}</span>
+        <span class="zh zh-text">${esc(r.zh)}</span>
+        <span><span class="lvl lvl-${r.level}">L${r.level}</span></span>
+      </a>`).join("")}</div>`;
+}
+
+function showDetail(r) {
+  const refs = list(r.confused_with).map(id => byId[id]).filter(Boolean)
+    .map(x => `<a class="chip" href="#id=${x.id}">${esc(x.term_en)}</a>`).join("");
+  const field = (label, v) => v ? `<dt>${label}</dt><dd>${v}</dd>` : "";
+  document.getElementById("main").innerHTML = `
+    <a class="back" href="#${r.domain}/${r.subdomain}">← ${esc(DOMAIN_NAMES[r.domain] || r.domain)} / ${esc(titleSub(r.subdomain))}</a>
+    <div class="detail">${thumb(r)}
+      <div>
+        <h2>${esc(r.term_en)} <span class="lvl lvl-${r.level}">L${r.level}</span></h2>
+        <div class="zh zh-text">${esc(r.zh)}</div>
+        <p class="short">${esc(r.short_def)}</p>
+        ${r.explanation ? `<p>${esc(r.explanation)}</p>` : ""}
+        ${r.example ? `<p><em>“${esc(r.example)}”</em></p>` : ""}
+        <dl>
+          ${field("Also called", list(r.aka).map(a => `<span class="chip">${esc(a)}</span>`).join(""))}
+          ${field("Confused with", refs)}
+          ${field("Blocks", r.blocks && `<code>${esc(r.blocks)}</code>`)}
+          ${field("Python", r.python && `<code>${esc(r.python)}</code>`)}
+          ${field("Tags", list(r.tags).map(t => `<span class="chip">${esc(t)}</span>`).join(""))}
+          ${field("Store SKUs", list(r.store_skus).map(s => `<span class="chip">${esc(s)}</span>`).join(""))}
+          ${field("ID · status", `${esc(r.id)} · ${esc(r.status)}`)}
+        </dl>
+      </div>
+    </div>`;
+}
+
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  if (q) {
+    buildNav(null);
+    const hits = rows.filter(r => [r.term_en, r.aka, r.zh, r.short_def, r.explanation, r.tags]
+      .some(v => v.toLowerCase().includes(q)));
+    return showGrid(`Search: “${q}”`, hits);
+  }
+  if (h.startsWith("id=") && byId[h.slice(3)]) { const r = byId[h.slice(3)]; buildNav(`${r.domain}/${r.subdomain}`); return showDetail(r); }
+  buildNav(h);
+  const [d, s] = h.split("/");
+  if (!d) return showGrid("All terms", rows);
+  const items = rows.filter(r => r.domain === d && (!s || r.subdomain === s));
+  showGrid(s ? `${DOMAIN_NAMES[d] || d} / ${titleSub(s)}` : (DOMAIN_NAMES[d] || d), items);
+}
+
+const zhBox = document.getElementById("zh");
+try { zhBox.checked = localStorage.getItem("showZh") !== "0"; } catch {}
+const applyZh = () => { document.body.classList.toggle("hide-zh", !zhBox.checked);
+                        try { localStorage.setItem("showZh", zhBox.checked ? "1" : "0"); } catch {} };
+zhBox.addEventListener("change", applyZh); applyZh();
+document.getElementById("q").addEventListener("input", route);
+addEventListener("hashchange", () => { document.getElementById("q").value = ""; route(); });
+
+fetch(DATA).then(r => { if (!r.ok) throw new Error(`${DATA}: HTTP ${r.status}`); return r.text(); })
+  .then(t => { rows = parseCSV(t); byId = Object.fromEntries(rows.map(r => [r.id, r])); route(); })
+  .catch(e => { document.getElementById("main").innerHTML =
+    `<div class="error">Couldn't load the vocab list (${esc(e.message)}).<br>Open this page through a web server, not as a file — e.g. run <code>python3 -m http.server</code> in the repo folder and go to <code>http://localhost:8000/app/</code>.</div>`; });
+</script>
+</body>
+</html>
