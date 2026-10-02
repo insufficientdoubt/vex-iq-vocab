@@ -1,6 +1,6 @@
 # VEX IQ Vocab — Project Plan
 
-Status: **scaffolded** — empty CSVs, schema and validator in place; ready to seed. This file records decisions and the spec. Update it when a decision changes.
+Status: **seeding** — Building (BLD) drafted; other domains to come. This file records decisions and the spec. Update it when a decision changes.
 
 ## 1. Purpose
 
@@ -47,6 +47,7 @@ vex-iq-vocab/
     vocab.csv
     frames.csv
   images/            ← <ID>.png, extras as <ID>-a.png, <ID>-b.png
+  sources/           ← reference data pulled from VEX sources (not validated, not edited by hand)
   tools/             ← generators (Kahoot, flashcards, handouts…)
   .github/workflows/validate.yml
 ```
@@ -79,7 +80,7 @@ Subdomains are provisional — verify against the VEX IQ kit poster and VEXcode 
 
 | Prefix | Domain | Covers | Provisional subdomains |
 |---|---|---|---|
-| `BLD` | Building | Physical parts: competition kit + extensions we actually use (e.g. pneumatics) | structure, motion, connectors, electronics, pneumatics, tools (to be matched to VEX kit categories) |
+| `BLD` | Building | Physical parts: competition kit + extensions we actually use (e.g. pneumatics) | general, electronics, specialty, shafts, connectors, pins-standoffs, wheels, beams-plates, gears, sprockets-chain, cams, linear-motion, pneumatics — **confirmed**: Competition Kit poster categories + `general` (size/naming words) + `pneumatics` |
 | `CODE` | Coding | VEXcode IQ: devices, block categories, command words, programming concepts | devices, block-categories, commands, concepts |
 | `ENG` | Engineering | Mechanisms and design/control techniques: intake, DR4B, cascade lift, arm, claw, catapult, drivetrain (mechanism), gear ratio, torque, autonomous routine, PID… | mechanisms, drivetrains, mechanical-concepts, control-techniques |
 | `EDP` | Design process | Engineering design process + engineering notebook + judge interview vocabulary | process, notebook, interview |
@@ -129,15 +130,24 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 
 - [x] **0. Plan** — this document; public GitHub repo created.
 - [x] **1. Scaffold** — `schema.yaml`, `validate.py`, GitHub Action, empty CSVs with headers, README rules for AI tools.
-- [ ] **2. Confirm taxonomy** — check VEX kit poster categories and VEXcode IQ block categories; finalize subdomains and level definitions.
+- [ ] **2. Confirm taxonomy** — ~~VEX kit poster categories~~ (done); VEXcode IQ block categories; level definitions.
 - [ ] **3. Seed vocab** — AI-drafted, ~250–300 terms, all `status=draft`. One domain at a time, teacher review per domain.
+  - [x] BLD — 73 terms (part families from the Competition Kit poster + pneumatics)
+  - [ ] CODE · ENG · EDP · COMP · SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.
 - [ ] **6. Images** — photograph parts (possible student project), name by ID.
 - [ ] **7. Generators** — Kahoot, flashcards, handouts, contact sheet.
 - [ ] **8. China access** — Gitee mirror.
 
-## 10. Open questions
+## 10. Sources
+
+| Source | Used for |
+|---|---|
+| [VEX IQ Competition Kit poster (PDF)](https://content.vexrobotics.com/vexpro/pdf/IQ-Competition-Kit-111521.pdf) | BLD subdomains and English part names |
+| [vexstore.cn IQ products](https://www.vexstore.cn/iq?vex_classroom=IQ) | Official Chinese part names → `sources/vexstore-cn-iq-parts.csv`. Pulled from the store's public search index (Algolia), which returns every IQ product with its Chinese name and pack contents in one request. Re-pull the same way when the catalog changes. |
+
+## 11. Open questions
 
 - Level definitions: is "role-specific" the right meaning for level 2?
 - Exact VEX IQ kit categories and which extension kits to include beyond pneumatics.
