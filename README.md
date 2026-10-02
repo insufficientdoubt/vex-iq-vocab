@@ -13,7 +13,9 @@ A bilingual (English / Simplified Chinese) vocabulary list and sentence-frame ba
 
 ## Browse the list
 
-`app/index.html` is a simple browser for the vocab list: an index by domain and subdomain, search (English or 中文), and a page per term. It reads `data/vocab.csv` directly, so it always shows the current data. It needs a web server, not a double-click:
+**Online:** https://insufficientdoubt.github.io/vex-iq-vocab/ (GitHub Pages, updates a minute or two after each push).
+
+`app/index.html` is a simple browser for the vocab list: an index by domain and subdomain, search (English or 中文), and a page per term. It reads `data/vocab.csv` directly, so it always shows the current data. To run it locally it needs a web server, not a double-click:
 
 ```
 python3 -m http.server 8000
