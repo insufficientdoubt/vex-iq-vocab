@@ -15,7 +15,7 @@ A bilingual (English / Simplified Chinese) vocabulary list and sentence-frame ba
 
 **Online:** https://insufficientdoubt.github.io/vex-iq-vocab/ (GitHub Pages, updates a minute or two after each push).
 
-`app/index.html` is a simple browser for the vocab list: an index by domain and subdomain, search (English or 中文), and a page per term. It reads `data/vocab.csv` directly, so it always shows the current data. To run it locally it needs a web server, not a double-click:
+`app/index.html` is a simple browser for the vocab list: an index by domain and subdomain, search (English or 中文), and a page per term. It reads `data/vocab.csv` directly, so it always shows the current data. The sidebar also has **Quick references**: links to the game manual, Q&A, rubrics, VEX Library, STEM Labs and VEXcode (the `REFS` list near the top of the script; VEX sources only, update the season links each year). To run it locally it needs a web server, not a double-click:
 
 ```
 python3 -m http.server 8000

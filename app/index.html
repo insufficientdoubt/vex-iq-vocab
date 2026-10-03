@@ -37,6 +37,12 @@
   nav a.sub { padding-left: 22px; color: var(--muted); }
   nav a.sub.active { color: var(--accent); }
   nav .count { color: var(--muted); font-weight: 400; font-size: 12px; }
+  #refs { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 8px; }
+  #refs summary { cursor: pointer; font-weight: 600; font-size: 14px; padding: 5px 10px; border-radius: 6px; }
+  #refs summary:hover { background: var(--chip); }
+  #refs h3 { margin: 10px 10px 2px; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  #refs a { display: block; padding: 4px 10px; font-size: 13px; }
+  #refs a::after { content: " ↗"; color: var(--muted); font-size: 11px; }
   main { padding: 16px; overflow-y: auto; }
   main h2 { margin: 0 0 12px; font-size: 18px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
@@ -74,9 +80,10 @@
   .error { background: #fde8e8; color: #8a1c1c; padding: 12px; border-radius: 8px; }
   @media (max-width: 700px) {
     .layout { grid-template-columns: 1fr; }
-    nav { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--line);
-          display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; }
-    nav a { white-space: nowrap; margin: 0; gap: 6px; background: var(--chip); }
+    nav { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--line); padding: 6px; }
+    #nav { display: flex; flex-wrap: wrap; gap: 4px; }
+    #nav a { white-space: nowrap; margin: 0; gap: 6px; background: var(--chip); }
+    #refs { margin-top: 8px; }
     nav a.domain::before { display: none; }
     nav .subs { flex-basis: 100%; display: flex; gap: 4px; overflow-x: auto; padding-top: 2px; }
     nav a.sub { padding-left: 10px; }
@@ -91,7 +98,7 @@
   <label><input type="checkbox" id="zh" checked> 中文</label>
 </header>
 <div class="layout">
-  <nav id="nav"></nav>
+  <nav><div id="nav"></div><details id="refs"><summary>Quick references</summary><div id="refs-list"></div></details></nav>
   <main id="main"></main>
 </div>
 <script src="vendor/scratchblocks.min.js"></script>
@@ -100,6 +107,31 @@
 const DATA = "../data/vocab.csv", IMAGES = "../images/";
 const DOMAIN_NAMES = { BLD: "Building", CODE: "Coding", ENG: "Engineering", EDP: "Design process",
                        COMP: "Competition", SEASON: "Season game" };
+
+// Quick references in the sidebar: VEX sources only. Update the season-specific links each season.
+const REFS = [
+  ["Competition", [
+    ["Game manual (Level Up)", "https://link.vex.com/docs/26-27/viqrc/game-manual"],
+    ["Official Q&A (rule answers)", "https://events.vex.com/VIQRC/2026-2027/QA"],
+    ["Hero Bot build instructions", "https://library.globalrobotics.org/hc/en-us/articles/50816795175700"],
+    ["Inspection checklist", "https://library.globalrobotics.org/hc/en-us/articles/51133522040596"],
+    ["Competition day guide", "https://library.globalrobotics.org/hc/en-us/articles/52646217682452"],
+    ["Find events and results", "https://events.vex.com"],
+  ]],
+  ["Notebook & judging", [
+    ["Engineering notebook basics", "https://library.globalrobotics.org/hc/en-us/articles/52987181366932"],
+    ["Notebook rubric (student version)", "https://link.vex.com/docs/global/engineering-notebook-rubric-student-friendly"],
+    ["Interview rubric (student version)", "https://link.vex.com/docs/global/team-interview-rubric-student-friendly"],
+    ["Student-Centered Policy", "https://library.globalrobotics.org/hc/en-us/articles/51372675292820"],
+  ]],
+  ["Learn & code", [
+    ["VEX Library: VEX IQ", "https://kb.vex.com/hc/en-us/categories/360002324792"],
+    ["VEX IQ STEM Labs", "https://education.vex.com/stemlabs/iq"],
+    ["VEXcode IQ (web)", "https://codeiq.vex.com"],
+    ["VEXcode IQ command reference", "https://api.vex.com/iq2/home/index.html"],
+    ["Virtual Driving Skills practice", "https://library.globalrobotics.org/hc/en-us/articles/51569257994004"],
+  ]],
+];
 
 let rows = [], byId = {}, ver = "";
 
@@ -165,6 +197,13 @@ function drawBlocks(root) {
   root.querySelectorAll("[data-blocks]").forEach(el => {
     try { const svg = blockSVG(byId[el.dataset.blocks]); if (svg) el.replaceChildren(svg); } catch (e) { el.textContent = byId[el.dataset.blocks].blocks; }
   });
+}
+
+function buildRefs() {
+  document.getElementById("refs-list").innerHTML = REFS.map(([group, links]) => `<h3>${esc(group)}</h3>` +
+    links.map(([label, url]) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`).join("")).join("");
+  // Open on wide screens; on phones it starts folded so the term list stays near the top.
+  document.getElementById("refs").open = window.matchMedia("(min-width: 701px)").matches;
 }
 
 function buildNav(active) {
@@ -246,6 +285,7 @@ try { zhBox.checked = localStorage.getItem("showZh") !== "0"; } catch {}
 const applyZh = () => { document.body.classList.toggle("hide-zh", !zhBox.checked);
                         try { localStorage.setItem("showZh", zhBox.checked ? "1" : "0"); } catch {} };
 zhBox.addEventListener("change", applyZh); applyZh();
+buildRefs();
 document.getElementById("q").addEventListener("input", route);
 addEventListener("hashchange", () => { document.getElementById("q").value = ""; route(); });
 
