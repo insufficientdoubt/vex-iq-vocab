@@ -1,6 +1,6 @@
 # VEX IQ Vocab — Project Plan
 
-Status: **seeding** — Building (77), Coding (107) and Engineering (72) drafted, plus EDP (41) and COMP (65) from VEX's competition sources (GRSF library); all `status=draft`. SEASON and sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
+Status: **seeding** — Building (77), Coding (107) and Engineering (72) drafted, plus EDP (41) and COMP (92) from VEX's competition sources (GRSF library, Level Up game manual); all `status=draft`. SEASON and sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
 
 This file records decisions, the spec, and how the work was done (§12). Update it when a decision changes. **New AI session? Read §12 first.**
 
@@ -149,7 +149,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
   - [x] CODE — 107 terms (Blocks + Python), VEXcode Chinese, all with reference links; every term has a block drawing or an image
   - [x] ENG — 72 terms from VEX IQ sources (6 community-sourced, level 3), all with images.
   - [x] `stem_lab` — 80 terms across all domains mapped to the STEM Lab lesson that first teaches them (from every lesson's Lesson Summary PDF).
-  - [ ] EDP · COMP — 41 EDP, 65 COMP. EDP-013–041 and COMP-017–065 added 2026-10-03 from the GRSF library (glossary, award descriptions, event types, qualifying awards, notebook/interview rubrics, Student-Centered Policy, Design Convergence). Awards carry a `qualifying` tag and their spot threshold; the full order is in `sources/vex-iq-qualifying-awards-2026-27.csv` (update each season). New COMP subdomain `tiers` (event levels). **Still to do:** images for the 78 new terms; match rules from the Level Up game manual (link.vex.com needs the browser); `stem_lab` for the new terms.
+  - [ ] EDP · COMP — 41 EDP, 65 COMP. EDP-013–041 and COMP-017–065 added 2026-10-03 from the GRSF library (glossary, award descriptions, event types, qualifying awards, notebook/interview rubrics, Student-Centered Policy, Design Convergence). Awards carry a `qualifying` tag and their spot threshold; the full order is in `sources/vex-iq-qualifying-awards-2026-27.csv` (update each season). New COMP subdomain `tiers` (event levels). COMP-066–092 from the Level Up Game Manual v2.0 glossary and rules (match rules, violations, student roles). All terms have images (award icons and concept drawings in `tools/diagrams.py`; three manual figures). **Still to do:** `stem_lab` for the new terms; teacher review.
   - [ ] SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.

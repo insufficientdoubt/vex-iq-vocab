@@ -18,6 +18,7 @@ Images © VEX Robotics / Innovation First, Inc., used for non-commercial classro
 | EDP-004 | VEX IQ STEM Lab Lesson Summary: Up and Over, Claw Design |
 | EDP-008 – 012, COMP-002 | VEX IQ STEM Lab: Competition 101 (VEX IQ Level Up), Sessions 2, 3 and 6 — Flop Hero Bot, field route, notebook, rubric, judges, sizing tool, event photos |
 | the other EDP and COMP images, including the award icons (COMP-045 – 060) | Drawn by `tools/diagrams.py` |
+| COMP-066, COMP-076, COMP-086 | VEX IQ Robotics Competition Level Up Game Manual v2.0 (Figures FO-3, FO-2, R3-1), © VEX Robotics |
 | COMP-007, COMP-009 | VEX Worlds event photos (referee; Teamwork Challenge drive teams), supplied by the teacher |
 | COMP-014 | VEX IQ Challenge Field product photo (VEX Robotics) |
 | COMP-015 | Flight case product photo from RoboSource.net (caption and banner cropped out) |

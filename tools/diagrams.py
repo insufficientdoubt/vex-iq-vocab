@@ -1392,6 +1392,999 @@ def nominated_award():
     return im
 
 
+# ---- competition: tiers, matches, roles, rules ----
+YELLOW, LIME, PINK = "#ffd43b", "#74b816", "#f783ac"
+
+
+def check(d, x, y, s=60, color=GREEN, w=16):
+    d.line((x - s, y, x - s * 0.3, y + s * 0.7, x + s, y - s * 0.8), fill=color, width=w, joint="curve")
+
+
+def cross(d, x, y, s=50, color="#e03131", w=16):
+    d.line((x - s, y - s, x + s, y + s), fill=color, width=w)
+    d.line((x - s, y + s, x + s, y - s), fill=color, width=w)
+
+
+def page(d, x0, y0, x1, y1, lines=5, fill="white"):
+    d.rounded_rectangle((x0, y0, x1, y1), radius=14, fill=fill, outline=EDGE, width=6)
+    gap = (y1 - y0 - 80) / max(lines, 1)
+    for i in range(lines):
+        y = y0 + 60 + i * gap
+        d.line((x0 + 40, y, x1 - 40, y), fill=FAINT, width=8)
+
+
+def stopwatch(d, cx, cy, r, s="1:00", color="#e03131"):
+    d.rectangle((cx - 22, cy - r - 45, cx + 22, cy - r + 5), fill=EDGE)
+    d.ellipse((cx - r, cy - r, cx + r, cy + r), fill="white", outline=color, width=int(r * 0.12))
+    if s:
+        text(d, (cx, cy), s, int(r * 0.55), True, DARK)
+
+
+def school(d, cx, by, k=1.0, fill="#ffe8cc"):
+    d.rectangle((cx - 170 * k, by - 220 * k, cx + 170 * k, by), fill=fill, outline=EDGE, width=6)
+    d.polygon([(cx - 200 * k, by - 220 * k), (cx, by - 360 * k), (cx + 200 * k, by - 220 * k)], fill="#e8590c", outline=EDGE)
+    d.rectangle((cx - 40 * k, by - 110 * k, cx + 40 * k, by), fill="#a0522d", outline=EDGE, width=4)
+    for dx in (-110, 110):
+        d.rectangle((cx + dx * k - 35 * k, by - 180 * k, cx + dx * k + 35 * k, by - 120 * k), fill="#a5d8ff", outline=EDGE, width=4)
+    d.line((cx, by - 360 * k, cx, by - 460 * k), fill=EDGE, width=6)
+    d.polygon([(cx, by - 460 * k), (cx + 80 * k, by - 435 * k), (cx, by - 410 * k)], fill="#e03131")
+
+
+def globe(d, cx, cy, r, fill="#4dabf7"):
+    d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=fill, outline=EDGE, width=6)
+    d.ellipse((cx - r * 0.45, cy - r, cx + r * 0.45, cy + r), outline="white", width=6)
+    d.line((cx, cy - r, cx, cy + r), fill="white", width=6)
+    for t in (-0.5, 0, 0.5):
+        w = r * math.sqrt(1 - t * t)
+        d.line((cx - w, cy + t * r, cx + w, cy + t * r), fill="white", width=6)
+
+
+STEP = [(130, 900, 470, 1080), (470, 680, 810, 1080), (810, 460, 1150, 1080)]
+
+
+def ladder(hi=None, faded=False):
+    """Three steps: local qualifying event → Championship Event → World Championship."""
+    im, d = canvas()
+    for i, box in enumerate(STEP):
+        d.rectangle(box, fill=(YELLOW if i == hi else "#e9ecef"), outline=EDGE, width=6)
+    for i in range(2):
+        arrow(d, STEP[i][0] + 170, STEP[i][1] - 40, STEP[i + 1][0] + 120, STEP[i + 1][1] - 70, DARK, 10, 40)
+    globe(d, 980, 340, 90, "#4dabf7" if hi == 2 else "#ced4da")
+    return im, d
+
+
+def qualifying_event():
+    im, d = ladder(0)
+    mini_robot(d, 300, 890, 0.9, "#4fb3e3")
+    return im
+
+
+def championship_event():
+    im, d = ladder(1)
+    mini_robot(d, 640, 670, 0.9, "#4fb3e3")
+    big_trophy(d, 640, 380, 0.9)
+    return im
+
+
+def world_championship():
+    im, d = ladder(2)
+    mini_robot(d, 980, 450, 0.9, "#4fb3e3")
+    return im
+
+
+def signature_event():
+    im, d = ladder(None)
+    d.rounded_rectangle((80, 260, 420, 520), radius=20, fill="#7048e8", outline=EDGE, width=6)
+    star(d, 250, 390, 90, YELLOW)
+    d.line((420, 330, 860, 330), fill="#7048e8", width=14)
+    arrow(d, 860, 330, 890, 340, "#7048e8", 14, 50)
+    return im
+
+
+def spotlight_event():
+    im, d = canvas()
+    d.polygon([(600, 120), (300, 900), (900, 900)], fill="#fff3bf")
+    d.ellipse((520, 60, 680, 180), fill=DARK)
+    d.ellipse((300, 860, 900, 960), fill="#ffe066", outline=EDGE, width=5)
+    mini_robot(d, 600, 900, 1.3, "#4fb3e3")
+    for x, y in [(180, 300), (1020, 300), (160, 700), (1040, 700)]:
+        star(d, x, y, 50, YELLOW, outline=EDGE, width=3)
+    return im
+
+
+def scrimmage():
+    im, d = canvas()
+    field(d, 200, 330, 4, 200)
+    mini_robot(d, 420, 900, 1.0, "#4fb3e3")
+    mini_robot(d, 780, 900, 1.0, "#f3b27a")
+    trophy(d, 1030, 220, 0.6)
+    d.line((900, 80, 1160, 380), fill="#e03131", width=20)
+    return im
+
+
+def in_school_competition():
+    im, d = canvas()
+    school(d, 600, 760, 1.6, "#fff4e6")
+    mini_robot(d, 470, 760, 0.6, "#4fb3e3")
+    mini_robot(d, 730, 760, 0.6, "#f3b27a")
+    ground(d, 770)
+    return im
+
+
+def school_based_event():
+    im, d = canvas()
+    for i, x in enumerate((230, 600, 970)):
+        school(d, x, 640, 0.75)
+        mini_robot(d, x, 900, 0.8, ["#4fb3e3", "#f3b27a", "#69db7c"][i])
+    d.line((140, 990, 1060, 990), fill=GROUND, width=8)
+    return im
+
+
+def skills_only_event():
+    im, d = canvas()
+    field(d, 140, 360, 4, 180)
+    mini_robot(d, 500, 900, 1.2, "#4fb3e3")
+    stopwatch(d, 980, 330, 170, "1:00")
+    return im
+
+
+def qualifying_spot():
+    im, d = canvas()
+    d.rounded_rectangle((180, 380, 1020, 820), radius=40, fill="#ffe066", outline=EDGE, width=8)  # ticket
+    for y in (480, 600, 720):
+        d.ellipse((150, y - 30, 210, y + 30), fill="white")
+        d.ellipse((990, y - 30, 1050, y + 30), fill="white")
+    d.line((380, 400, 380, 800), fill=EDGE, width=5)
+    star(d, 280, 600, 60, "#f08c00")
+    arrow(d, 560, 750, 560, 450, "#2f9e44", 40, 110)
+    arrow(d, 800, 750, 800, 450, "#2f9e44", 40, 110)
+    return im
+
+
+def qualifying_award():
+    im, d = canvas()
+    small_medal(d, 380, 640, "#f0b400", 2.0)
+    d.rounded_rectangle((680, 520, 1120, 760), radius=30, fill="#ffe066", outline=EDGE, width=6)
+    arrow(d, 900, 720, 900, 560, "#2f9e44", 30, 80)
+    text(d, (600, 640), "+", 140, True, DARK)
+    return im
+
+
+def world_skills_standings():
+    im, d = canvas()
+    globe(d, 300, 360, 170)
+    for i, (n, w) in enumerate([("1", 520), ("2", 440), ("3", 380), ("4", 320)]):
+        y = 640 + i * 130
+        d.rounded_rectangle((180, y, 180 + 100, y + 100), radius=16, fill=YELLOW if i == 0 else "#e9ecef", outline=EDGE, width=5)
+        text(d, (230, y + 50), n, 64, True, DARK)
+        d.rounded_rectangle((310, y + 15, 310 + w, y + 85), radius=12, fill="#4fb3e3", outline=EDGE, width=4)
+    stopwatch(d, 870, 380, 150, "")
+    return im
+
+
+def level_es_ms():
+    im, d = canvas()
+    person(d, 400, 1060, 1.15, "#69db7c")
+    person(d, 800, 1060, 1.65, "#4fb3e3")
+    return im
+
+
+def schedule(d, x0, y0, rows, hi=None, prefix="Q"):
+    w = 760
+    d.rounded_rectangle((x0, y0, x0 + w, y0 + 100 + len(rows) * 120), radius=20, fill="white", outline=EDGE, width=6)
+    d.rectangle((x0, y0, x0 + w, y0 + 100), fill="#1c7ed6")
+    for i, (m, a, b) in enumerate(rows):
+        y = y0 + 100 + i * 120
+        if i == hi:
+            d.rectangle((x0 + 6, y, x0 + w - 6, y + 120), fill="#fff3bf")
+        text(d, (x0 + 110, y + 60), m, 60, True, DARK)
+        plate(d, x0 + 360, y + 60, a, 230, 80, "#4dabf7")
+        plate(d, x0 + 620, y + 60, b, 230, 80, "#ff8787")
+
+
+def qualification_match():
+    im, d = canvas()
+    schedule(d, 220, 230, [("Q22", "1234A", "5678B"), ("Q23", "1234A", "2468C"), ("Q24", "9012D", "1234A"), ("Q25", "1357E", "8642F")], 1)
+    return im
+
+
+def finals_match():
+    im, d = canvas()
+    big_trophy(d, 600, 330, 1.2)
+    for i, (m, a, b) in enumerate([("F1", "1", "2"), ("F2", "3", "4"), ("F3", "5", "6")]):
+        y = 680 + i * 150
+        text(d, (300, y), m, 70, True, DARK)
+        for j, n in enumerate((a, b)):
+            d.rounded_rectangle((440 + j * 260, y - 55, 660 + j * 260, y + 55), radius=16, fill="#e7f1fb", outline=EDGE, width=5)
+            text(d, (550 + j * 260, y), "#" + n, 60, True, DARK)
+    return im
+
+
+def robot_skills_challenge():
+    im, d = canvas()
+    field(d, 330, 330, 4, 140)
+    mini_robot(d, 610, 720, 1.0, "#4fb3e3")
+    controller_icon(d, 230, 950, 0.7)
+    d.rounded_rectangle((830, 860, 1110, 1040), radius=16, fill="#1b1f24", outline=EDGE, width=5)
+    text(d, (970, 950), "</>", 90, True, "#8ce99a")
+    text(d, (600, 950), "+", 110, True, DARK)
+    return im
+
+
+def driving_skills():
+    im, d = canvas()
+    controller_icon(d, 330, 500, 1.3)
+    mini_robot(d, 850, 640, 1.4, "#4fb3e3")
+    for r in (60, 110, 160):
+        d.arc((560 - r, 480 - r, 560 + r, 480 + r), start=-40, end=40, fill=ORANGE, width=10)
+    stopwatch(d, 600, 930, 130, "1:00")
+    return im
+
+
+def autonomous_skills():
+    im, d = canvas()
+    d.rounded_rectangle((110, 330, 560, 640), radius=20, fill="#1b1f24", outline=EDGE, width=6)
+    text(d, (335, 485), "</>", 150, True, "#8ce99a")
+    mini_robot(d, 850, 640, 1.4, "#4fb3e3")
+    arrow(d, 580, 480, 720, 480, DARK, 14, 46)
+    stopwatch(d, 600, 930, 130, "1:00")
+    return im
+
+
+def skills_stop_time():
+    im, d = canvas()
+    stopwatch(d, 600, 440, 280, "0:12")
+    controller_icon(d, 600, 960, 0.9)
+    ground(d, 1040, 300, 900)
+    return im
+
+
+def ranking():
+    im, d = canvas()
+    for i, (team, c) in enumerate([("1234A", YELLOW), ("5678B", "#dee2e6"), ("2468C", "#ffc078"), ("9012D", "white")]):
+        y = 230 + i * 200
+        d.rounded_rectangle((200, y, 1000, y + 160), radius=20, fill=c, outline=EDGE, width=6)
+        text(d, (300, y + 80), str(i + 1), 90, True, DARK)
+        plate(d, 640, y + 80, team, 340, 110)
+    return im
+
+
+def scoreboard(d, x0, y0, x1, y1, s, color="#ffe066"):
+    d.rounded_rectangle((x0, y0, x1, y1), radius=24, fill="#1b1f24", outline=EDGE, width=6)
+    text(d, ((x0 + x1) / 2, (y0 + y1) / 2), s, int((y1 - y0) * 0.6), True, color)
+
+
+def practice_match():
+    im, d = canvas()
+    field(d, 200, 520, 4, 140)
+    mini_robot(d, 420, 980, 0.9, "#4fb3e3")
+    mini_robot(d, 700, 980, 0.9, "#f3b27a")
+    scoreboard(d, 330, 150, 870, 420, "- -", "#868e96")
+    return im
+
+
+def no_show():
+    im, d = canvas()
+    field(d, 150, 300, 4, 180)
+    mini_robot(d, 400, 900, 1.0, "#4fb3e3")
+    d.rounded_rectangle((620, 760, 880, 920), radius=16, outline="#e03131", width=8)
+    text(d, (750, 840), "?", 110, True, "#e03131")
+    stopwatch(d, 1000, 250, 130, "")
+    return im
+
+
+def referee_person(d, x, y, k=1.0):
+    person(d, x, y, k, "white")
+    for i in range(5):  # black stripes on the shirt
+        sx = x - 55 * k + i * 27 * k
+        d.rectangle((sx, y - 325 * k, sx + 12 * k, y - 125 * k), fill=DARK)
+
+
+def event_partner():
+    im, d = canvas()
+    person(d, 330, 1060, 1.5, "#7048e8")
+    clipboard(d, 500, 650, 1.2)
+    field(d, 680, 520, 3, 140)
+    for i, x in enumerate((720, 880, 1040)):
+        person(d, x, 460, 0.55, ["#4fb3e3", "#69db7c", "#ffa94d"][i])
+    return im
+
+
+def head_referee():
+    im, d = canvas()
+    referee_person(d, 420, 1070, 1.6)
+    d.ellipse((620, 380, 700, 460), fill=SKIN, outline=EDGE, width=4)  # raised hand
+    d.line((560, 600, 650, 440), fill="white", width=40)
+    d.line((560, 600, 650, 440), fill=EDGE, width=4)
+    field(d, 760, 600, 2, 180)
+    return im
+
+
+def scorekeeper_referee():
+    im, d = canvas()
+    referee_person(d, 400, 1070, 1.5)
+    d.rounded_rectangle((560, 520, 860, 900), radius=20, fill="#1b1f24", outline=EDGE, width=6)  # tablet
+    text(d, (710, 650), "36", 110, True, "#ffe066")
+    d.rectangle((600, 760, 820, 840), fill="#4dabf7")
+    return im
+
+
+def judge_advisor():
+    im, d = canvas()
+    person(d, 600, 760, 1.25, "#a0522d")
+    clipboard(d, 760, 470, 0.8)
+    for x in (230, 970):
+        person(d, x, 1100, 0.9, ADULT)
+    d.rounded_rectangle((120, 800, 1080, 880), radius=10, fill="#c69c6d", outline=EDGE, width=5)  # table
+    return im
+
+
+def emcee():
+    im, d = canvas()
+    person(d, 450, 1060, 1.6, "#d6336c")
+    d.line((600, 560, 680, 420), fill=DARK, width=24)  # mic
+    d.ellipse((640, 330, 740, 430), fill="#495057", outline=EDGE, width=5)
+    for r in (90, 140, 190):
+        d.arc((690 - r, 380 - r, 690 + r, 380 + r), start=-50, end=30, fill=ORANGE, width=10)
+    return im
+
+
+def volunteer():
+    im, d = canvas()
+    for i, (x, c) in enumerate([(270, "#69db7c"), (600, "#69db7c"), (930, "#69db7c")]):
+        person(d, x, 1000, 1.25, c)
+        d.rectangle((x - 25, 600, x + 25, 650), fill="white")
+    k = 4.0
+    pts = [(600 + k * 16 * math.sin(t) ** 3, 250 - k * (13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t)))
+           for t in [i * 2 * math.pi / 120 for i in range(120)]]
+    d.polygon(pts, fill="#e03131")
+    return im
+
+
+def code_of_conduct():
+    im, d = canvas()
+    page(d, 300, 160, 900, 1040, 7)
+    k = 4.5
+    pts = [(600 + k * 16 * math.sin(t) ** 3, 820 - k * (13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t)))
+           for t in [i * 2 * math.pi / 120 for i in range(120)]]
+    d.polygon(pts, fill="#e03131")
+    return im
+
+
+def student_centered_policy():
+    im, d = canvas()
+    person(d, 330, 1060, 1.15, "#4fb3e3")  # student builds
+    mini_robot(d, 560, 1060, 1.0)
+    d.line((390, 700, 470, 900), fill="#4fb3e3", width=36)
+    person(d, 930, 1060, 1.6, ADULT)  # adult stands back and explains
+    d.ellipse((560, 170, 1100, 480), fill="white", outline=EDGE, width=6)
+    d.polygon([(820, 470), (900, 470), (900, 560)], fill="white", outline=EDGE)
+    text(d, (830, 325), "Why?", 110, True, BLUE)
+    return im
+
+
+def official_qa():
+    im, d = canvas()
+    d.rounded_rectangle((120, 200, 620, 560), radius=40, fill="#e7f1fb", outline=EDGE, width=6)
+    text(d, (370, 380), "?", 220, True, BLUE)
+    d.rounded_rectangle((560, 600, 1080, 960), radius=40, fill="#ebfbee", outline=EDGE, width=6)
+    page(d, 650, 660, 990, 900, 4)
+    check(d, 940, 720, 50)
+    return im
+
+
+def team_number():
+    im, d = canvas()
+    for i, letter in enumerate("ABC"):
+        plate(d, 600, 330 + i * 270, "12345" + letter, 760, 200, ["#e03131", "#1c7ed6", "#2f9e44"][i])
+    return im
+
+
+def student_centered_review():
+    im, d = canvas()
+    for i, x in enumerate((200, 400)):
+        person(d, x, 1060, 1.05, ["#4fb3e3", "#69db7c"][i])
+    mini_robot(d, 600, 1060, 0.9)
+    person(d, 960, 1060, 1.5, ADULT)
+    clipboard(d, 800, 650, 1.0)
+    d.ellipse((150, 200, 560, 470), fill="white", outline=EDGE, width=6)
+    text(d, (355, 335), "We built...", 60, True, BLUE)
+    return im
+
+
+def bean(d, cx, cy, color="#fcc419", w=110, h=80, ang=0):
+    poly(d, rot_rect(cx, cy, w, h, ang), color)
+
+
+def kid_with(d, x, k=1.15, shirt="#4fb3e3"):
+    person(d, x, 1060, k, shirt)
+
+
+def drive_team():
+    im, d = canvas()
+    for i, (x, c) in enumerate([(230, "#4fb3e3"), (520, "#69db7c"), (810, "#ffa94d")]):
+        person(d, x, 1060, 1.3, c)
+    controller_icon(d, 230, 700, 0.55)
+    bean(d, 810, 680, "#fcc419", 150, 110)
+    d.rectangle((90, 1080, 1110, 1100), fill="#e03131")
+    return im
+
+
+def driver_switch():
+    im, d = canvas()
+    person(d, 300, 1060, 1.4, "#4fb3e3")
+    person(d, 900, 1060, 1.4, "#69db7c")
+    controller_icon(d, 600, 640, 0.7)
+    arrow(d, 430, 520, 760, 520, ORANGE, 14, 50)
+    stopwatch(d, 600, 250, 120, "0:30")
+    return im
+
+
+def robot_reset():
+    im, d = canvas()
+    field(d, 150, 150, 4, 160)
+    poly(d, rot_rect(550, 420, 230, 160, 35), PART)  # tipped robot
+    for dx, dy in ((-60, 70), (70, -20)):
+        d.ellipse((550 + dx - 40, 420 + dy - 40, 550 + dx + 40, 420 + dy + 40), fill=DARK)
+    controller_icon(d, 330, 1000, 0.7)
+    ground(d, 1080, 120, 600)
+    d.rounded_rectangle((800, 840, 1050, 1000), radius=16, outline=GREEN, width=8)
+    arrow(d, 640, 520, 900, 820, GREEN, 12, 44)
+    return im
+
+
+def match_stop_time():
+    im, d = canvas()
+    stopwatch(d, 600, 420, 250, "0:12")
+    big_trophy(d, 600, 860, 0.8)
+    for x in (300, 900):
+        d.rounded_rectangle((x - 120, 850, x + 120, 970), radius=16, fill="#e7f1fb", outline=EDGE, width=5)
+        text(d, (x, 910), "40", 70, True, DARK)
+    return im
+
+
+def alliance_score():
+    im, d = canvas()
+    scoreboard(d, 330, 160, 870, 460, "36")
+    mini_robot(d, 380, 900, 1.2, "#4fb3e3")
+    mini_robot(d, 820, 900, 1.2, "#f3b27a")
+    arrow(d, 520, 480, 400, 700, DARK, 10, 40)
+    arrow(d, 680, 480, 800, 700, DARK, 10, 40)
+    return im
+
+
+def possession():
+    im, d = canvas()
+    robot_top(d, 600, 640, 300, 360, PART)
+    d.rectangle((470, 380, 500, 460), fill=EDGE)
+    d.rectangle((700, 380, 730, 460), fill=EDGE)
+    bean(d, 600, 410, "#fcc419", 150, 100)
+    for a in (90, 180, 270):
+        spin(d, 600, 640, 330, a - 40, a - 5, GREEN, 10, 34)
+    return im
+
+
+def plowing():
+    im, d = canvas()
+    robot_top(d, 380, 620, 300, 300, PART, front=False)
+    bean(d, 640, 620, "#fcc419", 110, 150, 0)
+    arrow(d, 760, 620, 1080, 620, ORANGE, 18, 60)
+    for y in (540, 700):
+        d.line((180, y, 230, y), fill=FAINT, width=10)
+    return im
+
+
+def preload():
+    im, d = canvas()
+    field(d, 200, 200, 4, 200)
+    robot_top(d, 400, 900, 260, 260, "#4fb3e3")
+    bean(d, 400, 900, "#fcc419", 120, 90)
+    d.line((660, 1000, 660, 820), fill=EDGE, width=8)
+    d.polygon([(660, 820), (780, 860), (660, 900)], fill=GREEN)
+    return im
+
+
+def field_perimeter():
+    im, d = canvas()
+    field(d, 150, 150, 6, 150)
+    d.rectangle((150, 150, 1050, 1050), outline=ORANGE, width=40)
+    return im
+
+
+def ref_flag(d, x, y, color, k=1.0):
+    d.line((x, y, x, y - 420 * k), fill=DARK, width=int(14 * k))
+    d.polygon([(x, y - 420 * k), (x + 280 * k, y - 340 * k), (x, y - 260 * k)], fill=color, outline=EDGE)
+
+
+def violation():
+    im, d = canvas()
+    page(d, 120, 260, 560, 900, 6)
+    ref_flag(d, 760, 1000, "#ffd43b", 1.5)
+    return im
+
+
+def minor_violation():
+    im, d = canvas()
+    ref_flag(d, 420, 1000, "#ffd43b", 1.4)
+    d.ellipse((690, 300, 1100, 620), fill="white", outline=EDGE, width=6)
+    text(d, (895, 460), "careful!", 70, True, ORANGE)
+    return im
+
+
+def major_violation():
+    im, d = canvas()
+    ref_flag(d, 380, 1000, "#e03131", 1.5)
+    scoreboard(d, 680, 380, 1080, 680, "0", "#ff6b6b")
+    return im
+
+
+def score_affecting():
+    im, d = canvas()
+    scoreboard(d, 140, 380, 640, 700, "36")
+    arrow(d, 760, 900, 760, 330, "#e03131", 30, 90)
+    ref_flag(d, 980, 1000, "#e03131", 1.0)
+    return im
+
+
+def disqualification():
+    im, d = canvas()
+    scoreboard(d, 240, 220, 960, 640, "0", "#ff6b6b")
+    d.rounded_rectangle((470, 720, 730, 1060), radius=20, fill="#e03131", outline=EDGE, width=6)  # red card
+    return im
+
+
+def disablement():
+    im, d = canvas()
+    controller_icon(d, 600, 900, 1.2)
+    ground(d, 1030, 200, 1000)
+    d.regular_polygon((600, 400, 230), 8, rotation=22.5, fill="#e03131", outline=EDGE)
+    d.rectangle((470, 370, 730, 430), fill="white")
+    return im
+
+
+def match_replay():
+    im, d = canvas()
+    field(d, 330, 330, 3, 180)
+    spin(d, 600, 600, 420, -60, 240, BLUE, 26, 70)
+    return im
+
+
+def appeal():
+    im, d = canvas()
+    person(d, 330, 1060, 1.3, "#4fb3e3")
+    d.line((390, 700, 470, 470), fill="#4fb3e3", width=40)
+    d.ellipse((430, 400, 520, 490), fill=SKIN, outline=EDGE, width=4)
+    referee_person(d, 880, 1060, 1.45)
+    d.ellipse((170, 120, 560, 380), fill="white", outline=EDGE, width=6)
+    text(d, (365, 250), "Q14?", 100, True, BLUE)
+    return im
+
+
+def game_design_committee():
+    im, d = canvas()
+    for i, x in enumerate((250, 600, 950)):
+        person(d, x, 1080, 1.05, ["#868e96", "#495057", "#adb5bd"][i])
+    page(d, 380, 140, 820, 560, 5, "#fff9db")
+    star(d, 600, 230, 50, ORANGE)
+    return im
+
+
+def legal_parts():
+    im, d = canvas()
+    beam(d, 130, 330, 6, 1, 90)
+    d.rounded_rectangle((180, 520, 520, 620), radius=40, fill="#4fb3e3", outline=EDGE, width=6)
+    check(d, 360, 820, 90)
+    d.polygon([(760, 380), (1060, 380), (1000, 620), (820, 620)], fill="#adb5bd", outline=EDGE, width=6)  # odd non-VEX part
+    d.line((840, 450, 980, 560), fill=EDGE, width=6)
+    cross(d, 910, 830, 70)
+    d.line((600, 280, 600, 960), fill=FAINT, width=6)
+    return im
+
+
+def role_kid(shirt, prop):
+    im, d = canvas()
+    person(d, 360, 1080, 1.55, shirt)
+    prop(d)
+    return im
+
+
+def designer():
+    def p(d):
+        page(d, 640, 280, 1080, 760, 0, "#e7f1fb")
+        d.rounded_rectangle((720, 450, 1000, 560), radius=14, outline=BLUE, width=8)
+        for x in (770, 950):
+            d.ellipse((x - 40, 540, x + 40, 620), outline=BLUE, width=8)
+        d.line((640, 900, 820, 680), fill=EDGE, width=26)
+        d.line((644, 896, 816, 684), fill=YELLOW, width=18)
+    return role_kid("#7048e8", p)
+
+
+def builder():
+    def p(d):
+        mini_robot(d, 860, 1060, 1.4, PART)
+        d.line((600, 760, 760, 600), fill="#adb5bd", width=40)
+        d.ellipse((730, 540, 830, 640), fill="#adb5bd", outline=EDGE, width=5)
+    return role_kid("#e8590c", p)
+
+
+def coder():
+    def p(d):
+        d.rounded_rectangle((620, 480, 1100, 820), radius=20, fill="#1b1f24", outline=EDGE, width=6)
+        text(d, (860, 650), "</>", 150, True, "#8ce99a")
+        d.polygon([(580, 820), (1140, 820), (1180, 880), (540, 880)], fill="#adb5bd", outline=EDGE, width=5)
+    return role_kid("#2f9e44", p)
+
+
+def strategist():
+    def p(d):
+        d.rounded_rectangle((620, 260, 1120, 760), radius=16, fill="white", outline=EDGE, width=8)
+        for x, y in ((720, 360), (720, 640)):
+            d.ellipse((x - 30, y - 30, x + 30, y + 30), outline=BLUE, width=8)
+        cross(d, 1000, 380, 30, "#e03131", 10)
+        arrow(d, 760, 380, 960, 480, BLUE, 10, 34)
+        arrow(d, 760, 620, 980, 560, BLUE, 10, 34)
+    return role_kid("#1c7ed6", p)
+
+
+def notebooker():
+    def p(d):
+        page(d, 640, 380, 1080, 960, 6, "#fff9db")
+        d.line((560, 900, 760, 640), fill=EDGE, width=26)
+        d.line((564, 896, 756, 644), fill=YELLOW, width=18)
+    return role_kid("#d6336c", p)
+
+
+# ---- design process, outside ideas, notebook ----
+
+def bulb(d, cx, cy, k=1.0, fill="#ffe066"):
+    d.ellipse((cx - 90 * k, cy - 110 * k, cx + 90 * k, cy + 70 * k), fill=fill, outline=EDGE, width=6)
+    d.rectangle((cx - 40 * k, cy + 55 * k, cx + 40 * k, cy + 115 * k), fill="#ced4da", outline=EDGE, width=5)
+
+
+def notebook(d, x0, y0, x1, y1, fill="#fff9db", lines=6):
+    page(d, x0, y0, x1, y1, lines, fill)
+    for y in range(int(y0) + 40, int(y1) - 20, 70):
+        d.ellipse((x0 - 18, y - 12, x0 + 18, y + 12), fill="white", outline=EDGE, width=4)
+
+
+def magnifier(d, cx, cy, r, color=DARK):
+    d.ellipse((cx - r, cy - r, cx + r, cy + r), outline=color, width=int(r * 0.18))
+    d.line((cx + r * 0.7, cy + r * 0.7, cx + r * 1.6, cy + r * 1.6), fill=color, width=int(r * 0.3))
+
+
+def video(d, x0, y0, x1, y1):
+    d.rounded_rectangle((x0, y0, x1, y1), radius=24, fill="#1b1f24", outline=EDGE, width=6)
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    d.ellipse((cx - 70, cy - 70, cx + 70, cy + 70), fill="#e03131")
+    d.polygon([(cx - 22, cy - 38), (cx - 22, cy + 38), (cx + 42, cy)], fill="white")
+    d.rectangle((x0 + 30, y1 - 40, x1 - 30, y1 - 28), fill="#868e96")
+    d.rectangle((x0 + 30, y1 - 40, x0 + (x1 - x0) * 0.45, y1 - 28), fill="#e03131")
+
+
+def define_the_problem():
+    im, d = canvas()
+    d.ellipse((380, 120, 820, 520), fill="#e7f1fb", outline=EDGE, width=6)
+    text(d, (600, 320), "?", 280, True, BLUE)
+    page(d, 300, 620, 900, 1060, 4)
+    return im
+
+
+def criteria():
+    im, d = canvas()
+    page(d, 250, 160, 950, 1060, 0)
+    for i in range(4):
+        y = 300 + i * 200
+        d.rounded_rectangle((330, y - 50, 430, y + 50), radius=10, outline=EDGE, width=6)
+        check(d, 385, y, 45, GREEN, 14)
+        d.line((480, y, 860, y), fill=FAINT, width=14)
+    return im
+
+
+def proto(d, cx, cy, k, kind):
+    if kind == 0:
+        d.rectangle((cx - 90 * k, cy - 50 * k, cx + 90 * k, cy + 50 * k), outline=BLUE, width=8)
+    elif kind == 1:
+        d.rounded_rectangle((cx - 90 * k, cy - 50 * k, cx + 90 * k, cy + 50 * k), radius=30 * k, outline=BLUE, width=8)
+        d.line((cx + 90 * k, cy, cx + 150 * k, cy - 60 * k), fill=BLUE, width=8)
+    else:
+        d.rounded_rectangle((cx - 90 * k, cy - 50 * k, cx + 90 * k, cy + 50 * k), radius=30 * k, fill="#d0ebff", outline=BLUE, width=8)
+        d.line((cx + 90 * k, cy, cx + 150 * k, cy - 60 * k), fill=BLUE, width=8)
+        d.line((cx + 150 * k, cy - 60 * k, cx + 200 * k, cy - 20 * k), fill=BLUE, width=8)
+    for dx in (-55, 55):
+        d.ellipse((cx + dx * k - 30 * k, cy + 40 * k, cx + dx * k + 30 * k, cy + 100 * k), outline=BLUE, width=8)
+
+
+def develop_solutions():
+    im, d = canvas()
+    for i, x in enumerate((220, 600, 980)):
+        page(d, x - 170, 380, x + 170, 760, 0)
+        proto(d, x - 20, 550, 0.9, i)
+    for x in (390, 770):
+        arrow(d, x + 10, 570, x + 40, 570, ORANGE, 12, 40)
+    stopwatch(d, 600, 960, 110, "")
+    return im
+
+
+def optimize():
+    im, d = canvas()
+    d.line((200, 1000, 1000, 1000), fill=EDGE, width=8)
+    d.line((200, 1000, 200, 250), fill=EDGE, width=8)
+    pts = [(260, 900), (420, 780), (580, 720), (740, 520), (920, 330)]
+    d.line(pts, fill=GREEN, width=14)
+    for x, y in pts:
+        d.ellipse((x - 22, y - 22, x + 22, y + 22), fill=GREEN, outline=EDGE, width=4)
+    return im
+
+
+def test_procedure():
+    im, d = canvas()
+    page(d, 220, 140, 980, 1060, 0)
+    for i in range(4):
+        y = 300 + i * 200
+        d.ellipse((290, y - 55, 400, y + 55), fill=BLUE)
+        text(d, (345, y), str(i + 1), 70, True, "white")
+        d.line((450, y, 880, y), fill=FAINT, width=14)
+    return im
+
+
+def table(d, x0, y0, cols, rows, cw, rh, head=None, cells=None):
+    for r in range(rows):
+        for c in range(cols):
+            fill = "#e7f1fb" if r == 0 else "white"
+            d.rectangle((x0 + c * cw, y0 + r * rh, x0 + (c + 1) * cw, y0 + (r + 1) * rh), fill=fill, outline=EDGE, width=5)
+            if cells and cells[r][c]:
+                text(d, (x0 + c * cw + cw / 2, y0 + r * rh + rh / 2), cells[r][c], int(rh * 0.42), r == 0, DARK)
+
+
+def trial():
+    im, d = canvas()
+    table(d, 180, 260, 2, 5, 420, 140, cells=[["#", "Points"], ["1", "8"], ["2", "12"], ["3", "11"], ["4", "12"]])
+    return im
+
+
+def quantitative_data():
+    im, d = canvas()
+    d.line((200, 1000, 1000, 1000), fill=EDGE, width=8)
+    for i, (h, v) in enumerate([(300, "8"), (480, "12"), (430, "11"), (560, "14")]):
+        x = 260 + i * 190
+        d.rectangle((x, 1000 - h, x + 130, 1000), fill="#4dabf7", outline=EDGE, width=5)
+        text(d, (x + 65, 1000 - h - 50), v, 70, True, DARK)
+    return im
+
+
+def qualitative_data():
+    im, d = canvas()
+    notebook(d, 220, 160, 980, 1060)
+    for i, (txt, c) in enumerate([("claw slips", "#e03131"), ("wobbly arm", "#e03131"), ("smooth turns", GREEN)]):
+        text(d, (600, 380 + i * 200), txt, 72, True, c)
+    return im
+
+
+def tradeoff():
+    im, d = canvas()
+    d.polygon([(560, 1000), (640, 1000), (600, 520)], fill=DARK)
+    d.line((220, 440, 980, 600), fill=DARK, width=16)
+    for x, y, c, sym in [(260, 450, "#ffa94d", "fast"), (940, 610, "#4dabf7", "strong")]:
+        d.line((x, y, x, y + 140), fill=DARK, width=6)
+        d.rounded_rectangle((x - 150, y + 140, x + 150, y + 320), radius=20, fill=c, outline=EDGE, width=6)
+        text(d, (x, y + 230), sym, 64, True, DARK)
+    return im
+
+
+def reflection():
+    im, d = canvas()
+    person(d, 330, 1080, 1.5, "#4fb3e3")
+    d.ellipse((560, 120, 1100, 600), fill="white", outline=EDGE, width=6)
+    for x, y, r in ((520, 640, 30), (470, 720, 20)):
+        d.ellipse((x - r, y - r, x + r, y + r), fill="white", outline=EDGE, width=5)
+    spin(d, 830, 360, 150, -60, 230, BLUE, 18, 50)
+    check(d, 830, 360, 60, GREEN, 18)
+    return im
+
+
+def research():
+    im, d = canvas()
+    video(d, 140, 230, 760, 680)
+    mini_robot(d, 450, 560, 0.9, "#f3b27a")
+    magnifier(d, 820, 720, 170)
+    return im
+
+
+def team_circle(d):
+    d.ellipse((240, 320, 960, 1040), fill="#f1f3f5", outline=EDGE, width=6)
+    for i, x in enumerate((420, 600, 780)):
+        person(d, x, 920, 0.75, ["#4fb3e3", "#69db7c", "#ffa94d"][i])
+
+
+def outside_idea():
+    im, d = canvas()
+    team_circle(d)
+    bulb(d, 1040, 200, 1.0)
+    arrow(d, 960, 300, 760, 500, ORANGE, 16, 54)
+    return im
+
+
+def reveal_video():
+    im, d = canvas()
+    video(d, 120, 230, 1080, 900)
+    mini_robot(d, 600, 760, 1.6, "#4fb3e3")
+    for x, y in ((300, 380), (900, 380)):
+        star(d, x, y, 50, YELLOW)
+    return im
+
+
+def inspired_adaptation():
+    im, d = canvas()
+    mini_robot(d, 300, 640, 1.3, "#f3b27a")
+    d.rectangle((240, 360, 270, 470), fill=EDGE)
+    arrow(d, 480, 560, 700, 560, GREEN, 16, 56)
+    mini_robot(d, 900, 640, 1.3, "#4fb3e3")
+    d.rectangle((840, 360, 870, 470), fill=EDGE)
+    d.line((870, 365, 1010, 365), fill=EDGE, width=26)  # added arm
+    star(d, 1060, 300, 60, YELLOW, outline=EDGE, width=3)
+    bulb(d, 300, 220, 0.7)
+    return im
+
+
+def direct_copying():
+    im, d = canvas()
+    for x in (300, 900):
+        mini_robot(d, x, 640, 1.3, "#f3b27a")
+        d.rectangle((x - 60, 360, x - 30, 470), fill=EDGE)
+    text(d, (600, 560), "=", 200, True, "#e03131")
+    cross(d, 600, 860, 80)
+    return im
+
+
+def ownership_check():
+    im, d = canvas()
+    boxes = [(330, 330), (870, 330), (330, 870), (870, 870)]
+    for x, y in boxes:
+        d.rounded_rectangle((x - 230, y - 230, x + 230, y + 230), radius=30, fill="#f1f3f5", outline=EDGE, width=6)
+    # adapt: wrench, test: stopwatch, understand: bulb, credit: tag
+    d.line((230, 430, 420, 240), fill="#868e96", width=44)
+    d.ellipse((380, 190, 470, 280), fill="#868e96", outline=EDGE, width=5)
+    stopwatch(d, 870, 360, 140, "")
+    bulb(d, 330, 880, 1.2)
+    d.polygon([(720, 800), (950, 800), (1040, 880), (950, 960), (720, 960)], fill=YELLOW, outline=EDGE)
+    d.ellipse((940, 860, 980, 900), fill="white", outline=EDGE, width=4)
+    return im
+
+
+def help_check():
+    im, d = canvas()
+    person(d, 300, 1080, 1.5, ADULT)
+    d.rounded_rectangle((470, 160, 1100, 560), radius=16, fill="white", outline=EDGE, width=8)  # whiteboard
+    for cx, cy, r in ((640, 360, 110), (900, 360, 60)):
+        d.ellipse((cx - r, cy - r, cx + r, cy + r), outline=BLUE, width=8)
+    person(d, 800, 1080, 1.05, "#4fb3e3")
+    mini_robot(d, 1010, 1080, 0.8)
+    return im
+
+
+def design_convergence():
+    im, d = canvas()
+    for x, y, c in ((220, 260, "#f3b27a"), (980, 260, "#69db7c"), (220, 960, "#ffd43b"), (980, 960, "#b197fc")):
+        mini_robot(d, x, y + 60, 0.75, c)
+        arrow(d, x + (120 if x < 600 else -120), y + (60 if y < 600 else -60), 600 + (-150 if x < 600 else 150), 600 + (-90 if y < 600 else 90), DARK, 10, 36)
+    mini_robot(d, 600, 680, 1.3, "#4fb3e3")
+    return im
+
+
+def starting_point():
+    im, d = canvas()
+    mini_robot(d, 330, 760, 1.4, "#adb5bd")
+    d.line((330, 560, 330, 360), fill=EDGE, width=8)
+    d.polygon([(330, 360), (470, 400), (330, 440)], fill=GREEN)
+    arrow(d, 560, 680, 760, 680, ORANGE, 14, 50)
+    mini_robot(d, 960, 760, 1.4, "#4fb3e3")
+    d.rectangle((900, 470, 930, 610), fill=EDGE)
+    d.line((930, 475, 1080, 430), fill=EDGE, width=24)
+    return im
+
+
+def notebook_entry():
+    im, d = canvas()
+    notebook(d, 240, 140, 960, 1060, lines=0)
+    d.rounded_rectangle((300, 200, 640, 290), radius=12, fill="#e7f1fb", outline=EDGE, width=4)
+    text(d, (470, 245), "Oct 3", 56, True, DARK)
+    for i in range(5):
+        d.line((310, 380 + i * 100, 890, 380 + i * 100), fill=FAINT, width=12)
+    d.ellipse((700, 880, 900, 1000), outline=BLUE, width=6)
+    text(d, (800, 940), "AL", 64, True, BLUE)
+    return im
+
+
+def table_of_contents():
+    im, d = canvas()
+    page(d, 220, 140, 980, 1060, 0)
+    for i in range(6):
+        y = 260 + i * 130
+        d.line((300, y, 680, y), fill="#adb5bd", width=14)
+        for x in range(700, 830, 30):
+            d.ellipse((x - 5, y - 5, x + 5, y + 5), fill="#adb5bd")
+        text(d, (880, y), str(1 + i * 7), 60, True, DARK)
+    return im
+
+
+def appendix():
+    im, d = canvas()
+    for i in range(5):
+        x = 300 + i * 22
+        d.rounded_rectangle((x, 200 + i * 10, x + 560, 1000 + i * 10), radius=14, fill="white", outline=EDGE, width=5)
+    d.rounded_rectangle((950, 760, 1060, 880), radius=10, fill=ORANGE, outline=EDGE, width=5)
+    return im
+
+
+def credit():
+    im, d = canvas()
+    bulb(d, 330, 500, 1.6)
+    d.polygon([(560, 640), (1000, 640), (1100, 760), (1000, 880), (560, 880)], fill=YELLOW, outline=EDGE, width=6)
+    d.ellipse((990, 735, 1040, 785), fill="white", outline=EDGE, width=4)
+    text(d, (780, 760), "1234A", 80, True, DARK)
+    d.line((330, 650, 560, 760), fill=EDGE, width=6)
+    return im
+
+
+def season_summary():
+    im, d = canvas()
+    page(d, 140, 180, 600, 1020, 0, "#e7f1fb")
+    for i in range(4):
+        star(d, 220, 300 + i * 190, 36, ORANGE)
+        d.line((280, 300 + i * 190, 540, 300 + i * 190), fill="#74c0fc", width=14)
+        arrow(d, 600, 300 + i * 190, 760, 300 + i * 190, DARK, 8, 30)
+    notebook(d, 800, 200, 1080, 1000)
+    return im
+
+
+def code_summary():
+    im, d = canvas()
+    page(d, 220, 140, 980, 1060, 0, "#ebfbee")
+    for i, (w, c) in enumerate([(300, "#ffd43b"), (360, "#4dabf7"), (300, "#4dabf7"), (240, "#69db7c")]):
+        y = 280 + i * 200
+        d.rounded_rectangle((600 - w / 2, y - 55, 600 + w / 2, y + 55), radius=26, fill=c, outline=EDGE, width=5)
+        if i < 3:
+            arrow(d, 600, y + 60, 600, y + 140, DARK, 8, 30)
+    return im
+
+
+def credit_summary():
+    im, d = canvas()
+    page(d, 220, 140, 980, 1060, 0)
+    for i in range(5):
+        y = 280 + i * 160
+        d.polygon([(300, y - 40), (400, y - 40), (440, y), (400, y + 40), (300, y + 40)], fill=YELLOW, outline=EDGE, width=4)
+        d.line((480, y, 880, y), fill=FAINT, width=14)
+    return im
+
+
+def fully_developed_notebook():
+    im, d = canvas()
+    for i in range(8):
+        d.rectangle((330 + i * 8, 250 + i * 14, 830 + i * 8, 980 + i * 14), fill="#fff9db" if i == 7 else "white", outline=EDGE, width=4)
+    spin(d, 640, 690, 180, -80, 240, GREEN, 20, 56)
+    return im
+
+
+def digital_notebook():
+    im, d = canvas()
+    d.rounded_rectangle((180, 220, 1020, 780), radius=24, fill="#1b1f24", outline=EDGE, width=6)
+    page(d, 300, 280, 900, 740, 5, "#fff9db")
+    d.polygon([(100, 800), (1100, 800), (1160, 900), (40, 900)], fill="#adb5bd", outline=EDGE, width=6)
+    return im
+
+
+def annotate():
+    im, d = canvas()
+    d.rectangle((300, 300, 900, 900), fill="#f1f3f5", outline=EDGE, width=5)
+    mini_robot(d, 600, 760, 1.6, PART)
+    for (x, y), (tx, ty), s in [((480, 600), (200, 200), "gear"), ((720, 720), (1000, 1050), "wheel")]:
+        d.line((x, y, tx, ty + (40 if ty < 600 else -40)), fill=ORANGE, width=8)
+        d.ellipse((x - 16, y - 16, x + 16, y + 16), fill=ORANGE)
+        text(d, (tx, ty), s, 70, True, ORANGE)
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
@@ -1481,6 +2474,92 @@ DIAGRAMS = {
     "judged award": judged_award,
     "performance award": performance_award,
     "nominated award": nominated_award,
+    "scrimmage": scrimmage,
+    "in-school competition": in_school_competition,
+    "qualifying event": qualifying_event,
+    "school-based event": school_based_event,
+    "Robot Skills-Only Event": skills_only_event,
+    "Championship Event": championship_event,
+    "Spotlight Event": spotlight_event,
+    "Signature Event": signature_event,
+    "VEX Robotics World Championship": world_championship,
+    "qualifying spot": qualifying_spot,
+    "qualifying award": qualifying_award,
+    "World Skills Standings": world_skills_standings,
+    "level (Elementary / Middle School)": level_es_ms,
+    "qualification match": qualification_match,
+    "finals match": finals_match,
+    "Robot Skills Challenge": robot_skills_challenge,
+    "Driving Skills match": driving_skills,
+    "Autonomous Coding Skills match": autonomous_skills,
+    "Skills Stop Time": skills_stop_time,
+    "ranking": ranking,
+    "practice match": practice_match,
+    "no-show": no_show,
+    "Event Partner": event_partner,
+    "head referee": head_referee,
+    "scorekeeper referee": scorekeeper_referee,
+    "Judge Advisor": judge_advisor,
+    "emcee": emcee,
+    "volunteer": volunteer,
+    "Code of Conduct": code_of_conduct,
+    "Student-Centered Policy": student_centered_policy,
+    "official Q&A": official_qa,
+    "team number": team_number,
+    "Student-Centered Review": student_centered_review,
+    "drive team": drive_team,
+    "driver switch": driver_switch,
+    "robot reset": robot_reset,
+    "Match Stop Time": match_stop_time,
+    "Alliance Score": alliance_score,
+    "possession": possession,
+    "plowing": plowing,
+    "preload": preload,
+    "field perimeter": field_perimeter,
+    "violation": violation,
+    "Minor Violation": minor_violation,
+    "Major Violation": major_violation,
+    "Score Affecting": score_affecting,
+    "Disqualification": disqualification,
+    "Disablement": disablement,
+    "match replay": match_replay,
+    "appeal": appeal,
+    "Game Design Committee": game_design_committee,
+    "legal parts": legal_parts,
+    "designer": designer,
+    "builder": builder,
+    "coder": coder,
+    "strategist": strategist,
+    "notebooker": notebooker,
+    "define the problem": define_the_problem,
+    "criteria": criteria,
+    "develop solutions": develop_solutions,
+    "optimize": optimize,
+    "test procedure": test_procedure,
+    "trial": trial,
+    "quantitative data": quantitative_data,
+    "qualitative data": qualitative_data,
+    "tradeoff": tradeoff,
+    "reflection": reflection,
+    "research": research,
+    "outside idea": outside_idea,
+    "reveal video": reveal_video,
+    "inspired adaptation": inspired_adaptation,
+    "direct copying": direct_copying,
+    "Ownership Check": ownership_check,
+    "Help Check": help_check,
+    "design convergence": design_convergence,
+    "starting point": starting_point,
+    "notebook entry": notebook_entry,
+    "table of contents": table_of_contents,
+    "appendix": appendix,
+    "credit": credit,
+    "Season Summary": season_summary,
+    "Code Summary": code_summary,
+    "Credit Summary": credit_summary,
+    "fully developed notebook": fully_developed_notebook,
+    "digital engineering notebook": digital_notebook,
+    "annotate": annotate,
 }
 
 
