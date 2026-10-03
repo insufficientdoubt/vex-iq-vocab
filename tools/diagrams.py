@@ -2479,6 +2479,117 @@ def out_of_the_field():
     return im
 
 
+# ---- top-ups: event day, tile, charger, firmware, interview ----
+
+def check_in():
+    im, d = canvas()
+    d.rectangle((560, 640, 1120, 720), fill="#c69c6d", outline=EDGE, width=6)  # desk
+    d.rectangle((600, 720, 640, 1060), fill="#8d6e4a"); d.rectangle((1040, 720, 1080, 1060), fill="#8d6e4a")
+    person(d, 900, 640, 0.9, "#7048e8")
+    clipboard(d, 740, 590, 0.6)
+    person(d, 330, 1060, 1.4, "#4fb3e3")
+    plate(d, 330, 330, "1234A", 300, 100)
+    return im
+
+
+def event_meeting():
+    im, d = canvas()
+    person(d, 450, 620, 0.9, "#7048e8")
+    referee_person(d, 750, 620, 0.9)
+    for i in range(7):
+        x = 150 + i * 150
+        person(d, x, 1100 - (i % 2) * 30, 0.7, ["#4fb3e3", "#69db7c", "#ffa94d", "#f783ac"][i % 4])
+    d.rounded_rectangle((900, 100, 1150, 300), radius=12, fill="white", outline=EDGE, width=6)
+    for i in range(3):
+        d.line((930, 150 + i * 50, 1120, 150 + i * 50), fill=FAINT, width=10)
+    return im
+
+
+def awards_ceremony():
+    im, d = canvas()
+    d.rectangle((150, 700, 1050, 820), fill="#1c7ed6", outline=EDGE, width=6)  # stage
+    big_trophy(d, 600, 330, 1.2)
+    for i, x in enumerate((300, 900)):
+        person(d, x, 700, 0.85, ["#4fb3e3", "#69db7c"][i])
+    for i in range(6):
+        x = 170 + i * 170
+        person(d, x, 1120, 0.55, ["#ffa94d", "#f783ac", "#69db7c", "#4fb3e3"][i % 4])
+    for x, y in ((150, 200), (1050, 200), (200, 480), (1000, 480)):
+        star(d, x, y, 45, YELLOW, outline=EDGE, width=3)
+    return im
+
+
+def field_tile():
+    im, d = canvas()
+    for r in range(3):
+        for c in range(3):
+            x, y = 180 + c * 290, 180 + r * 290
+            hi = (r, c) == (1, 1)
+            d.rectangle((x, y, x + 280, y + 280), fill=YELLOW if hi else "#f1f3f5", outline=EDGE, width=6)
+            for k in range(6):  # puzzle edge teeth
+                d.rectangle((x + 20 + k * 44, y - 8, x + 40 + k * 44, y + 8), fill=EDGE)
+    return im
+
+
+def battery_charger():
+    im, d = canvas()
+    d.rounded_rectangle((420, 420, 980, 860), radius=40, fill="#343a40", outline=EDGE, width=8)
+    d.rounded_rectangle((520, 380, 880, 560), radius=20, fill="#adb5bd", outline=EDGE, width=6)  # battery on top
+    d.ellipse((860, 700, 920, 760), fill="#40c057")
+    d.line((420, 700, 260, 700, 260, 400), fill=DARK, width=18)  # cable to plug
+    d.rounded_rectangle((200, 280, 320, 400), radius=12, fill="#868e96", outline=EDGE, width=5)
+    for x in (230, 290):
+        d.rectangle((x - 8, 220, x + 8, 280), fill="#adb5bd")
+    d.polygon([(700, 590), (650, 690), (700, 690), (670, 790), (770, 650), (715, 650), (750, 590)], fill=YELLOW)
+    return im
+
+
+def firmware():
+    im, d = canvas()
+    d.rounded_rectangle((250, 250, 950, 950), radius=40, fill="#868e96", outline=EDGE, width=8)  # Brain
+    d.rounded_rectangle((380, 330, 820, 640), radius=16, fill="#1b1f24", outline=EDGE, width=6)
+    spin(d, 600, 480, 100, -60, 250, "#8ce99a", 16, 44)
+    for i in range(6):
+        d.rectangle((300 + i * 105, 900, 360 + i * 105, 950), fill=DARK)
+    text(d, (600, 770), "VEXos", 80, True, "white")
+    return im
+
+
+def evidence():
+    im, d = canvas()
+    for i, x in enumerate((220, 420)):
+        person(d, x, 1060, 1.05, ["#4fb3e3", "#69db7c"][i])
+    notebook(d, 600, 360, 1080, 920, lines=0)
+    d.line((660, 840, 1040, 840), fill=EDGE, width=6)
+    for i, h in enumerate((150, 260, 220, 330)):
+        x = 690 + i * 90
+        d.rectangle((x, 840 - h, x + 60, 840), fill="#4dabf7", outline=EDGE, width=4)
+    arrow(d, 480, 560, 640, 640, ORANGE, 12, 44)
+    return im
+
+
+def explain_your_learning():
+    im, d = canvas()
+    person(d, 300, 1060, 1.45, "#4fb3e3")
+    d.ellipse((480, 130, 1110, 560), fill="white", outline=EDGE, width=6)
+    proto(d, 650, 330, 0.8, 0)
+    arrow(d, 760, 340, 860, 340, ORANGE, 10, 34)
+    proto(d, 960, 330, 0.8, 2)
+    mini_robot(d, 760, 1060, 1.2, "#4fb3e3")
+    return im
+
+
+def how_you_worked_with_others():
+    im, d = canvas()
+    for i, x in enumerate((230, 500, 770)):
+        person(d, x, 1060, 1.1, ["#4fb3e3", "#69db7c", "#ffa94d"][i])
+    d.ellipse((330, 90, 870, 420), fill="white", outline=EDGE, width=6)
+    bulb(d, 520, 260, 0.8)
+    d.polygon([(640, 210), (760, 210), (800, 260), (760, 310), (640, 310)], fill=YELLOW, outline=EDGE, width=4)
+    mini_robot(d, 1000, 1060, 0.9, "#4fb3e3")
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
@@ -2663,6 +2774,15 @@ DIAGRAMS = {
     "color match": color_match,
     "one-bag limit": one_bag_limit,
     "out of the field": out_of_the_field,
+    "check-in": check_in,
+    "event meeting": event_meeting,
+    "awards ceremony": awards_ceremony,
+    "field tile": field_tile,
+    "battery charger": battery_charger,
+    "firmware": firmware,
+    "evidence": evidence,
+    "Explain Your Learning": explain_your_learning,
+    "How You Worked With Others": how_you_worked_with_others,
 }
 
 
@@ -2672,7 +2792,7 @@ def main():
     for term, fn in DIAGRAMS.items():
         out = ROOT / "images" / f"{ids[term]}.png"
         im = fn()
-        if ids[term].startswith(("CODE-", "ENG-", "EDP-", "COMP-", "SEASON-")) and term != "sensor":
+        if ids[term].startswith(("CODE-", "ENG-", "EDP-", "COMP-", "SEASON-")) and term != "sensor" or term == "battery charger":
             im = fit(im)
         im.resize((S // 2, S // 2), Image.LANCZOS).quantize(colors=96, method=Image.Quantize.MEDIANCUT).save(out, optimize=True)
         print(f"{ids[term]}  {term}  → images/{out.name}")
