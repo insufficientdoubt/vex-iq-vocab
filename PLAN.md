@@ -1,6 +1,6 @@
 # VEX IQ Vocab — Project Plan
 
-Status: **seeding** — Building (77), Coding (107) and Engineering (72) drafted, plus EDP (41) and COMP (92) from VEX's competition sources (GRSF library, Level Up game manual); all `status=draft`. SEASON and sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
+Status: **seeding** — Building (77), Coding (107) and Engineering (72) drafted, plus EDP (41), COMP (92) and SEASON (18, Level Up) from VEX's competition sources (GRSF library, Level Up game manual); all `status=draft`. Sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
 
 This file records decisions, the spec, and how the work was done (§12). Update it when a decision changes. **New AI session? Read §12 first.**
 
