@@ -2385,6 +2385,100 @@ def annotate():
     return im
 
 
+# ---- season game: Level Up (2026-27) ----
+RED_BAG, BLUE_BAG, YEL_BAG = "#e03131", "#1c7ed6", "#fcc419"
+
+
+def pyramid(hi):
+    """Side view of a Pyramid Goal with one level (0 = L1, 1 = L2, 2 = L3) highlighted."""
+    im, d = canvas()
+    for i, (w, y) in enumerate([(900, 980), (640, 760), (380, 540)]):
+        top = y - 200
+        d.rectangle((600 - w / 2, top, 600 + w / 2, y), fill="#c92a2a", outline=EDGE, width=6)
+        d.rectangle((600 - w / 2, top - 30, 600 + w / 2, top), fill=YELLOW if i == hi else "#495057", outline=EDGE, width=6)
+    ground(d, 990, 80, 1120)
+    levels = [(900, 980), (640, 760), (380, 540)]
+    w, y = levels[hi]
+    surface = y - 230
+    inner = levels[hi + 1][0] if hi < 2 else 0          # the next level up covers the middle
+    xs = [600 - (w + inner) / 4, 600 + (w + inner) / 4] if hi < 2 else [540, 660]
+    for x in xs:
+        bean(d, x, surface - 38, RED_BAG, 100 if hi < 2 else 110, 70)
+    return im
+
+
+def l1_goal(): return pyramid(0)
+def l2_goal(): return pyramid(1)
+def l3_goal(): return pyramid(2)
+
+
+def match_load():
+    im, d = canvas()
+    field(d, 420, 220, 4, 180)
+    d.rectangle((420, 220, 600, 940), fill="#ffc9c9", outline=EDGE, width=6)  # load zone strip
+    d.rounded_rectangle((60, 220, 360, 940), radius=20, outline="#e03131", width=10)  # driver station
+    for i in range(8):
+        bean(d, 150 + (i % 2) * 120, 290 + (i // 2) * 160, RED_BAG, 100, 72)
+    arrow(d, 300, 1040, 520, 1040, DARK, 12, 44)
+    return im
+
+
+def loader():
+    im, d = canvas()
+    d.rectangle((640, 640, 1150, 1080), fill="#f1f3f5", outline=EDGE, width=6)
+    d.rectangle((640, 640, 820, 1080), fill="#ffc9c9", outline=EDGE, width=5)
+    person(d, 330, 1080, 1.4, "#ffa94d")
+    d.line((410, 720, 650, 760), fill="#ffa94d", width=40)
+    bean(d, 730, 790, RED_BAG, 120, 86)
+    for i in range(3):
+        bean(d, 160 + i * 20, 1050 - i * 40, RED_BAG, 110, 70)
+    return im
+
+
+def shortcut():
+    im, d = canvas()
+    field(d, 150, 150, 6, 150)
+    d.rectangle((150, 520, 690, 620), fill="#495057")  # walls with a narrow gap
+    d.rectangle((790, 520, 1050, 620), fill="#495057")
+    robot_top(d, 740, 900, 90, 120, "#4fb3e3")
+    arrow(d, 740, 820, 740, 330, GREEN, 14, 50)
+    robot_top(d, 360, 900, 220, 220, "#f3b27a")
+    d.line((360, 780, 360, 680, 160, 680), fill=ORANGE, width=10)
+    return im
+
+
+def color_match():
+    im, d = canvas()
+    for x, gc in ((330, "#ffc9c9"), (870, "#d0ebff")):
+        d.rounded_rectangle((x - 230, 380, x + 230, 900), radius=20, fill=gc, outline=EDGE, width=6)
+    bean(d, 330, 640, RED_BAG, 180, 130)
+    check(d, 330, 260, 70)
+    bean(d, 870, 640, RED_BAG, 180, 130)
+    cross(d, 870, 260, 60)
+    return im
+
+
+def one_bag_limit():
+    im, d = canvas()
+    for x, n in ((320, 1), (880, 2)):
+        robot_top(d, x, 640, 280, 320, PART, front=False)
+        for i in range(n):
+            bean(d, x - (0 if n == 1 else 70) + i * 140, 440, YEL_BAG if i == 0 else BLUE_BAG, 130, 90)
+    check(d, 320, 950, 70)
+    cross(d, 880, 950, 60)
+    d.line((600, 200, 600, 1050), fill=FAINT, width=6)
+    return im
+
+
+def out_of_the_field():
+    im, d = canvas()
+    field(d, 150, 300, 4, 180)
+    bean(d, 1000, 300, BLUE_BAG, 130, 95, 25)
+    arrow(d, 760, 520, 940, 340, ORANGE, 12, 44)
+    cross(d, 1000, 300, 90, "#e03131", 14)
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
@@ -2560,6 +2654,15 @@ DIAGRAMS = {
     "fully developed notebook": fully_developed_notebook,
     "digital engineering notebook": digital_notebook,
     "annotate": annotate,
+    "Match Load": match_load,
+    "L1 Goal": l1_goal,
+    "L2 Goal": l2_goal,
+    "L3 Goal": l3_goal,
+    "loader": loader,
+    "shortcut": shortcut,
+    "color match": color_match,
+    "one-bag limit": one_bag_limit,
+    "out of the field": out_of_the_field,
 }
 
 
@@ -2569,7 +2672,7 @@ def main():
     for term, fn in DIAGRAMS.items():
         out = ROOT / "images" / f"{ids[term]}.png"
         im = fn()
-        if ids[term].startswith(("CODE-", "ENG-", "EDP-", "COMP-")) and term != "sensor":
+        if ids[term].startswith(("CODE-", "ENG-", "EDP-", "COMP-", "SEASON-")) and term != "sensor":
             im = fit(im)
         im.resize((S // 2, S // 2), Image.LANCZOS).quantize(colors=96, method=Image.Quantize.MEDIANCUT).save(out, optimize=True)
         print(f"{ids[term]}  {term}  → images/{out.name}")

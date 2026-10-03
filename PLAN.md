@@ -150,7 +150,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
   - [x] ENG — 72 terms from VEX IQ sources (6 community-sourced, level 3), all with images.
   - [x] `stem_lab` — 80 terms across all domains mapped to the STEM Lab lesson that first teaches them (from every lesson's Lesson Summary PDF).
   - [ ] EDP · COMP — 41 EDP, 65 COMP. EDP-013–041 and COMP-017–065 added 2026-10-03 from the GRSF library (glossary, award descriptions, event types, qualifying awards, notebook/interview rubrics, Student-Centered Policy, Design Convergence). Awards carry a `qualifying` tag and their spot threshold; the full order is in `sources/vex-iq-qualifying-awards-2026-27.csv` (update each season). New COMP subdomain `tiers` (event levels). COMP-066–092 from the Level Up Game Manual v2.0 glossary and rules (match rules, violations, student roles). All terms have images (award icons and concept drawings in `tools/diagrams.py`; three manual figures). **Still to do:** `stem_lab` for the new terms; teacher review.
-  - [ ] SEASON
+  - [x] SEASON — 18 terms for Level Up (2026-27) from the game manual v2.0: bean bags, goals, Load Zone, loader, scoring rules. `season` = 2026-27. Retire or replace them when the next game is released (IDs stay permanent).
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.
 - [x] **6. Images** — every term has a picture (BLD, CODE, ENG, EDP, COMP). VEX images credited in `images/CREDITS.md`; concept diagrams in `tools/diagrams.py`. SEASON to come with that domain. Optional: replace with own photos (student project).
