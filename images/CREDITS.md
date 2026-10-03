@@ -17,7 +17,7 @@ Images © VEX Robotics / Innovation First, Inc., used for non-commercial classro
 | EDP-001, EDP-006 | VEX Library: Get Started Engineering (design process graphic) and Getting Started with Engineering Notebooks (sample page). Black background replaced with white. |
 | EDP-004 | VEX IQ STEM Lab Lesson Summary: Up and Over, Claw Design |
 | EDP-008 – 012, COMP-002 | VEX IQ STEM Lab: Competition 101 (VEX IQ Level Up), Sessions 2, 3 and 6 — Flop Hero Bot, field route, notebook, rubric, judges, sizing tool, event photos |
-| the other EDP and COMP images | Drawn by `tools/diagrams.py` |
+| the other EDP and COMP images, including the award icons (COMP-045 – 060) | Drawn by `tools/diagrams.py` |
 | COMP-007, COMP-009 | VEX Worlds event photos (referee; Teamwork Challenge drive teams), supplied by the teacher |
 | COMP-014 | VEX IQ Challenge Field product photo (VEX Robotics) |
 | COMP-015 | Flight case product photo from RoboSource.net (caption and banner cropped out) |

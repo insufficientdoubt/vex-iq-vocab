@@ -1201,6 +1201,197 @@ def license_plate():
     return im
 
 
+# ---- award icons: one medal shape, a different color and symbol for each award ----
+
+def star(d, cx, cy, r, fill, inner=0.45, outline=None, width=0):
+    pts = []
+    for i in range(10):
+        a = -math.pi / 2 + i * math.pi / 5
+        rr = r if i % 2 == 0 else r * inner
+        pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+    d.polygon(pts, fill=fill, outline=outline, width=width)
+
+
+def medal(color, ribbon=None):
+    """Medal on a ribbon. Returns (im, d, cx, cy, r) so the caller draws the symbol on the disc."""
+    im, d = canvas()
+    cx, cy, r = 600, 520, 330
+    rb = ribbon or color
+    for s in (-1, 1):
+        x0 = cx + s * 120
+        d.polygon([(x0 - 85, cy + 150), (x0 + 85, cy + 150), (x0 + 85 + s * 60, cy + 620),
+                   (x0 + s * 60, cy + 560), (x0 - 85 + s * 60, cy + 620)], fill=rb, outline=EDGE)
+    d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=color, outline=EDGE, width=8)
+    d.ellipse((cx - r + 40, cy - r + 40, cx + r - 40, cy + r - 40), outline="white", width=10)
+    return im, d, cx, cy, r
+
+
+W = "white"
+
+
+def excellence_award():
+    im, d, cx, cy, r = medal("#f0b400", "#1c7ed6")
+    star(d, cx, cy + 10, 200, W, outline=EDGE, width=4)
+    for dx in (-150, 150):
+        star(d, cx + dx, cy - 170, 45, W)
+    return im
+
+
+def design_award():
+    im, d, cx, cy, r = medal("#1c7ed6")
+    for s in (-1, 1):  # open notebook
+        d.polygon([(cx, cy - 110), (cx + s * 190, cy - 140), (cx + s * 190, cy + 120), (cx, cy + 150)], fill=W, outline=EDGE, width=5)
+        for i in range(4):
+            y = cy - 80 + i * 50
+            d.line((cx + s * 30, y + 5 * s * 0, cx + s * 160, y - 20), fill="#a5d8ff", width=8)
+    d.line((cx + 30, cy + 170, cx + 230, cy - 60), fill=EDGE, width=38)  # pencil
+    d.line((cx + 34, cy + 165, cx + 226, cy - 55), fill="#ffd43b", width=28)
+    d.polygon([(cx + 18, cy + 190), (cx + 12, cy + 150), (cx + 50, cy + 175)], fill=EDGE)
+    return im
+
+
+def innovate_award():
+    im, d, cx, cy, r = medal("#7048e8")
+    d.ellipse((cx - 130, cy - 210, cx + 130, cy + 50), fill="#ffe066", outline=EDGE, width=6)  # bulb
+    d.rectangle((cx - 60, cy + 30, cx + 60, cy + 120), fill="#ffe066", outline=EDGE, width=6)
+    for i in range(3):
+        d.rounded_rectangle((cx - 65, cy + 120 + i * 35, cx + 65, cy + 150 + i * 35), radius=12, fill="#ced4da", outline=EDGE, width=4)
+    d.line((cx - 40, cy - 20, cx - 20, cy - 90, cx, cy - 30, cx + 20, cy - 90, cx + 40, cy - 20), fill="#f08c00", width=10)
+    for a in (-150, -120, -90, -60, -30):
+        t = math.radians(a)
+        d.line((cx + 165 * math.cos(t), cy - 80 + 165 * math.sin(t), cx + 215 * math.cos(t), cy - 80 + 215 * math.sin(t)), fill=W, width=12)
+    return im
+
+
+def think_award():
+    im, d, cx, cy, r = medal("#2f9e44")
+    d.rounded_rectangle((cx - 210, cy - 150, cx + 210, cy + 150), radius=24, fill="#1b1f24", outline=W, width=8)
+    text(d, (cx, cy), "</>", 170, True, "#8ce99a")
+    return im
+
+
+def amaze_award():
+    im, d, cx, cy, r = medal("#1098ad")
+    mini_robot(d, cx, cy + 150, 1.25, "#ced4da")
+    d.rectangle((cx - 20, cy - 80, cx + 20, cy - 40), fill=EDGE)
+    for x, y, rr in [(cx - 170, cy - 150, 55), (cx + 160, cy - 180, 70), (cx + 10, cy - 210, 40)]:
+        star(d, x, y, rr, "#ffe066", inner=0.35)
+    return im
+
+
+def build_award():
+    im, d, cx, cy, r = medal("#495057")
+    ang = math.radians(-45)  # wrench along a diagonal
+    ux, uy = math.cos(ang), math.sin(ang)
+    p0, p1 = (cx - 170 * ux, cy - 170 * uy), (cx + 120 * ux, cy + 120 * uy)
+    d.line((p0, p1), fill=EDGE, width=72)
+    d.line((p0, p1), fill="#dee2e6", width=56)
+    hx, hy = cx + 170 * ux, cy + 170 * uy
+    d.ellipse((hx - 95, hy - 95, hx + 95, hy + 95), fill="#dee2e6", outline=EDGE, width=6)
+    d.polygon([(hx + 20, hy - 120), (hx + 120, hy - 20), (hx + 50, hy + 50), (hx - 50, hy - 50)], fill="#495057")
+    d.ellipse((p0[0] - 45, p0[1] - 45, p0[0] + 45, p0[1] + 45), fill="#dee2e6", outline=EDGE, width=6)
+    d.ellipse((p0[0] - 18, p0[1] - 18, p0[0] + 18, p0[1] + 18), fill="#495057")
+    return im
+
+
+def create_award():
+    im, d, cx, cy, r = medal("#d6336c")
+    d.ellipse((cx - 210, cy - 160, cx + 190, cy + 170), fill="#f8f0e3", outline=EDGE, width=6)  # palette
+    d.ellipse((cx + 60, cy + 40, cx + 140, cy + 120), fill="#d6336c", outline=EDGE, width=4)
+    for (x, y), c in zip([(cx - 120, cy - 60), (cx - 30, cy - 110), (cx + 70, cy - 90), (cx - 130, cy + 50), (cx - 40, cy + 90)],
+                         ["#e03131", "#ffd43b", "#1c7ed6", "#2f9e44", "#7048e8"]):
+        d.ellipse((x - 38, y - 38, x + 38, y + 38), fill=c, outline=EDGE, width=4)
+    return im
+
+
+def judges_award():
+    im, d, cx, cy, r = medal("#a0522d")
+    star(d, cx - 30, cy - 30, 120, "#ffe066", outline=EDGE, width=4)
+    d.ellipse((cx - 190, cy - 190, cx + 130, cy + 130), outline=W, width=26)  # magnifier
+    d.line((cx + 90, cy + 90, cx + 210, cy + 210), fill=W, width=44)
+    return im
+
+
+def inspire_award():
+    im, d, cx, cy, r = medal("#f76707")
+    d.polygon([(cx, cy - 230), (cx + 70, cy - 110), (cx + 150, cy - 160), (cx + 170, cy + 40), (cx + 110, cy + 170),
+               (cx - 110, cy + 170), (cx - 170, cy + 40), (cx - 130, cy - 120), (cx - 60, cy - 60)], fill="#ffe066", outline=EDGE, width=6)
+    d.polygon([(cx, cy - 40), (cx + 80, cy + 60), (cx + 50, cy + 170), (cx - 50, cy + 170), (cx - 80, cy + 60)], fill="#ff922b")
+    return im
+
+
+def sportsmanship_award():
+    im, d, cx, cy, r = medal("#e03131")
+    k = 12.5  # classic heart curve
+    pts = [(cx + k * 16 * math.sin(t) ** 3,
+            cy - 10 - k * (13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t)))
+           for t in [i * 2 * math.pi / 200 for i in range(200)]]
+    d.polygon(pts, fill=W)
+    return im
+
+
+def energy_award():
+    im, d, cx, cy, r = medal("#74b816")
+    d.polygon([(cx + 40, cy - 240), (cx - 150, cy + 30), (cx - 10, cy + 30), (cx - 60, cy + 240), (cx + 150, cy - 50), (cx + 10, cy - 50)],
+              fill="#ffe066", outline=EDGE, width=6)
+    return im
+
+
+def big_trophy(d, cx, cy, k=1.0):
+    trophy(d, cx, cy, k)
+    star(d, cx, cy - 70 * k, 55 * k, W)
+
+
+def teamwork_champions():
+    im, d = canvas()
+    big_trophy(d, 600, 430, 1.9)
+    mini_robot(d, 330, 1060, 1.0, "#4fb3e3")
+    mini_robot(d, 870, 1060, 1.0, "#f3b27a")
+    text(d, (600, 990), "+", 120, True, DARK)
+    return im
+
+
+def robot_skills_champion():
+    im, d = canvas()
+    big_trophy(d, 600, 430, 1.9)
+    mini_robot(d, 600, 1060, 1.1, "#4fb3e3")
+    return im
+
+
+def small_medal(d, cx, cy, color, k=1.0):
+    for s in (-1, 1):
+        d.polygon([(cx + s * 30 * k - 30 * k, cy - 210 * k), (cx + s * 30 * k + 30 * k, cy - 210 * k), (cx + s * 15 * k, cy - 60 * k)], fill="#1c7ed6", outline=EDGE)
+    d.ellipse((cx - 100 * k, cy - 100 * k, cx + 100 * k, cy + 100 * k), fill=color, outline=EDGE, width=6)
+    star(d, cx, cy, 60 * k, W)
+
+
+def judged_award():
+    im, d = canvas()
+    person(d, 330, 1040, 1.45, ADULT)
+    clipboard(d, 500, 640, 1.4)
+    small_medal(d, 880, 600, "#f0b400", 1.5)
+    return im
+
+
+def performance_award():
+    im, d = canvas()
+    d.rounded_rectangle((120, 320, 640, 640), radius=24, fill="#1b1f24", outline=EDGE, width=6)  # scoreboard
+    text(d, (380, 480), "54", 200, True, "#ffe066")
+    mini_robot(d, 380, 900, 1.3, "#4fb3e3")
+    small_medal(d, 900, 600, "#f0b400", 1.5)
+    return im
+
+
+def nominated_award():
+    im, d = canvas()
+    for i, x in enumerate((230, 470)):
+        person(d, x, 1040, 1.25, ["#69db7c", "#ffa94d"][i])
+    d.line((520, 760, 560, 560), fill="#ffa94d", width=44)  # raised arm
+    d.ellipse((520, 470, 610, 580), fill=SKIN, outline=EDGE, width=5)
+    small_medal(d, 900, 600, "#e03131", 1.5)
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
@@ -1274,6 +1465,22 @@ DIAGRAMS = {
     "game piece": game_piece,
     "game manual": game_manual,
     "license plate": license_plate,
+    "Excellence Award": excellence_award,
+    "Design Award": design_award,
+    "Innovate Award": innovate_award,
+    "Think Award": think_award,
+    "Amaze Award": amaze_award,
+    "Build Award": build_award,
+    "Create Award": create_award,
+    "Judges Award": judges_award,
+    "Inspire Award": inspire_award,
+    "Sportsmanship Award": sportsmanship_award,
+    "Energy Award": energy_award,
+    "Teamwork Champions": teamwork_champions,
+    "Robot Skills Champion": robot_skills_champion,
+    "judged award": judged_award,
+    "performance award": performance_award,
+    "nominated award": nominated_award,
 }
 
 
