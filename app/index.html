@@ -8,11 +8,11 @@
   :root {
     --bg: #f6f7f9; --panel: #fff; --text: #1b1f24; --muted: #667085; --line: #e3e6ea;
     --accent: #0a6cc4; --accent-soft: #e6f0fa; --chip: #f0f2f5;
-    --l1: #2f9e44; --l2: #e8890c; --l3: #c2255c;
+    --l1: #2f9e44; --l2: #e8890c; --l3: #c2255c; --ref-head: #c2410c;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #14171b; --panel: #1d2126; --text: #e8eaed; --muted: #9aa3ad; --line: #2c3238;
-            --accent: #5aa9f0; --accent-soft: #1f3347; --chip: #262b31; }
+            --accent: #5aa9f0; --accent-soft: #1f3347; --chip: #262b31; --ref-head: #ff922b; }
   }
   * { box-sizing: border-box; }
   body { margin: 0; font: 15px/1.45 system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -40,9 +40,11 @@
   #refs { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 8px; }
   #refs summary { cursor: pointer; font-weight: 600; font-size: 14px; padding: 5px 10px; border-radius: 6px; }
   #refs summary:hover { background: var(--chip); }
-  #refs h3 { margin: 10px 10px 2px; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  #refs h3 { margin: 12px 10px 2px; font-size: 11px; font-weight: 700; color: var(--ref-head); text-transform: uppercase; letter-spacing: .04em; }
   #refs a { display: block; padding: 4px 10px; font-size: 13px; }
   #refs a::after { content: " ↗"; color: var(--muted); font-size: 11px; }
+  #refs a.key { font-weight: 600; }
+  #refs .star { color: var(--ref-head); margin-right: 3px; }
   main { padding: 16px; overflow-y: auto; }
   main h2 { margin: 0 0 12px; font-size: 18px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
@@ -108,10 +110,10 @@ const DATA = "../data/vocab.csv", IMAGES = "../images/";
 const DOMAIN_NAMES = { BLD: "Building", CODE: "Coding", ENG: "Engineering", EDP: "Design process",
                        COMP: "Competition", SEASON: "Season game" };
 
-// Quick references in the sidebar: VEX sources only. Update the season-specific links each season.
+// Quick references in the sidebar: VEX sources only. A third value of true marks a key link (starred). Update the season-specific links each season.
 const REFS = [
   ["Competition", [
-    ["Game manual (Level Up)", "https://link.vex.com/docs/26-27/viqrc/game-manual"],
+    ["Game manual (Level Up)", "https://link.vex.com/docs/26-27/viqrc/game-manual", true],
     ["Official Q&A (rule answers)", "https://events.vex.com/VIQRC/2026-2027/QA"],
     ["Hero Bot build instructions", "https://library.globalrobotics.org/hc/en-us/articles/50816795175700"],
     ["Inspection checklist", "https://library.globalrobotics.org/hc/en-us/articles/51133522040596"],
@@ -119,7 +121,7 @@ const REFS = [
     ["Find events and results", "https://events.vex.com"],
   ]],
   ["Notebook & judging", [
-    ["Engineering notebook basics", "https://library.globalrobotics.org/hc/en-us/articles/52987181366932"],
+    ["Engineering notebook basics", "https://library.globalrobotics.org/hc/en-us/articles/52987181366932", true],
     ["Notebook rubric (student version)", "https://link.vex.com/docs/global/engineering-notebook-rubric-student-friendly"],
     ["Interview rubric (student version)", "https://link.vex.com/docs/global/team-interview-rubric-student-friendly"],
     ["Student-Centered Policy", "https://library.globalrobotics.org/hc/en-us/articles/51372675292820"],
@@ -127,7 +129,7 @@ const REFS = [
   ["Learn & code", [
     ["VEX Library: VEX IQ", "https://kb.vex.com/hc/en-us/categories/360002324792"],
     ["VEX IQ STEM Labs", "https://education.vex.com/stemlabs/iq"],
-    ["VEXcode IQ (web)", "https://codeiq.vex.com"],
+    ["VEXcode IQ (web)", "https://codeiq.vex.com", true],
     ["VEXcode IQ command reference", "https://api.vex.com/iq2/home/index.html"],
     ["Virtual Driving Skills practice", "https://library.globalrobotics.org/hc/en-us/articles/51569257994004"],
   ]],
@@ -201,7 +203,7 @@ function drawBlocks(root) {
 
 function buildRefs() {
   document.getElementById("refs-list").innerHTML = REFS.map(([group, links]) => `<h3>${esc(group)}</h3>` +
-    links.map(([label, url]) => `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a>`).join("")).join("");
+    links.map(([label, url, key]) => `<a href="${esc(url)}" target="_blank" rel="noopener"${key ? ' class="key"' : ""}>${key ? '<span class="star">★</span>' : ""}${esc(label)}</a>`).join("")).join("");
   // Open on wide screens; on phones it starts folded so the term list stays near the top.
   document.getElementById("refs").open = window.matchMedia("(min-width: 701px)").matches;
 }
