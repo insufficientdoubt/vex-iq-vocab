@@ -35,6 +35,7 @@ then open http://localhost:8000/app/
 6. **Chinese translations:** official VEX Chinese terms first (store names for parts, VEXcode's Chinese interface for coding), then established community terms, literal translation last. Don't use the machine-translated Chinese on api.vex.com.
 7. **VEX IQ only.** Don't import VRC/V5 terms that don't apply.
    **Sources: VEX first.** Use VEX IQ materials (VEX Library, IQ STEM Labs, Hero Bot articles) for terms, grouping and wording, then VEX EXP/V5 articles when the idea carries over to IQ. A term VEX doesn't cover may come from a community source (e.g. Purdue SIGBots wiki), but only as level 3 with tags `advanced; community-sourced`.
+   **Competition terms come from VEX's competition** (the VEX IQ Robotics Competition, run by the Global Robotics & Science Foundation). Never use RECF material: since 2026 RECF runs a separate competition with different names and rules.
 8. **No student data** — this repo is public.
 9. Run `python3 validate.py` before committing (needs `pip install pyyaml`). GitHub runs it on every push too.
 10. `blocks` uses scratchblocks syntax, copied from VEX's API reference where possible.

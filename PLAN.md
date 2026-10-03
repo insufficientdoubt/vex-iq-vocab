@@ -1,6 +1,6 @@
 # VEX IQ Vocab — Project Plan
 
-Status: **seeding** — Building (77), Coding (107) and Engineering (72) drafted, plus a first set of EDP (12) and COMP (16) terms; all `status=draft`. SEASON and sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
+Status: **seeding** — Building (77), Coding (107) and Engineering (72) drafted, plus EDP (41) and COMP (65) from VEX's competition sources (GRSF library); all `status=draft`. SEASON and sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
 
 This file records decisions, the spec, and how the work was done (§12). Update it when a decision changes. **New AI session? Read §12 first.**
 
@@ -149,7 +149,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
   - [x] CODE — 107 terms (Blocks + Python), VEXcode Chinese, all with reference links; every term has a block drawing or an image
   - [x] ENG — 72 terms from VEX IQ sources (6 community-sourced, level 3), all with images.
   - [x] `stem_lab` — 80 terms across all domains mapped to the STEM Lab lesson that first teaches them (from every lesson's Lesson Summary PDF).
-  - [ ] EDP · COMP — first terms added as they came up in the VEX IQ sources (12 EDP, 13 COMP, all with images). **Still to do:** evaluate both domains as a whole and add what's missing from other sources (game manual, RECF judge guide and notebook rubric, Competition 101 STEM Labs…).
+  - [ ] EDP · COMP — 41 EDP, 65 COMP. EDP-013–041 and COMP-017–065 added 2026-10-03 from the GRSF library (glossary, award descriptions, event types, qualifying awards, notebook/interview rubrics, Student-Centered Policy, Design Convergence). Awards carry a `qualifying` tag and their spot threshold; the full order is in `sources/vex-iq-qualifying-awards-2026-27.csv` (update each season). New COMP subdomain `tiers` (event levels). **Still to do:** images for the 78 new terms; match rules from the Level Up game manual (link.vex.com needs the browser); `stem_lab` for the new terms.
   - [ ] SEASON
 - [ ] **4. Seed frames** — starter set across all situations.
 - [ ] **5. Chinese review** — check `zh` against official VEX Chinese materials; promote to `reviewed`/`verified`.
@@ -167,6 +167,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 | [VEX Library](https://kb.vex.com/hc/en-us) | BLD and ENG `ref_url`s; ENG terms and grouping (IQ › Mechanical: drivetrains, assemblies, arms, claws, gears/sprockets, wheels, motor groups; Competition Robots: Hero Bots). Search with `/api/v2/help_center/articles/search.json?query=…` from a browser on kb.vex.com; list a whole category with `/api/v2/help_center/en-us/categories/<id>/articles.json` (IQ = 360002324792). |
 | [VEX IQ STEM Labs](https://education.vex.com/stemlabs/iq) | ENG/EDP/COMP definitions. The KB article "IQ (2nd gen) STEM Lab Unit Concepts" maps every unit to its concepts. Each lesson's *Learn* page links a **Lesson Summary PDF** on content.vexrobotics.com with VEX's kid-level definitions (force, traction, gear train, mechanical advantage, center of mass, manipulator, intake, claw, scouting, path planning, autonomous…); the PDFs download fine with curl. education.vex.com itself needs the browser. Competition 101 (VEX IQ Level Up) has the event vocabulary. |
 | [VEX IQ Cumulative Pacing Guide](https://docs.google.com/spreadsheets/d/1QmNfN8X9Trpr8UhcZAGPa-akSaPDrFxsoluerQ0AMQk) | STEM Lab unit order for `stem_lab` → `sources/iq-stem-labs.csv`. A Google Sheet, so each tab exports with `/export?format=csv&gid=<tab id>` (curl works). The link.vex.com download links are blocked to scripts. |
+| [Global Robotics & Science Foundation library](https://library.globalrobotics.org/hc/en-us) | COMP/EDP: event types, awards, qualifying spots, judging, notebook and interview rubrics. GRSF runs the VEX IQ Robotics Competition since VEX split from RECF (May 2026). Key articles: Glossary of Terms, Award Descriptions, Which Awards Qualify Teams at VEX IQ Events, Types of VEX Robotics Competition Events. Zendesk API works with curl: `/api/v2/help_center/en-us/articles.json`. Rubric PDFs (link.vex.com) need the browser. **Don't use RECF sources** (roboticseducation.org, recf.org, games.recf.org): RECF now runs a separate, parallel competition (RECF Engage/Achieve) with different names and rules. |
 | [Purdue SIGBots wiki](https://wiki.purduesigbots.com) | Community source, only for level-3 terms VEX doesn't cover (bang-bang, PID, proportional control, setpoint, error, odometry). curl works. Alternative for PID: George Gillard, *An Introduction to PID Controllers*. |
 | [vexstore.cn IQ products](https://www.vexstore.cn/iq?vex_classroom=IQ) | Official Chinese part names → `sources/vexstore-cn-iq-parts.csv`. Pulled from the store's public search index (Algolia), which returns every IQ product with its Chinese name and pack contents in one request. Re-pull the same way when the catalog changes. |
 
@@ -177,7 +178,8 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - Current season game name and elements (for SEASON domain).
 - Who reviews the Chinese?
 - Content license (e.g. CC BY-NC-SA 4.0) — matters if other teachers reuse it.
-- EDP and COMP: evaluate holistically before calling them done — the current terms are only the ones that came up in the VEX IQ engineering sources. Check against the game manual, RECF judging materials and the notebook rubric.
+- EDP and COMP: evaluate holistically before calling them done — the current terms are only the ones that came up in the VEX IQ engineering sources. Check against the game manual and the GRSF library (VEX's competition foundation): glossary, award descriptions, notebook and interview rubrics.
+- COMP/EDP Chinese for the new terms (award names, event tiers, notebook terms) is unofficial: check against VEX China event materials, e.g. 全能奖 (Excellence), 思维奖 (Think), 惊艳奖 (Amaze), 选拔赛 (qualifying event), 锦标赛 (Championship Event), 排位赛 (qualification match), 晋级名额 (qualifying spot).
 - ENG Chinese is all unofficial (no VEX Chinese source found for mechanism names): check especially 操作机构, 被动/主动机构, 搜集器 (intake, from the store's Intake Flap name), 双反四连杆, 链条连杆臂, 级联升降, 剪叉升降, 投石器, 支撑面积 (footprint), 手动控制 / 自动, 坦克模式 / 街机模式, 开关控制. EDP/COMP: 操作手 (driver), 维修区 (pit), 队号牌, 团队协作挑战赛, 联盟队友, 评委.
 - Teacher review still needed (all `draft`): especially the Chinese not taken from an official source — BLD: 孔距 (pitch), 智能端口, 凸轮, 凸轮从动件, 齿数, 接口; CODE: block-type names (堆叠积木, 帽子积木, C形积木, 报告积木) and the six `concepts` terms. Also level assignments.
 - Unverified fact claims in drafts: "continuous racks can be joined end to end" (BLD-075); IQ and V5 share the same square shaft size (SKU 276-1149 listed for `shaft`).
@@ -209,6 +211,6 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - `git push` occasionally fails with an SSL error from China; just retry.
 
 **Next steps**
-1. EDP and COMP: holistic review and fill-in from other sources (game manual, RECF judging, notebook rubric). SEASON (current game; `season` column required).
+1. EDP and COMP: holistic review and fill-in from VEX sources (game manual, GRSF library). SEASON (current game; `season` column required).
 2. Sentence frames (`data/frames.csv`), including respectful referee questions and judge-interview frames.
 3. Generators: Kahoot import, flashcards, handouts (reference = with Chinese, review = without).

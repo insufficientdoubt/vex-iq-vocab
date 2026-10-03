@@ -40,7 +40,7 @@ vocab:
     CODE:   [basics, drivetrain, motion, sensing, vision, controller, screen-console, events, control, operators, variables, functions, python, concepts]
     ENG:    [drivetrains, manipulators, power-transfer, forces, control-techniques]
     EDP:    [process, notebook, interview]
-    COMP:   [events, roles, matches, rules, awards]
+    COMP:   [tiers, events, roles, matches, rules, awards]
     SEASON: [game-elements, scoring, field]
 
 frames:
