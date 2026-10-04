@@ -2590,6 +2590,82 @@ def how_you_worked_with_others():
     return im
 
 
+# ---- structure and chassis styles ----
+
+def rigidity():
+    im, d = canvas()
+    for x0 in (120, 680):  # two supports each
+        for x in (x0, x0 + 400):
+            d.polygon([(x - 40, 760), (x + 40, 760), (x, 690)], fill=DARK)
+    pts = [(120 + i * 20, 690 + 120 * math.sin(math.pi * i / 20)) for i in range(21)]  # sagging single beam
+    d.line(pts, fill="#868e96", width=34, joint="curve")
+    d.line(pts, fill=EDGE, width=4)
+    beam(d, 660, 600, 9, 1, 50)  # layered beam stays straight
+    beam(d, 670, 640, 9, 1, 50)
+    for x in (320, 880):
+        d.rectangle((x - 60, 480, x + 60, 580), fill="#495057", outline=EDGE, width=5)
+        arrow(d, x, 400, x, 470, "#e03131", 12, 40)
+    cross(d, 320, 950, 55)
+    check(d, 880, 950, 70)
+    return im
+
+
+def layering():
+    im, d = canvas()
+    beam(d, 170, 420, 12, 1, 70, "#adb5bd")
+    beam(d, 240, 470, 10, 1, 70, "#74c0fc")
+    for x in (310, 590, 870):
+        d.ellipse((x - 26, 480, x + 26, 532), fill="#1b1f24")
+    arrow(d, 600, 760, 600, 620, ORANGE, 12, 40)
+    d.rectangle((300, 820, 900, 860), fill="#adb5bd", outline=EDGE, width=4)  # side view: two layers
+    d.rectangle((300, 860, 900, 900), fill="#74c0fc", outline=EDGE, width=4)
+    return im
+
+
+def boxed_beam():
+    im, d = canvas()
+    shapes = {  # end views made of beam cross-sections (x0, y0, x1, y1)
+        "I": [(80, 300, 340, 340), (190, 340, 230, 560), (80, 560, 340, 600)],
+        "C": [(470, 300, 730, 340), (470, 340, 510, 560), (470, 560, 730, 600)],
+        "T": [(860, 300, 1120, 340), (970, 340, 1010, 600)],
+    }
+    for parts in shapes.values():
+        for box in parts:
+            d.rectangle(box, fill="#adb5bd", outline=EDGE, width=5)
+    for x, y in ((210, 340), (210, 560), (490, 340), (490, 560), (990, 340)):
+        d.rectangle((x - 22, y - 22, x + 22, y + 22), fill="#1c7ed6")
+    beam(d, 150, 780, 13, 1, 70, "#adb5bd")  # side view of the long beam
+    d.rectangle((150, 850, 1060, 880), fill="#868e96", outline=EDGE, width=4)
+    return im
+
+
+def ladder_chassis():
+    im, d = canvas()
+    for x in (330, 870):  # rails
+        d.rounded_rectangle((x - 40, 180, x + 40, 1020), radius=16, fill="#adb5bd", outline=EDGE, width=6)
+    for y in (260, 600, 940):  # rungs
+        d.rectangle((370, y - 35, 830, y + 35), fill="#ced4da", outline=EDGE, width=6)
+    for x in (230, 970):
+        for y in (330, 870):
+            d.rounded_rectangle((x - 45, y - 110, x + 45, y + 110), radius=20, fill=DARK)
+    return im
+
+
+def sandwich_chassis():
+    im, d = canvas()
+    for x in (300, 860):  # tall side walls, seen from the front
+        d.rectangle((x - 30, 200, x + 30, 980), fill="#4dabf7", outline=EDGE, width=6)
+        for y in range(260, 960, 80):
+            d.ellipse((x - 12, y - 12, x + 12, y + 12), fill="white", outline=EDGE, width=3)
+    for y in (420, 640, 860):  # shafts held at both ends
+        d.line((330, y, 830, y), fill=DARK, width=14)
+    d.rounded_rectangle((420, 360, 740, 480), radius=20, fill="#adb5bd", outline=EDGE, width=6)  # mechanism
+    d.ellipse((480, 560, 680, 720), fill="#ced4da", outline=EDGE, width=6)  # gear
+    for x in (360, 800):
+        d.rounded_rectangle((x - 30, 820, x + 30, 1020), radius=14, fill=DARK)  # wheels inside the walls
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
@@ -2783,6 +2859,11 @@ DIAGRAMS = {
     "evidence": evidence,
     "Explain Your Learning": explain_your_learning,
     "How You Worked With Others": how_you_worked_with_others,
+    "rigidity": rigidity,
+    "layering": layering,
+    "boxed beam": boxed_beam,
+    "ladder chassis": ladder_chassis,
+    "sandwich chassis": sandwich_chassis,
 }
 
 

@@ -38,7 +38,7 @@ vocab:
   domains:
     BLD:    [general, electronics, specialty, shafts, connectors, pins-standoffs, wheels, beams-plates, gears, sprockets-chain, cams, linear-motion, pneumatics]
     CODE:   [basics, drivetrain, motion, sensing, vision, controller, screen-console, events, control, operators, variables, functions, python, concepts]
-    ENG:    [drivetrains, manipulators, power-transfer, forces, control-techniques]
+    ENG:    [drivetrains, structure, manipulators, power-transfer, forces, control-techniques]
     EDP:    [process, notebook, interview]
     COMP:   [tiers, events, roles, matches, rules, awards]
     SEASON: [game-elements, scoring, field]
