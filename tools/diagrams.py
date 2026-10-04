@@ -2652,17 +2652,26 @@ def ladder_chassis():
 
 
 def sandwich_chassis():
+    """Top view: two solid side plates (seen edge-on), braced at the corners, with an arm reaching out the front."""
     im, d = canvas()
-    for x in (300, 860):  # tall side walls, seen from the front
-        d.rectangle((x - 30, 200, x + 30, 980), fill="#4dabf7", outline=EDGE, width=6)
-        for y in range(260, 960, 80):
-            d.ellipse((x - 12, y - 12, x + 12, y + 12), fill="white", outline=EDGE, width=3)
-    for y in (420, 640, 860):  # shafts held at both ends
-        d.line((330, y, 830, y), fill=DARK, width=14)
-    d.rounded_rectangle((420, 360, 740, 480), radius=20, fill="#adb5bd", outline=EDGE, width=6)  # mechanism
-    d.ellipse((480, 560, 680, 720), fill="#ced4da", outline=EDGE, width=6)  # gear
-    for x in (360, 800):
-        d.rounded_rectangle((x - 30, 820, x + 30, 1020), radius=14, fill=DARK)  # wheels inside the walls
+    L, R, T, B = 280, 920, 470, 1110          # wall positions and front/back ends
+    for x in (L, R):
+        d.rectangle((x - 28, T, x + 28, B), fill="#4dabf7", outline=EDGE, width=6)
+    for y, sy in ((T + 14, 1), (B - 14, -1)):  # corner bracing: dotted links tie the walls into a box
+        dashed(d, L + 28, y, R - 28, y, ORANGE, 12, 24)
+        for x, sx in ((L + 28, 1), (R - 28, -1)):
+            dashed(d, x, y + sy * 110, x + sx * 130, y, ORANGE, 12, 20)
+    for y in (680, 930):                       # axles held by both walls, wheels just inside
+        d.line((L + 28, y, R - 28, y), fill=DARK, width=12)
+        for x in (L + 75, R - 75):
+            d.rounded_rectangle((x - 32, y - 80, x + 32, y + 80), radius=14, fill=DARK)
+    d.rounded_rectangle((470, 740, 730, 870), radius=16, fill="#adb5bd", outline=EDGE, width=6)  # arm base / motor
+    d.line((L + 28, 805, 470, 805), fill=DARK, width=12)
+    d.line((730, 805, R - 28, 805), fill=DARK, width=12)
+    d.rounded_rectangle((565, 210, 635, 790), radius=14, fill="#ced4da", outline=EDGE, width=6)  # arm out the front
+    d.rounded_rectangle((470, 170, 730, 230), radius=12, fill="#ced4da", outline=EDGE, width=6)  # claw
+    for x in (480, 720):
+        d.rounded_rectangle((x - 22, 70, x + 22, 200), radius=12, fill="#ffa94d", outline=EDGE, width=5)
     return im
 
 
