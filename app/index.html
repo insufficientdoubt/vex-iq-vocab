@@ -44,6 +44,11 @@
   #refs a { display: block; padding: 4px 10px; font-size: 13px; }
   #refs a::after { content: " ↗"; color: var(--muted); font-size: 11px; }
   #refs a.key { font-weight: 600; }
+  nav .sub-zh { display: block; font-size: 11.5px; font-weight: 400; color: var(--muted); line-height: 1.25; }
+  .hide-zh nav .sub-zh, .hide-zh #refs .zh-text { display: none; }
+  #refs h3 .zh-text { text-transform: none; letter-spacing: 0; margin-left: 4px; }
+  #refs .sum-zh { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 4px; }
+  nav a { align-items: flex-start; }
   #refs .star { color: var(--ref-head); margin-right: 3px; }
   main { padding: 16px; overflow-y: auto; }
   main h2 { margin: 0 0 12px; font-size: 18px; }
@@ -86,6 +91,7 @@
     #nav { display: flex; flex-wrap: wrap; gap: 4px; }
     #nav a { white-space: nowrap; margin: 0; gap: 6px; background: var(--chip); }
     #refs { margin-top: 8px; }
+    #nav .sub-zh { display: inline; margin-left: 4px; }
     nav a.domain::before { display: none; }
     nav .subs { flex-basis: 100%; display: flex; gap: 4px; overflow-x: auto; padding-top: 2px; }
     nav a.sub { padding-left: 10px; }
@@ -100,7 +106,7 @@
   <label><input type="checkbox" id="zh" checked> 中文</label>
 </header>
 <div class="layout">
-  <nav><div id="nav"></div><details id="refs"><summary>Quick references</summary><div id="refs-list"></div></details></nav>
+  <nav><div id="nav"></div><details id="refs"><summary>Quick references <span class="zh-text sum-zh">快速参考</span></summary><div id="refs-list"></div></details></nav>
   <main id="main"></main>
 </div>
 <script src="vendor/scratchblocks.min.js"></script>
@@ -110,28 +116,28 @@ const DATA = "../data/vocab.csv", IMAGES = "../images/";
 const DOMAIN_NAMES = { BLD: "Building", CODE: "Coding", ENG: "Engineering", EDP: "Design process",
                        COMP: "Competition", SEASON: "Season game" };
 
-// Quick references in the sidebar: VEX sources only. A third value of true marks a key link (starred). Update the season-specific links each season.
+// Quick references in the sidebar: VEX sources only. Each link is [English, 中文, url, key]; key = true stars it. Update the season-specific links each season.
 const REFS = [
-  ["Competition", [
-    ["Game manual (Level Up)", "https://link.vex.com/docs/26-27/viqrc/game-manual", true],
-    ["Official Q&A (rule answers)", "https://events.vex.com/VIQRC/2026-2027/QA"],
-    ["Hero Bot build instructions", "https://library.globalrobotics.org/hc/en-us/articles/50816795175700"],
-    ["Inspection checklist", "https://library.globalrobotics.org/hc/en-us/articles/51133522040596"],
-    ["Competition day guide", "https://library.globalrobotics.org/hc/en-us/articles/52646217682452"],
-    ["Find events and results", "https://events.vex.com"],
+  ["Competition", "比赛", [
+    ["Game manual (Level Up)", "比赛手册", "https://link.vex.com/docs/26-27/viqrc/game-manual", true],
+    ["Official Q&A (rule answers)", "官方问答（规则解答）", "https://events.vex.com/VIQRC/2026-2027/QA"],
+    ["Hero Bot build instructions", "英雄机器人搭建说明", "https://library.globalrobotics.org/hc/en-us/articles/50816795175700"],
+    ["Inspection checklist", "检查清单", "https://library.globalrobotics.org/hc/en-us/articles/51133522040596"],
+    ["Competition day guide", "比赛日指南", "https://library.globalrobotics.org/hc/en-us/articles/52646217682452"],
+    ["Find events and results", "查找赛事和成绩", "https://events.vex.com"],
   ]],
-  ["Notebook & judging", [
-    ["Engineering notebook basics", "https://library.globalrobotics.org/hc/en-us/articles/52987181366932", true],
-    ["Notebook rubric (student version)", "https://link.vex.com/docs/global/engineering-notebook-rubric-student-friendly"],
-    ["Interview rubric (student version)", "https://link.vex.com/docs/global/team-interview-rubric-student-friendly"],
-    ["Student-Centered Policy", "https://library.globalrobotics.org/hc/en-us/articles/51372675292820"],
+  ["Notebook & judging", "工程笔记与评审", [
+    ["Engineering notebook basics", "工程笔记基础", "https://library.globalrobotics.org/hc/en-us/articles/52987181366932", true],
+    ["Notebook rubric (student version)", "笔记评分表（学生版）", "https://link.vex.com/docs/global/engineering-notebook-rubric-student-friendly"],
+    ["Interview rubric (student version)", "面试评分表（学生版）", "https://link.vex.com/docs/global/team-interview-rubric-student-friendly"],
+    ["Student-Centered Policy", "以学生为中心政策", "https://library.globalrobotics.org/hc/en-us/articles/51372675292820", true],
   ]],
-  ["Learn & code", [
-    ["VEX Library: VEX IQ", "https://kb.vex.com/hc/en-us/categories/360002324792"],
-    ["VEX IQ STEM Labs", "https://education.vex.com/stemlabs/iq"],
-    ["VEXcode IQ (web)", "https://codeiq.vex.com", true],
-    ["VEXcode IQ command reference", "https://api.vex.com/iq2/home/index.html"],
-    ["Virtual Driving Skills practice", "https://library.globalrobotics.org/hc/en-us/articles/51569257994004"],
+  ["Learn & code", "学习与编程", [
+    ["VEX Library: VEX IQ", "VEX 知识库：VEX IQ", "https://kb.vex.com/hc/en-us/categories/360002324792"],
+    ["VEX IQ STEM Labs", "VEX IQ STEM 实验室", "https://education.vex.com/stemlabs/iq"],
+    ["VEXcode IQ (web)", "VEXcode IQ（网页版）", "https://codeiq.vex.com", true],
+    ["VEXcode IQ command reference", "VEXcode IQ 指令参考", "https://api.vex.com/iq2/home/index.html"],
+    ["Virtual Driving Skills practice", "虚拟手动技能赛练习", "https://library.globalrobotics.org/hc/en-us/articles/51569257994004"],
   ]],
 ];
 
@@ -157,6 +163,17 @@ function parseCSV(text) {
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const list = s => s.split(";").map(x => x.trim()).filter(Boolean);
+const DOMAIN_ZH = { BLD: "搭建", CODE: "编程", ENG: "工程", EDP: "设计流程", COMP: "比赛", SEASON: "本赛季比赛" };
+const SUB_ZH = { general: "通用", electronics: "电子部件", specialty: "特殊件", shafts: "轴", connectors: "连接件",
+  "pins-standoffs": "销钉与撑柱", wheels: "轮子", "beams-plates": "梁与板", gears: "齿轮", "sprockets-chain": "链轮与链条",
+  cams: "凸轮", "linear-motion": "直线运动", pneumatics: "气动", basics: "基础", drivetrain: "驱动", motion: "运动",
+  sensing: "侦测", vision: "视觉", controller: "遥控器", "screen-console": "屏幕与控制台", events: "事件", control: "控制",
+  operators: "运算", variables: "变量", functions: "函数", python: "Python", concepts: "编程概念",
+  drivetrains: "底盘", manipulators: "操作机构", "power-transfer": "动力传递", forces: "力", "control-techniques": "控制技术",
+  process: "流程", notebook: "工程笔记", interview: "面试", tiers: "赛事级别", roles: "角色", matches: "比赛场次",
+  rules: "规则", awards: "奖项", "game-elements": "比赛道具", scoring: "计分", field: "场地" };
+// COMP "events" are event-day words, not VEXcode events.
+const subZh = (d, s) => d === "COMP" && s === "events" ? "赛事" : (SUB_ZH[s] || "");
 const SUB_NAMES = { "pins-standoffs": "Pins & Standoffs", "beams-plates": "Beams & Plates",
                     "sprockets-chain": "Sprockets & Chain", "screen-console": "Screen & Console",
                     "functions": "My Blocks & Functions" };
@@ -202,8 +219,8 @@ function drawBlocks(root) {
 }
 
 function buildRefs() {
-  document.getElementById("refs-list").innerHTML = REFS.map(([group, links]) => `<h3>${esc(group)}</h3>` +
-    links.map(([label, url, key]) => `<a href="${esc(url)}" target="_blank" rel="noopener"${key ? ' class="key"' : ""}>${key ? '<span class="star">★</span>' : ""}${esc(label)}</a>`).join("")).join("");
+  document.getElementById("refs-list").innerHTML = REFS.map(([group, gzh, links]) => `<h3>${esc(group)} <span class="zh-text">${esc(gzh)}</span></h3>` +
+    links.map(([label, zh, url, key]) => `<a href="${esc(url)}" target="_blank" rel="noopener"${key ? ' class="key"' : ""}>${key ? '<span class="star">★</span>' : ""}${esc(label)}<span class="sub-zh zh-text">${esc(zh)}</span></a>`).join("")).join("");
   // Open on wide screens; on phones it starts folded so the term list stays near the top.
   document.getElementById("refs").open = window.matchMedia("(min-width: 701px)").matches;
 }
@@ -211,16 +228,16 @@ function buildRefs() {
 function buildNav(active) {
   const tree = {};
   for (const r of rows) ((tree[r.domain] ??= {})[r.subdomain] ??= []).push(r);
-  let html = `<a href="#" class="${active === "" ? "active" : ""}">All <span class="count">${rows.length}</span></a>`;
+  let html = `<a href="#" class="${active === "" ? "active" : ""}"><span>All<span class="sub-zh zh-text">全部</span></span> <span class="count">${rows.length}</span></a>`;
   // Accordion: every domain is listed, but only the open one (the domain being viewed) shows its subdomains.
   const open = (active || "").split("/")[0];
   for (const [d, subs] of Object.entries(tree)) {
     const n = Object.values(subs).flat().length;
-    html += `<a href="#${d}" class="domain ${d === open ? "open" : ""} ${active === d ? "active" : ""}"><span>${esc(DOMAIN_NAMES[d] || d)}</span> <span class="count">${n}</span></a>`;
+    html += `<a href="#${d}" class="domain ${d === open ? "open" : ""} ${active === d ? "active" : ""}"><span>${esc(DOMAIN_NAMES[d] || d)}<span class="sub-zh zh-text">${esc(DOMAIN_ZH[d] || "")}</span></span> <span class="count">${n}</span></a>`;
     if (d !== open) continue;
     html += `<div class="subs">`;
     for (const [s, items] of Object.entries(subs))
-      html += `<a href="#${d}/${s}" class="sub ${active === d + "/" + s ? "active" : ""}">${esc(titleSub(s))} <span class="count">${items.length}</span></a>`;
+      html += `<a href="#${d}/${s}" class="sub ${active === d + "/" + s ? "active" : ""}"><span>${esc(titleSub(s))}<span class="sub-zh zh-text">${esc(subZh(d, s))}</span></span> <span class="count">${items.length}</span></a>`;
     html += `</div>`;
   }
   document.getElementById("nav").innerHTML = html;
