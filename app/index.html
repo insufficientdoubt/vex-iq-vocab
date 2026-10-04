@@ -42,7 +42,7 @@
   #refs summary:hover { background: var(--chip); }
   #refs h3 { margin: 12px 10px 2px; font-size: 11px; font-weight: 700; color: var(--ref-head); text-transform: uppercase; letter-spacing: .04em; }
   #refs a { display: block; padding: 4px 10px; font-size: 13px; }
-  #refs a::after { content: " ↗"; color: var(--muted); font-size: 11px; }
+  #refs .ext { color: var(--muted); font-size: 11px; }
   #refs a.key { font-weight: 600; }
   nav .sub-zh { display: block; font-size: 11.5px; font-weight: 400; color: var(--muted); line-height: 1.25; }
   .hide-zh nav .sub-zh, .hide-zh #refs .zh-text { display: none; }
@@ -220,7 +220,7 @@ function drawBlocks(root) {
 
 function buildRefs() {
   document.getElementById("refs-list").innerHTML = REFS.map(([group, gzh, links]) => `<h3>${esc(group)} <span class="zh-text">${esc(gzh)}</span></h3>` +
-    links.map(([label, zh, url, key]) => `<a href="${esc(url)}" target="_blank" rel="noopener"${key ? ' class="key"' : ""}>${key ? '<span class="star">★</span>' : ""}${esc(label)}<span class="sub-zh zh-text">${esc(zh)}</span></a>`).join("")).join("");
+    links.map(([label, zh, url, key]) => `<a href="${esc(url)}" target="_blank" rel="noopener"${key ? ' class="key"' : ""}>${key ? '<span class="star">★</span>' : ""}${esc(label)} <span class="ext">↗</span><span class="sub-zh zh-text">${esc(zh)}</span></a>`).join("")).join("");
   // Open on wide screens; on phones it starts folded so the term list stays near the top.
   document.getElementById("refs").open = window.matchMedia("(min-width: 701px)").matches;
 }
