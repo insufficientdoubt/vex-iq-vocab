@@ -6,11 +6,11 @@ Images © VEX Robotics / Innovation First, Inc., used for non-commercial classro
 |---|---|
 | BLD images except those below | Cropped from the [VEX IQ Competition Kit poster (PDF)](https://content.vexrobotics.com/vexpro/pdf/IQ-Competition-Kit-111521.pdf) |
 | BLD-010 (arrow added), BLD-046, pneumatics (BLD-067 – BLD-073), BLD-074 | Product photos from [vexstore.cn](https://www.vexstore.cn/iq?vex_classroom=IQ) |
-| BLD-001 – BLD-005 | Diagrams drawn by `tools/diagrams.py` (edit the script and re-run to change them) |
+| BLD-001 – BLD-005, BLD-026 | Diagrams drawn by `tools/diagrams.py` (edit the script and re-run to change them) |
 | CODE-041, CODE-074, CODE-089, CODE-095, CODE-096, CODE-098 – CODE-100, CODE-102 – CODE-104 | Drawn by `tools/diagrams.py` (CODE-041 combines the BLD sensor images) |
 | CODE-003, 004, 011, 013, 053 – 055, 061, 094, 106 | Screenshots from VEX Library articles (VEXcode IQ toolbar, Devices menu, Print Console, AI Vision Utility, error prompt) |
 | CODE-107 | VEXcode IQ screenshot (Slot picker), taken by the teacher |
-| BLD-081 – BLD-085 | VEX IQ Legal Parts List (3D renders of 228-2500-154, -1925, -1664, -1665, -1689, -1660), © VEX Robotics |
+| BLD-081 – BLD-086 | VEX IQ Legal Parts List (3D renders of 228-2500-154, -1925, -1664, -1665, -1689, -1660, -350), © VEX Robotics |
 | BLD-079, BLD-080 | Photo of the teacher's own parts (background removed) |
 | CODE-001 | VEXcode IQ screenshot (example project with the Devices menu), supplied by the teacher |
 | ENG-001, 003, 004, 006, 007, 008, 015 – 017, 021, 024, 028, 031, 036, 040, 042, 049 – 051, 062 – 064 | VEX Library articles: Selecting a VEX IQ Drivetrain, Selecting a VEX IQ Assembly, Building VEX IQ Robot Arms, Using VEX IQ Plastic Gears, Chain & Sprockets, and Pulleys, Building with VEX IQ Motor Groups, and the Hero Bot articles (Huey, Swish). Black/green backgrounds replaced with white. |

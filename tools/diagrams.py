@@ -2698,6 +2698,33 @@ def chain_wrap():
     return im
 
 
+def ratchet_and_pawl():
+    """Ratchet wheel with the pawl caught against a tooth: turns one way (green), blocked the other (red)."""
+    im, d = canvas()
+    cx, cy, outer, root, n = 470, 640, 320, 250, 16
+    step = 2 * math.pi / n
+    face = math.radians(-64)                      # the radial face the pawl is resting against
+    pts = []
+    for i in range(n):
+        a = face + i * step
+        pts += [(cx + root * math.cos(a), cy + root * math.sin(a)), (cx + outer * math.cos(a), cy + outer * math.sin(a))]
+    d.polygon(pts, fill="#94d82d", outline=EDGE, width=6)
+    d.ellipse((cx - 90, cy - 90, cx + 90, cy + 90), outline=EDGE, width=6)
+    d.rectangle((cx - 34, cy - 34, cx + 34, cy + 34), fill="white", outline=EDGE, width=6)
+    tip_a = face + math.radians(5)                # pawl tip sits just past the face, down in the gap
+    tip = (cx + (root + 20) * math.cos(tip_a), cy + (root + 20) * math.sin(tip_a))
+    pivot = (1030, 200)
+    d.line((pivot, tip), fill="#868e96", width=70)          # pawl lever
+    d.line((pivot, tip), fill=EDGE, width=4)
+    d.ellipse((pivot[0] - 52, pivot[1] - 52, pivot[0] + 52, pivot[1] + 52), fill="#868e96", outline=EDGE, width=6)
+    d.ellipse((pivot[0] - 18, pivot[1] - 18, pivot[0] + 18, pivot[1] + 18), fill="white", outline=EDGE, width=4)
+    spin(d, cx, cy, outer + 70, 215, 160, GREEN, 18, 60)    # turning this way lifts the pawl over the teeth
+    spin(d, cx, cy, outer + 70, 10, 65, "#e03131", 18, 60)  # this way the pawl catches
+    ex, ey = cx + (outer + 170) * math.cos(math.radians(38)), cy + (outer + 170) * math.sin(math.radians(38))
+    cross(d, ex, ey, 45)
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
@@ -2897,6 +2924,7 @@ DIAGRAMS = {
     "ladder chassis": ladder_chassis,
     "sandwich chassis": sandwich_chassis,
     "chain wrap": chain_wrap,
+    "ratchet and pawl": ratchet_and_pawl,
 }
 
 
