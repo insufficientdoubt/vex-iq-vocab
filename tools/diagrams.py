@@ -2756,19 +2756,22 @@ def ratchet_and_pawl():
 
 
 def coopertition():
-    """Two teams helping each other at the pits: one hands the other a part."""
+    """One shared alliance score lifts both partners up the rankings."""
     im, d = canvas()
-    person(d, 330, 1060, 1.45, "#4fb3e3")
-    person(d, 870, 1060, 1.45, "#ffa94d")
-    plate(d, 330, 260, "1234A", 300, 100, "#1c7ed6")
-    plate(d, 870, 260, "5678B", 300, 100, "#e03131")
-    d.line((420, 700, 560, 640), fill="#4fb3e3", width=40)   # arms reaching to each other
-    d.line((780, 700, 640, 640), fill="#ffa94d", width=40)
-    beam(d, 500, 590, 4, 1, 50, "#adb5bd")                   # the shared part
-    k = 3.0
-    pts = [(600 + k * 16 * math.sin(t) ** 3, 470 - k * (13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t)))
-           for t in [i * 2 * math.pi / 120 for i in range(120)]]
-    d.polygon(pts, fill="#e03131")
+    mini_robot(d, 170, 520, 0.85, "#4fb3e3")
+    mini_robot(d, 490, 520, 0.85, "#f3b27a")
+    text(d, (330, 440), "+", 90, True, DARK)
+    scoreboard(d, 150, 600, 510, 800, "36")
+    for i, (team, c, hi) in enumerate([("1234A", "#4fb3e3", True), ("9012D", "#e9ecef", False),
+                                        ("5678B", "#f3b27a", True), ("2468C", "#e9ecef", False)]):
+        y = 230 + i * 190
+        d.rounded_rectangle((640, y, 1100, y + 150), radius=18, fill=c, outline=EDGE, width=6)
+        text(d, (700, y + 75), str(i + 1), 70, True, DARK)
+        text(d, (920, y + 75), team, 64, True, DARK)
+        if hi:
+            arrow(d, 1150, y + 140, 1150, y + 10, GREEN, 14, 44)
+    arrow(d, 520, 700, 620, 330, GREEN, 10, 36)
+    arrow(d, 520, 720, 620, 700, GREEN, 10, 36)
     return im
 
 
