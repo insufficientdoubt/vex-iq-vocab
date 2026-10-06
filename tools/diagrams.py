@@ -2755,6 +2755,23 @@ def ratchet_and_pawl():
     return im
 
 
+def coopertition():
+    """Two teams helping each other at the pits: one hands the other a part."""
+    im, d = canvas()
+    person(d, 330, 1060, 1.45, "#4fb3e3")
+    person(d, 870, 1060, 1.45, "#ffa94d")
+    plate(d, 330, 260, "1234A", 300, 100, "#1c7ed6")
+    plate(d, 870, 260, "5678B", 300, 100, "#e03131")
+    d.line((420, 700, 560, 640), fill="#4fb3e3", width=40)   # arms reaching to each other
+    d.line((780, 700, 640, 640), fill="#ffa94d", width=40)
+    beam(d, 500, 590, 4, 1, 50, "#adb5bd")                   # the shared part
+    k = 3.0
+    pts = [(600 + k * 16 * math.sin(t) ** 3, 470 - k * (13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t)))
+           for t in [i * 2 * math.pi / 120 for i in range(120)]]
+    d.polygon(pts, fill="#e03131")
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
@@ -2955,6 +2972,7 @@ DIAGRAMS = {
     "sandwich chassis": sandwich_chassis,
     "chain wrap": chain_wrap,
     "ratchet and pawl": ratchet_and_pawl,
+    "coopertition": coopertition,
 }
 
 

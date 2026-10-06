@@ -179,7 +179,7 @@ VEX IQ note: Teamwork Challenge is **cooperative** (two teams working together),
 - Current season game name and elements (for SEASON domain).
 - Who reviews the Chinese?
 - Content license (e.g. CC BY-NC-SA 4.0) — matters if other teachers reuse it.
-- Classroom terms (tag `local`, no `ref_url`): in-school competition, boxed beam (I/C/T-beam technique), ladder chassis, sandwich chassis. VEX has no name for these; VEX's own nearby terms are layering (IQ Beams and Plates article) and box structure (V5 chassis articles).
+- Classroom terms (tag `local`, no `ref_url`): in-school competition, boxed beam (I/C/T-beam technique), ladder chassis, sandwich chassis, coopertition (a FIRST Robotics word; VEX says "cooperation and friendly competition"). VEX has no name for these; VEX's own nearby terms are layering (IQ Beams and Plates article) and box structure (V5 chassis articles).
 - EDP and COMP: evaluate holistically before calling them done — the current terms are only the ones that came up in the VEX IQ engineering sources. Check against the game manual and the GRSF library (VEX's competition foundation): glossary, award descriptions, notebook and interview rubrics.
 - COMP/EDP Chinese for the new terms (award names, event tiers, notebook terms) is unofficial: check against VEX China event materials, e.g. 全能奖 (Excellence), 思维奖 (Think), 惊艳奖 (Amaze), 选拔赛 (qualifying event), 锦标赛 (Championship Event), 排位赛 (qualification match), 晋级名额 (qualifying spot).
 - ENG Chinese is all unofficial (no VEX Chinese source found for mechanism names): check especially 操作机构, 被动/主动机构, 搜集器 (intake, from the store's Intake Flap name), 双反四连杆, 链条连杆臂, 级联升降, 剪叉升降, 投石器, 支撑面积 (footprint), 手动控制 / 自动, 坦克模式 / 街机模式, 开关控制. EDP/COMP: 操作手 (driver), 维修区 (pit), 队号牌, 团队协作挑战赛, 联盟队友, 评委.
