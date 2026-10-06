@@ -2713,11 +2713,41 @@ def ratchet_and_pawl():
     d.rectangle((cx - 34, cy - 34, cx + 34, cy + 34), fill="white", outline=EDGE, width=6)
     tip_a = face + math.radians(5)                # pawl tip sits just past the face, down in the gap
     tip = (cx + (root + 20) * math.cos(tip_a), cy + (root + 20) * math.sin(tip_a))
-    pivot = (1030, 200)
-    d.line((pivot, tip), fill="#868e96", width=70)          # pawl lever
-    d.line((pivot, tip), fill=EDGE, width=4)
-    d.ellipse((pivot[0] - 52, pivot[1] - 52, pivot[0] + 52, pivot[1] + 52), fill="#868e96", outline=EDGE, width=6)
-    d.ellipse((pivot[0] - 18, pivot[1] - 18, pivot[0] + 18, pivot[1] + 18), fill="white", outline=EDGE, width=4)
+    pivot = (1060, 190)
+    # VEX Short Low-Profile Pawl: flat bar with rounded end and a row of holes, bent into a pointed hook
+    ux, uy = tip[0] - pivot[0], tip[1] - pivot[1]
+    L = math.hypot(ux, uy); ux, uy = ux / L, uy / L
+    bend = math.radians(-38)                                  # the hook bends down toward the teeth
+    hx, hy = ux * math.cos(bend) - uy * math.sin(bend), ux * math.sin(bend) + uy * math.cos(bend)
+    elbow = (tip[0] - hx * 170, tip[1] - hy * 170)
+    W = 58                                                    # half the bar width
+    def side(p0, p1, w):
+        vx, vy = p1[0] - p0[0], p1[1] - p0[1]; n = math.hypot(vx, vy)
+        return (-vy / n * w, vx / n * w)
+    nx, ny = side(pivot, elbow, W)
+    gray = "#868e96"
+    d.polygon([(pivot[0] + nx, pivot[1] + ny), (elbow[0] + nx, elbow[1] + ny),
+               (elbow[0] - nx, elbow[1] - ny), (pivot[0] - nx, pivot[1] - ny)], fill=gray)
+    d.ellipse((pivot[0] - W, pivot[1] - W, pivot[0] + W, pivot[1] + W), fill=gray)
+    d.polygon([(elbow[0] + nx, elbow[1] + ny), tip, (elbow[0] - nx, elbow[1] - ny)], fill=gray)
+    # outline: redraw edges thinly so it reads as one part
+    for p0, p1 in [((pivot[0] + nx, pivot[1] + ny), (elbow[0] + nx, elbow[1] + ny)),
+                   ((pivot[0] - nx, pivot[1] - ny), (elbow[0] - nx, elbow[1] - ny)),
+                   ((elbow[0] + nx, elbow[1] + ny), tip), ((elbow[0] - nx, elbow[1] - ny), tip)]:
+        d.line((p0, p1), fill=EDGE, width=6)
+    d.arc((pivot[0] - W, pivot[1] - W, pivot[0] + W, pivot[1] + W), 0, 360, fill=EDGE, width=6)
+    seg = math.hypot(elbow[0] - pivot[0], elbow[1] - pivot[1])
+    k = 0
+    while k * 70 <= seg - 20:                                 # big holes on the axis, small ones in between, offset
+        t = k * 70 / seg
+        x, y = pivot[0] + (elbow[0] - pivot[0]) * t, pivot[1] + (elbow[1] - pivot[1]) * t
+        if k % 2 == 0:
+            d.ellipse((x - 27, y - 27, x + 27, y + 27), fill="white", outline=EDGE, width=5)
+        else:
+            for sgn in (1, -1):
+                ox, oy = nx / W * 32 * sgn, ny / W * 32 * sgn
+                d.ellipse((x + ox - 11, y + oy - 11, x + ox + 11, y + oy + 11), fill="white", outline=EDGE, width=4)
+        k += 1
     spin(d, cx, cy, outer + 70, 215, 160, GREEN, 18, 60)    # turning this way lifts the pawl over the teeth
     spin(d, cx, cy, outer + 70, 10, 65, "#e03131", 18, 60)  # this way the pawl catches
     ex, ey = cx + (outer + 170) * math.cos(math.radians(38)), cy + (outer + 170) * math.sin(math.radians(38))
