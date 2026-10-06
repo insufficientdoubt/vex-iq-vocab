@@ -23,6 +23,15 @@ python3 -m http.server 8000
 
 then open http://localhost:8000/app/
 
+## Printable PDF
+
+```
+python3 tools/print_pdf.py            # everything, A4, with Chinese
+python3 tools/print_pdf.py CODE --letter --no-zh
+```
+
+writes `build/vex-iq-vocab.pdf`: a contents page, then every term as a card with everything the app shows, grouped by domain and subdomain, easier levels first. Each card's `ref_url` is named by its source and page title, with a QR code. The names come from `sources/link-titles.csv`; **add a row there when you add a new `ref_url`** (the script warns if one is missing). Needs Google Chrome and `pip install pyyaml qrcode pymupdf pillow`.
+
 `app/lessons.html` is a teacher reference: the vocab grouped by the VEX IQ STEM Lab lesson that first teaches each term (`stem_lab` column), in VEX's suggested pacing order. It isn't linked from the student app.
 
 ## Rules for humans and AI tools
