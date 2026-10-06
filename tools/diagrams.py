@@ -2675,6 +2675,29 @@ def sandwich_chassis():
     return im
 
 
+def chain_wrap():
+    """Small driving sprocket and big driven sprocket joined by chain; the wrap on the small one is highlighted."""
+    im, d = canvas()
+    (x1, y1, r1), (x2, y2, r2) = (330, 760, 120), (820, 470, 250)
+    th = math.atan2(y2 - y1, x2 - x1)
+    al = math.acos((r1 - r2) / math.hypot(x2 - x1, y2 - y1))   # external tangent angle
+    R1, R2 = r1 + 26, r2 + 26                                  # chain runs just outside the teeth
+    pts = lambda cx, cy, r, a: (cx + r * math.cos(a), cy + r * math.sin(a))
+    gear(d, x1, y1, r1, 10, "#4dabf7")
+    gear(d, x2, y2, r2, 22, "#4dabf7")
+    for sgn in (1, -1):                                        # top and bottom chain runs
+        d.line((pts(x1, y1, R1, th + sgn * al), pts(x2, y2, R2, th + sgn * al)), fill=DARK, width=16)
+    big = math.degrees
+    d.arc((x2 - R2, y2 - R2, x2 + R2, y2 + R2), big(th - al), big(th + al), fill=DARK, width=16)   # around the big one
+    d.arc((x1 - R1, y1 - R1, x1 + R1, y1 + R1), big(th + al), big(th - al) + 360, fill=ORANGE, width=24)  # the wrap
+    for a in (th + al, th - al):                               # angle rays from the sprocket's center
+        dashed(d, x1, y1, *pts(x1, y1, R1, a), ORANGE, 8, 18)
+    mid = th + math.pi
+    tx, ty = pts(x1, y1, R1 + 120, mid)
+    text(d, (tx, ty), "120°+", 70, True, ORANGE)
+    return im
+
+
 DIAGRAMS = {
     "pitch": pitch,
     "hole count (1x8, 2x4…)": hole_count,
@@ -2873,6 +2896,7 @@ DIAGRAMS = {
     "boxed beam": boxed_beam,
     "ladder chassis": ladder_chassis,
     "sandwich chassis": sandwich_chassis,
+    "chain wrap": chain_wrap,
 }
 
 
