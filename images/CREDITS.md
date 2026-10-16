@@ -28,6 +28,7 @@ Images © VEX Robotics / Innovation First, Inc., used for non-commercial classro
 | COMP-015 | Flight case product photo from RoboSource.net (caption and banner cropped out) |
 | COMP-016 | Fastime stopwatch product photo |
 | BLD-076 | [VEX Library: Understanding Inertial Sensor Data from the VEX IQ (2nd gen) Brain](https://kb.vex.com/hc/en-us/articles/4409666542100-Understanding-Inertial-Sensor-Data-from-the-VEX-IQ-2nd-gen-Brain) |
+| BLD-087 | VEX IQ Competition Kit contents poster (VEX Robotics), screenshot supplied by the teacher |
 
 Own photos may replace these later; keep the same `<ID>.png` filename.
 
