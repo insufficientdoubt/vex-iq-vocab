@@ -2755,6 +2755,33 @@ def ratchet_and_pawl():
     return im
 
 
+def parallelogram():
+    """The shape (sides with the same marks are parallel), and the same shape in a 4-bar arm."""
+    im, d = canvas()
+
+    def marks(p, q, n, color=BLUE):
+        ux, uy = (q[0] - p[0]), (q[1] - p[1])
+        L = math.hypot(ux, uy)
+        ux, uy = ux / L, uy / L
+        for k in range(n):
+            mx, my = (p[0] + q[0]) / 2 + (k - (n - 1) / 2) * 34 * ux, (p[1] + q[1]) / 2 + (k - (n - 1) / 2) * 34 * uy
+            for side in (1, -1):
+                d.line((mx + 14 * ux, my + 14 * uy, mx - 14 * ux - side * 22 * uy, my - 14 * uy + side * 22 * ux), fill=color, width=9)
+
+    shape = [(200, 470), (760, 470), (960, 130), (400, 130)]
+    poly(d, shape, fill="#d7e8f7", outline=BLUE, width=12)
+    marks(shape[0], shape[1], 1)
+    marks(shape[3], shape[2], 1)
+    marks(shape[0], shape[3], 2)
+    marks(shape[1], shape[2], 2)
+    # a 4-bar arm: the two bars, the tower and the end piece make the same shape (dashed)
+    d.rectangle((150, 740, 230, 1120), fill="#8e949b", outline=EDGE, width=6)
+    (tx, ty), (bx, by) = linkage(d, (190, 800), 560, 20, gap=180)
+    for p, q in (((190, 800), (tx, ty)), ((tx, ty), (bx, by)), ((bx, by), (190, 980)), ((190, 980), (190, 800))):
+        dashed(d, p[0], p[1], q[0], q[1], BLUE, 6, 22)
+    return im
+
+
 def coopertition():
     """One shared alliance score lifts both partners up the rankings."""
     im, d = canvas()
@@ -2976,6 +3003,7 @@ DIAGRAMS = {
     "chain wrap": chain_wrap,
     "ratchet and pawl": ratchet_and_pawl,
     "coopertition": coopertition,
+    "parallelogram": parallelogram,
 }
 
 
