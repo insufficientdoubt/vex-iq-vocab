@@ -78,10 +78,11 @@
   const BASE = 32.5, GAP = 7, FLOOR = 1.5;        // chassis length, bar spacing, the claw's lower pin at the start (cm)
   const CHASSIS = [2, 6], WHEEL = 2;              // the chassis plate (bottom and top, cm), wheel radius
   const FINGER = 5.5, OUT_DR4B = 4;               // claw finger length; the DR4B's bracket holds the claw out in front of the tower
+  const GEARS = 3.81;                             // the DR4B's 1:1 gears: two 36-tooth gears, 3 pitch (3.81 cm) apart
   const MODES = {
     four: { hi: 75, about: "<b>4-bar:</b> one parallelogram. The claw stays level, but it moves forward and back as it lifts (an arc)." },
     six:  { hi: 65, about: "<b>6-bar:</b> the first 4-bar's top bar is extra long (purple): it keeps going as the second 4-bar's bottom bar. The green end bar is extra tall: it's the tower for the second 4-bar. 6 bars in all. About twice as high, but it reaches further forward: careful the robot doesn't tip!" },
-    dr4b: { hi: 80, about: "<b>DR4B</b> (double reverse four-bar), at the front of the robot: the first stage folds back over the robot and the second tilts the other way, so the claw goes <b>straight up and down</b>, from the floor all the way up, and the robot never gets longer." },
+    dr4b: { hi: 80, about: "<b>DR4B</b> (double reverse four-bar), at the front of the robot: the first stage folds back over the robot and the second tilts the other way. Each stage has its own pins on the tall middle bar (green), and two equal gears (1:1) join them, so both stages always tilt by the same amount. The claw goes <b>straight up and down</b>, from the floor all the way up, and the robot never gets longer." },
   };
   let mode = "four", t = 0, dir = 1, playing = false, L = 25, H = 23, POS = 16;
   const $ = function (id) { return document.getElementById(id); };
@@ -97,9 +98,13 @@
     const r = a * Math.PI / 180, dx = L * Math.cos(r), dy = L * Math.sin(r), x = towerX();
     const T1 = [x, H], T2 = [x, H - GAP];   // the tower's two pivots
     if (mode === "dr4b") {   // stage 1 points back over the robot, stage 2 forward: the claw stays above the tower
+      // Each stage has its own two pins on the tall middle bar (green). Stage 1's top bar (pin M1) and
+      // stage 2's bottom bar (pin N2, GEARS above it) each carry a gear; the gears mesh 1:1, so the two
+      // stages always tilt by the same angle, opposite ways.
       const M1 = [T1[0] - dx, T1[1] + dy], M2 = [T2[0] - dx, T2[1] + dy];
-      const E1 = [M1[0] + dx, M1[1] + dy], E2 = [M2[0] + dx, M2[1] + dy];
-      return { stages: [[T1, T2, M1, M2], [M1, M2, E1, E2]], end: [E1, E2] };
+      const N2 = [M1[0], M1[1] + GEARS], N1 = [N2[0], N2[1] + GAP];
+      const E1 = [N1[0] + dx, N1[1] + dy], E2 = [N2[0] + dx, N2[1] + dy];
+      return { stages: [[T1, T2, M1, M2], [N1, N2, E1, E2]], gears: [M1, N2], end: [E1, E2] };
     }
     const M1 = [T1[0] + dx, T1[1] + dy], M2 = [T2[0] + dx, T2[1] + dy];
     if (mode === "four") return { stages: [[T1, T2, M1, M2]], end: [M1, M2] };
@@ -116,7 +121,7 @@
   // The lowest angle: the claw's lower pin FLOOR cm off the floor (reachesFloor = false if the bars are too short)
   let reachesFloor = true;
   function lowest() {
-    const k = mode === "four" ? (FLOOR - (H - GAP)) / L : mode === "six" ? (FLOOR - H) / (2 * L) : (FLOOR - (H - GAP)) / (2 * L);
+    const k = mode === "four" ? (FLOOR - (H - GAP)) / L : mode === "six" ? (FLOOR - H) / (2 * L) : (FLOOR - H - GEARS) / (2 * L);
     reachesFloor = k >= -1;
     return Math.asin(Math.max(-0.98, Math.min(0.98, k))) * 180 / Math.PI;
   }
@@ -217,7 +222,10 @@
       bar(k.M3, s.end[0], "#ff8c0f");
     } else {
       s.stages.forEach(function (st, i) { const c = ["#0087ff", "#ff8c0f"][i]; bar(st[0], st[2], c); bar(st[1], st[3], c); });
-      if (s.stages.length > 1) bar([s.stages[0][2][0], s.stages[0][2][1] + 1.2], [s.stages[0][3][0], s.stages[0][3][1] - 1.2], "#2e9e4f");   // the middle link
+      if (s.stages.length > 1) bar([s.stages[0][3][0], s.stages[0][3][1] - 1.2], [s.stages[1][0][0], s.stages[1][0][1] + 1.2], "#2e9e4f");   // the tall middle bar
+      if (s.gears) s.gears.forEach(function (q) {   // the 1:1 gears, meshing between the stages
+        el("circle", { cx: X(q[0]), cy: Y(q[1]), r: GEARS / 2 * S, fill: "#fff", "fill-opacity": 0.6, stroke: "#5b6b80", "stroke-width": 5, "stroke-dasharray": "3 3" }, g);
+      });
     }
     // the claw: an upright plate, two level fingers, a cube
     const e1 = s.end[0], e2 = s.end[1], px = plateX(s);
