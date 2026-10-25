@@ -15,7 +15,7 @@ Images © VEX Robotics / Innovation First, Inc., used for non-commercial classro
 | CODE-001 | VEXcode IQ screenshot (example project with the Devices menu), supplied by the teacher |
 | ENG-001, 003, 004, 006, 007, 008, 015 – 017, 021, 024, 028, 031, 036, 040, 042, 049 – 051, 062 – 064 | VEX Library articles: Selecting a VEX IQ Drivetrain, Selecting a VEX IQ Assembly, Building VEX IQ Robot Arms, Using VEX IQ Plastic Gears, Chain & Sprockets, and Pulleys, Building with VEX IQ Motor Groups, and the Hero Bot articles (Huey, Swish). Black/green backgrounds replaced with white. |
 | ENG-012 – 014, 030, 032, 035, 058, 061, 065, 066 | VEX IQ (2nd gen) STEM Lab Lesson Summaries (Robot Soccer, Up and Over, Cube Collector, Castle Crasher) |
-| ENG diagrams (the other 40 ENG images) | Drawn by `tools/diagrams.py` |
+| ENG diagrams (the other 41 ENG images, including ENG-080) | Drawn by `tools/diagrams.py` |
 | ENG-079 | Original drawing: a frame from this site's catapult simulator (`app/sims/catapult.html`, choo choo mode) |
 | EDP-001, EDP-006 | VEX Library: Get Started Engineering (design process graphic) and Getting Started with Engineering Notebooks (sample page). Black background replaced with white. |
 | EDP-004 | VEX IQ STEM Lab Lesson Summary: Up and Over, Claw Design |
