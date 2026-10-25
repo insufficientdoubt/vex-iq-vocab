@@ -8,7 +8,7 @@ Copies of two interactive pages from the Chalkline sample course (`course/units/
 
 **Changed from the original:** the Chalkline catapult has a *slip gear* (a gear with teeth cut off). VEX IQ has no slip gear and parts can't be cut, so this copy has the **choo choo** instead: two large gears with 3 standoffs between them push a bar on the arm, and the arm fires when a standoff passes the end of the bar. The original's "Snail cam" button is called "Drop cam" here, VEX's name for the part.
 
-**Added here (not in the original):** a **T-Fling** button. It is drawn from VEX's written description of Fling's catapult (VEX Library, "An Introduction to Fling"): a pin on two 60-tooth gears is a crank that pulls a two-piece tensioning arm, which lets go just past the over-center point. It has not yet been checked against photos of a real T-Fling.
+**Added here (not in the original):** a **T-Fling** button. It is drawn from VEX's written description of Fling's catapult (VEX Library, "An Introduction to Fling"): a two-piece tensioning arm is pinned to two 60-tooth gears; a shaft bushing on the other side of the gears' centre catches it and pulls the catapult arm down, then slides off just past the over-center point. Where the bushing touches the tensioning arm (here, at its hinge) is our reading of the text: it has not yet been checked against photos of a real T-Fling.
 
 They were written for that course as original work: plain SVG and JavaScript, no libraries, no internet needed. They are **copies**, not links, so changes in the Chalkline course don't reach this site (and the other way round). If you fix one, fix both or copy again.
 

@@ -13,7 +13,7 @@
   .steps li { padding: 6px 8px; border-radius: var(--r-sm); border: 1px solid transparent; color: var(--muted); }
   .steps li b { color: var(--ink); }
   .steps li.now { border-color: var(--accent); background: #e6edf7; color: var(--ink); }
-  .meter { height: 12px; border-radius: 6px; background: #e3e8ef; overflow: hidden; }
+  .meter { flex: none; height: 12px; border-radius: 6px; background: #e3e8ef; overflow: hidden; }
   .meter i { display: block; height: 100%; width: 0; background: #d6458f; }
 </style>
 </head>
@@ -48,10 +48,11 @@
       choo   ("choo choo") a motor turns two large gears with 3 standoffs between them. A standoff
              pushes a bar on the arm (pulling the arm back) until it slides past the bar's end: then
              nothing holds the arm. (VEX IQ parts can't be cut, so there's no slip gear.)
-      tfling a motor turns two 60-tooth gears. A pin on them is a crank: it pulls a two-piece
-             tensioning arm, which pulls the catapult arm down. Just past the over-center point (the
-             pin on the far side of the gears) the tensioning arm lets go. From VEX's description of
-             Fling, the 2021-22 Hero Bot; not checked against photos yet.
+      tfling a motor turns two 60-tooth gears. A two-piece tensioning arm is pinned to the gears;
+             a shaft bushing on the other side of the gears' centre catches it at its hinge and pulls
+             the catapult arm down. Just past the over-center point the bushing slides off and the
+             tensioning arm goes slack (still pinned). From VEX's description of Fling, the 2021-22
+             Hero Bot; where the bushing touches the arm is our reading, not checked against photos.
       cam    a motor turns a drop cam (snail-shaped; VEX calls it a drop cam). It pushes the arm's short tail, slowly pulling the
              arm back, then the tail falls off the cam's step.
       latch  wind a string onto a spool to pull the arm back, a latch hooks the arm, let the string
@@ -79,11 +80,11 @@
       "<b>4. Again.</b> The next standoff comes round and catches the bar. Three standoffs: three shots each time the gears go round.",
     ], tip: "Teams often call this a “choo choo” launcher. It uses only normal VEX IQ parts: two large gears with 3 standoffs between them. The motor only ever turns one way: no switch, no trigger." },
     tfling: { steps: [
-      "<b>1. Pull down.</b> The motor turns two 60-tooth gears. A pin on the gears pulls the tensioning arm, and the tensioning arm pulls the catapult arm down.",
-      "<b>2. Over center.</b> The pin reaches the far side of the gears, where it pulls hardest. (Fling stops here with a bumper switch, so the driver chooses when to shoot.)",
-      "<b>3. Launch!</b> Just past that point, the tensioning arm lets go. The rubber band snaps the arm forward and the ball flies.",
-      "<b>4. Again.</b> The pin comes round to the top, and the tensioning arm hooks on again.",
-    ], tip: "The T-Fling comes from Fling, VEX's 2021-22 Hero Bot. The pin on the gears works like a crank: half a turn pulls the arm all the way down." },
+      "<b>1. Pull down.</b> The motor turns two 60-tooth gears. The tensioning arm is pinned to the gears. A bushing on the other side of the gears catches it at its hinge and pulls the catapult arm down.",
+      "<b>2. Over center.</b> The bushing reaches the far side of the gears, where it pulls hardest. (Fling stops here with a bumper switch, so the driver chooses when to shoot.)",
+      "<b>3. Launch!</b> Just past that point, the bushing slides off the tensioning arm. It is still pinned to the gears, but it goes slack, so the rubber band snaps the catapult arm forward.",
+      "<b>4. Again.</b> The gears keep turning, and the bushing catches the tensioning arm again.",
+    ], tip: "From Fling, VEX's 2021-22 Hero Bot. Like the choo choo, a post on turning gears catches and slides off. But here the tensioning arm is pinned to the gears, so it is always ready to be caught again." },
     cam: { steps: [
       "<b>1. Push back.</b> The motor turns the drop cam. As it turns, it gets wider and pushes the arm's tail, so the arm goes back and the rubber band stretches.",
       "<b>2. The step.</b> The tail reaches the cam's step, where it suddenly gets narrow…",
@@ -149,30 +150,34 @@
     step = hold !== null ? (hold > LOADED - 8 ? 1 : 0) : clock - chooFired < 0.8 ? 2 : clock < 0.8 ? 0 : 3;
     return hold;   // null: nothing holds the arm
   }
-  // T-Fling: the crank pin Q is on the gears (centre TG), TR from the centre. The tensioning arm
-  // (two pieces, TLINK long when straight) joins Q to the point TA along the catapult arm. While it's
-  // hooked on, the arm sits where the tensioning arm is straight. Once the pin passes the far side
-  // (the over-center point, where the hold starts to fall) it lets go, and hooks on again at the top.
+  // T-Fling: two gears (centre TG). The tensioning arm has two pieces joined by a hinge: the lower
+  // piece (2 × TR long) is pinned to the gears at the pin, TR from the centre; the upper piece (TLINK
+  // long) goes to the point TA along the catapult arm. The shaft bushing is TR from the centre on the
+  // other side, so when it catches the hinge, the lower piece lies across the gears and the bushing
+  // pulls through the upper piece. Once the bushing passes the far side (the over-center point,
+  // where the hold starts to fall) it slides off, and it catches the hinge again near the top.
   const TG = [-90, -150], TR = 50, TA = 90, TGEAR = 62, TDRIVE = 26, TDG = pt(TGEAR + TDRIVE + 8, 200);
   const aAt = function (a) { return pt(TA, a); };
   const TUP = Math.atan2(aAt(REST)[1] - TG[1], aAt(REST)[0] - TG[0]) * 180 / Math.PI;   // from the gears towards the resting arm
   const TLINK = Math.hypot(aAt(REST)[0] - TG[0], aAt(REST)[1] - TG[1]) - TR + 4;
-  let tTurn = 0, tHooked = true, tLast = REST, tFired = -9;
-  const tPin = function () { const q = pt(TR, TUP - tTurn); return [TG[0] + q[0], TG[1] + q[1]]; };
+  let tTurn = 0, tHooked = true, tLast = REST, tFired = -9, tTaut = false;
+  const tOn = function (deg) { const q = pt(TR, deg); return [TG[0] + q[0], TG[1] + q[1]]; };
+  const tBush = function () { return tOn(TUP - tTurn); }, tPin = function () { return tOn(TUP - tTurn + 180); };
   function tflingHold() {
     const prev = tTurn % 360;
     tTurn = motor;   // the gears turn clockwise
     const th = tTurn % 360;
-    if (th < prev) tHooked = true;   // the pin is back at the top: hook on again
+    tTaut = false;
+    if (th < prev) tHooked = true;   // the bushing is back near the top: it catches the hinge again
     if (!tHooked) { step = clock - tFired < 0.8 ? 2 : 3; return null; }
-    const Q = tPin(), len = function (a) { const p = aAt(a); return Math.hypot(p[0] - Q[0], p[1] - Q[1]); };
+    const B = tBush(), len = function (a) { const p = aAt(a); return Math.hypot(p[0] - B[0], p[1] - B[1]); };
     let hold = REST;
-    if (len(REST) > TLINK) {   // taut: find where the tensioning arm is straight
+    if (len(REST) > TLINK) {   // taut: find where the upper piece reaches from the bushing to the arm
       let lo = REST, hi = LOADED + 20;
       for (let i = 0; i < 30; i++) { const mid = (lo + hi) / 2; if (len(mid) > TLINK) lo = mid; else hi = mid; }
-      hold = lo;
+      hold = lo; tTaut = true;
     }
-    if (th > 90 && hold < tLast - 0.02) { tHooked = false; tFired = clock; step = 2; tLast = REST; return null; }   // past over center
+    if (th > 90 && hold < tLast - 0.02) { tHooked = false; tTaut = false; tFired = clock; step = 2; tLast = REST; return null; }   // past over center
     tLast = hold;
     step = th > 90 && hold > LOADED - 10 ? 1 : 0;
     return hold;
@@ -240,18 +245,23 @@
       gear(X(TG[0] + TDG[0]), Y(TG[1] + TDG[1]), TDRIVE, tTurn * TGEAR / TDRIVE, 0, 360, "#0087ff");
       el("text", { x: X(TG[0] + TDG[0]) - TDRIVE - 58, y: Y(TG[1] + TDG[1]) + 5, "font-size": 15, fill: "#0a5cad" }, mech).textContent = "motor";
       el("text", { x: X(TG[0]) - 70, y: Y(TG[1] - TGEAR) + 30, "font-size": 15, fill: "#5a3a99" }, mech).textContent = "2 × 60-tooth gears";
-      const Q = tPin(), A = aAt(phi), d = Math.hypot(A[0] - Q[0], A[1] - Q[1]);
-      // the tensioning arm: straight while it pulls; when it has let go it folds at its hinge and hangs from the pin
-      let H;
-      if (tHooked && d >= TLINK - 0.5) H = [(A[0] + Q[0]) / 2, (A[1] + Q[1]) / 2];
-      else if (tHooked) { const h = Math.sqrt(Math.max(0, TLINK * TLINK / 4 - d * d / 4)), ux = (A[0] - Q[0]) / d, uy = (A[1] - Q[1]) / d;
-        H = [(A[0] + Q[0]) / 2 - uy * h, (A[1] + Q[1]) / 2 + ux * h]; }
-      if (H) el("polyline", { points: [A, H, Q].map(function (p) { return X(p[0]) + "," + Y(p[1]); }).join(" "), fill: "none", stroke: "#10233f", "stroke-width": 8, "stroke-linecap": "round", "stroke-linejoin": "round" }, mech);
-      else el("line", { x1: X(Q[0]), y1: Y(Q[1]), x2: X(Q[0] + 10), y2: Y(Q[1] - 70), stroke: "#10233f", "stroke-width": 8, "stroke-linecap": "round", opacity: 0.45 }, mech);
-      if (H) el("circle", { cx: X(H[0]), cy: Y(H[1]), r: 5, fill: "#fff", stroke: "#10233f", "stroke-width": 2 }, mech);
-      el("circle", { cx: X(Q[0]), cy: Y(Q[1]), r: 7, fill: "#5b6b80", stroke: "#10233f", "stroke-width": 2 }, mech);
+      const P = tPin(), B = tBush(), A = aAt(phi);
+      // the hinge: on the bushing while it pulls; otherwise wherever the two pieces reach (the fold nearer the bushing)
+      let H = B;
+      if (!tTaut) {
+        const L2 = 2 * TR, d = Math.max(1, Math.hypot(A[0] - P[0], A[1] - P[1])), ux = (A[0] - P[0]) / d, uy = (A[1] - P[1]) / d;
+        const along = Math.min(L2, Math.max(-L2, (d * d + L2 * L2 - TLINK * TLINK) / (2 * d))), h = Math.sqrt(Math.max(0, L2 * L2 - along * along));
+        const h1 = [P[0] + ux * along - uy * h, P[1] + uy * along + ux * h], h2 = [P[0] + ux * along + uy * h, P[1] + uy * along - ux * h];
+        H = Math.hypot(h1[0] - B[0], h1[1] - B[1]) < Math.hypot(h2[0] - B[0], h2[1] - B[1]) ? h1 : h2;
+      }
+      el("polyline", { points: [A, H, P].map(function (p) { return X(p[0]) + "," + Y(p[1]); }).join(" "), fill: "none", stroke: "#10233f", "stroke-width": 8, "stroke-linecap": "round", "stroke-linejoin": "round", opacity: tTaut ? 1 : 0.6 }, mech);
+      el("circle", { cx: X(B[0]), cy: Y(B[1]), r: 9, fill: "#ffd43b", stroke: "#10233f", "stroke-width": 2.5 }, mech);   // the shaft bushing
+      el("circle", { cx: X(H[0]), cy: Y(H[1]), r: 4, fill: "#fff", stroke: "#10233f", "stroke-width": 2 }, mech);        // the hinge
+      el("circle", { cx: X(P[0]), cy: Y(P[1]), r: 6, fill: "#5b6b80", stroke: "#10233f", "stroke-width": 2 }, mech);     // the pin
       el("circle", { cx: X(A[0]), cy: Y(A[1]), r: 6, fill: "#fff", stroke: "#10233f", "stroke-width": 2 }, mech);
-      if (tHooked && d >= TLINK - 0.5) el("text", { x: X((A[0] + Q[0]) / 2) + 12, y: Y((A[1] + Q[1]) / 2), "font-size": 15, fill: "#10233f" }, mech).textContent = "tensioning arm";
+      el("text", { x: X(B[0]) + 14, y: Y(B[1]) + 5, "font-size": 14, fill: "#8a6d00" }, mech).textContent = "bushing";
+      el("text", { x: X(P[0]) - 34, y: Y(P[1]) + 5, "font-size": 14, fill: "#5b6b80" }, mech).textContent = "pin";
+      if (tTaut) el("text", { x: X(A[0] + (H[0] - A[0]) * 0.3) + 12, y: Y(A[1] + (H[1] - A[1]) * 0.3), "font-size": 15, fill: "#10233f" }, mech).textContent = "tensioning arm";
     }
     if (mode === "cam") {
       const pts = [];
@@ -330,7 +340,7 @@
   }
 
   function setMode(m) {
-    mode = m; motor = 0; clock = 0; chooHeld = false; chooFired = -9; tTurn = 0; tHooked = true; tLast = REST; tFired = -9; phi = REST; omega = 0; free = false; flying = null; trailPts = []; step = 0;
+    mode = m; motor = 0; clock = 0; chooHeld = false; chooFired = -9; tTurn = 0; tHooked = true; tLast = REST; tFired = -9; tTaut = false; phi = REST; omega = 0; free = false; flying = null; trailPts = []; step = 0;
     document.querySelectorAll("[data-mode]").forEach(function (b) { b.classList.toggle("on", b.dataset.mode === m); });
     document.getElementById("steps").innerHTML = MODES[m].steps.map(function (s) { return "<li>" + s + "</li>"; }).join("");
     document.getElementById("tip").textContent = MODES[m].tip;
