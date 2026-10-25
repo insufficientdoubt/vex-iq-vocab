@@ -37,6 +37,13 @@
   nav a.sub { padding-left: 22px; color: var(--muted); }
   nav a.sub.active { color: var(--accent); }
   nav .count { color: var(--muted); font-weight: 400; font-size: 12px; }
+  #sims { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 8px; }
+  #sims h3 { margin: 0 10px 2px; font-size: 14px; font-weight: 600; }
+  #sims h3 .zh-text { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 4px; }
+  .sim-frame { width: 100%; height: max(560px, calc(100vh - 150px)); border: 1px solid var(--line); border-radius: 12px; background: #fff; display: block; }
+  .sim-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 10px; }
+  .sim-head h2 { margin: 0; }
+  .sim-head p { margin: 0; color: var(--muted); flex-basis: 100%; }
   #refs { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 8px; }
   #refs summary { cursor: pointer; font-weight: 600; font-size: 14px; padding: 5px 10px; border-radius: 6px; }
   #refs summary:hover { background: var(--chip); }
@@ -90,7 +97,10 @@
     nav { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--line); padding: 6px; }
     #nav { display: flex; flex-wrap: wrap; gap: 4px; }
     #nav a { white-space: nowrap; margin: 0; gap: 6px; background: var(--chip); }
-    #refs { margin-top: 8px; }
+    #refs, #sims { margin-top: 8px; }
+    #sims-list { display: flex; flex-wrap: wrap; gap: 4px; }
+    #sims-list a { background: var(--chip); }
+    .sim-frame { height: 1100px; }
     #nav .sub-zh { display: inline; margin-left: 4px; }
     nav a.domain::before { display: none; }
     nav .subs { flex-basis: 100%; display: flex; gap: 4px; overflow-x: auto; padding-top: 2px; }
@@ -106,7 +116,7 @@
   <label><input type="checkbox" id="zh" checked> 中文</label>
 </header>
 <div class="layout">
-  <nav><div id="nav"></div><details id="refs"><summary>Quick references <span class="zh-text sum-zh">快速参考</span></summary><div id="refs-list"></div></details></nav>
+  <nav><div id="nav"></div><div id="sims"><h3>Simulators <span class="zh-text">模拟器</span></h3><div id="sims-list"></div></div><details id="refs"><summary>Quick references <span class="zh-text sum-zh">快速参考</span></summary><div id="refs-list"></div></details></nav>
   <main id="main"></main>
 </div>
 <script src="vendor/scratchblocks.min.js"></script>
@@ -115,6 +125,13 @@
 const DATA = "../data/vocab.csv", IMAGES = "../images/";
 const DOMAIN_NAMES = { BLD: "Building", CODE: "Coding", ENG: "Engineering", EDP: "Design process",
                        COMP: "Competition", SEASON: "Season game" };
+
+// Simulators in the sidebar: copies of pages from the Chalkline sample course, saved in app/sims/ (see its README).
+// Each is [key, English, 中文, page, one-line note].
+const SIMS = [
+  ["lifts", "Robot lifts", "举升机构", "sims/lifts.html?mode=four", "4-bar, 6-bar and DR4B. Change the bars and the tower, then press Lift. The orange box and red line are the VEX IQ size rules."],
+  ["catapult", "Catapults", "弹射器", "sims/catapult.html?mode=slip", "Three ways to pull back and release: slip gear, snail cam, and winch, latch and trigger. Try Slow motion."],
+];
 
 // Quick references in the sidebar: VEX sources only. Each link is [English, 中文, url, key]; key = true stars it. Update the season-specific links each season.
 const REFS = [
@@ -226,6 +243,22 @@ function buildRefs() {
   document.getElementById("refs").open = window.matchMedia("(min-width: 701px)").matches;
 }
 
+function buildSims(active) {
+  document.getElementById("sims-list").innerHTML = SIMS.map(([key, en, zh]) =>
+    `<a href="#sim=${key}" class="${active === key ? "active" : ""}"><span>${esc(en)}<span class="sub-zh zh-text">${esc(zh)}</span></span></a>`).join("");
+}
+
+function showSim(key) {
+  const [, en, zh, page, note] = SIMS.find(s => s[0] === key);
+  document.getElementById("main").innerHTML = `<div class="sim-head"><h2>${esc(en)} <span class="zh-text" style="color:var(--muted);font-weight:400">${esc(zh)}</span></h2>
+    <a class="learn" style="margin:0" href="${esc(page)}" target="_blank" rel="noopener">Open full screen ↗</a><p>${esc(note)}</p></div>
+    <iframe class="sim-frame" src="${esc(page)}" title="${esc(en)}"></iframe>`;
+  // On phones the simulator stacks into one long column: grow the frame to fit it, so the page scrolls, not the frame.
+  const f = document.querySelector(".sim-frame");
+  f.onload = () => { if (matchMedia("(max-width: 700px)").matches)
+    try { f.style.height = (f.contentDocument.body.offsetHeight + 4) + "px"; } catch {} };
+}
+
 function buildNav(active) {
   const tree = {};
   for (const r of rows) ((tree[r.domain] ??= {})[r.subdomain] ??= []).push(r);
@@ -287,11 +320,14 @@ function route() {
   const h = decodeURIComponent(location.hash.slice(1));
   const q = document.getElementById("q").value.trim().toLowerCase();
   if (q) {
-    buildNav(null);
+    buildNav(null); buildSims(null);
     const hits = rows.filter(r => [r.term_en, r.aka, r.zh, r.short_def, r.explanation, r.tags]
       .some(v => v.toLowerCase().includes(q)));
     return showGrid(`Search: “${q}”`, hits);
   }
+  const sim = h.startsWith("sim=") && SIMS.find(s => s[0] === h.slice(4));
+  buildSims(sim ? sim[0] : null);
+  if (sim) { buildNav(null); return showSim(sim[0]); }
   if (h.startsWith("id=") && byId[h.slice(3)]) { const r = byId[h.slice(3)]; buildNav(`${r.domain}/${r.subdomain}`); return showDetail(r); }
   buildNav(h);
   const [d, s] = h.split("/");
@@ -305,7 +341,7 @@ try { zhBox.checked = localStorage.getItem("showZh") !== "0"; } catch {}
 const applyZh = () => { document.body.classList.toggle("hide-zh", !zhBox.checked);
                         try { localStorage.setItem("showZh", zhBox.checked ? "1" : "0"); } catch {} };
 zhBox.addEventListener("change", applyZh); applyZh();
-buildRefs();
+buildRefs(); buildSims(null);
 document.getElementById("q").addEventListener("input", route);
 addEventListener("hashchange", () => { document.getElementById("q").value = ""; route(); });
 

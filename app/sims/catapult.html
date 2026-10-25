@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catapult mechanisms</title>
+<link rel="stylesheet" href="embed.css">
+<style>
+  .main { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 270px; gap: 10px; }
+  svg { width: 100%; height: 100%; min-height: 0; border: 1px solid var(--line); border-radius: var(--r); background: #fbfcfe; }
+  .panel { display: flex; flex-direction: column; gap: 6px; padding: 10px; overflow: auto; font-size: 14px; line-height: 1.3; }
+  .steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .steps li { padding: 6px 8px; border-radius: var(--r-sm); border: 1px solid transparent; color: var(--muted); }
+  .steps li b { color: var(--ink); }
+  .steps li.now { border-color: var(--accent); background: #e6edf7; color: var(--ink); }
+  .meter { height: 12px; border-radius: 6px; background: #e3e8ef; overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 0; background: #d6458f; }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <button data-mode="slip">Slip gear</button>
+    <button data-mode="cam">Snail cam</button>
+    <button data-mode="latch">Winch, latch and trigger</button>
+    <span class="grow"></span>
+    <button id="slow">Slow motion</button>
+    <button class="primary" id="play">❚❚ Pause</button>
+  </div>
+  <div class="main">
+    <svg id="svg" viewBox="0 0 900 600" aria-label="A catapult"></svg>
+    <div class="panel box">
+      <div class="label">Rubber band stretch</div>
+      <div class="meter"><i id="meter"></i></div>
+      <div class="label">How it works</div>
+      <ol class="steps" id="steps"></ol>
+      <div class="note" id="tip"></div>
+    </div>
+  </div>
+
+<script>
+  /*
+    A rubber-band catapult, side view. The arm turns on a pivot P. A rubber band joins the arm to
+    the top of the front post: pulling the arm back stretches it, and letting go lets it snap the
+    arm forward until it hits the stop bar. The ball keeps going.
+
+    Three ways to pull the arm back and let it go:
+      slip   a motor turns a small gear with some teeth missing. Its teeth turn the arm's big gear
+             (pulling the arm back) until the gap comes round: then nothing holds the arm.
+      cam    a motor turns a snail-shaped cam. It pushes the arm's short tail, slowly pulling the
+             arm back, then the tail falls off the cam's step.
+      latch  wind a string onto a spool to pull the arm back, a latch hooks the arm, let the string
+             go slack, then pull the trigger to open the latch.
+
+    Angles: degrees, measured like in math (0° points forward, 90° up). The arm rests at REST
+    (against the stop bar) and is fully pulled back at LOADED.
+  */
+  const NS = "http://www.w3.org/2000/svg", svg = document.getElementById("svg");
+  const OX = 420, OY = 290;                        // where the pivot P is drawn
+  const X = function (x) { return OX + x; }, Y = function (y) { return OY - y; };
+  const REST = 115, LOADED = 190, ARM = 215, BAND_AT = 95, TAIL = 45;
+  const ANCHOR = [150, 55];                        // top of the front post, where the band is tied
+  const GROUND = -275;
+  const rad = function (d) { return d * Math.PI / 180; };
+  const pt = function (len, deg) { return [len * Math.cos(rad(deg)), len * Math.sin(rad(deg))]; };
+  function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); (parent || svg).append(e); return e; }
+  function set(e, attrs) { for (const k in attrs) e.setAttribute(k, attrs[k]); }
+
+  const MODES = {
+    slip: { steps: [
+      "<b>1. Pull back.</b> The motor turns the small gear. Its teeth turn the arm's big gear, so the arm goes back and the rubber band stretches.",
+      "<b>2. The gap.</b> The small gear has no teeth here. Now nothing holds the big gear…",
+      "<b>3. Launch!</b> The rubber band snaps the arm forward. It hits the stop bar, and the ball flies.",
+      "<b>4. Again.</b> The teeth come round and catch the big gear again. It repeats by itself.",
+    ], tip: "A slip gear is a normal gear with some teeth cut off. The motor only ever turns one way: no switch, no trigger." },
+    cam: { steps: [
+      "<b>1. Push back.</b> The motor turns the snail cam. As it turns, it gets wider and pushes the arm's tail, so the arm goes back and the rubber band stretches.",
+      "<b>2. The step.</b> The tail reaches the cam's step, where it suddenly gets narrow…",
+      "<b>3. Launch!</b> The tail falls off the step. The rubber band snaps the arm forward and the ball flies.",
+      "<b>4. Again.</b> The cam keeps turning until it reaches the tail again.",
+    ], tip: "A snail cam turns round and round in one direction, like a slip gear. The step must be sharp, so the arm drops off cleanly." },
+    latch: { steps: [
+      "<b>1. Wind.</b> Turn the spool. The string pulls the arm back and stretches the rubber band.",
+      "<b>2. Latch.</b> The latch swings in and hooks the arm.",
+      "<b>3. Let go of the string.</b> The string goes slack. Only the latch holds the arm now.",
+      "<b>4. Fire!</b> Pull the trigger: the latch swings away and the rubber band snaps the arm forward.",
+    ], tip: "The latch lets you load first and fire later: aim, wait for the signal, then pull the trigger." },
+  };
+
+  /* ---- The drawing ---- */
+  el("rect", { x: 0, y: Y(GROUND), width: 900, height: 40, fill: "#e9edf2" });
+  el("rect", { x: X(-270), y: Y(GROUND + 22), width: 470, height: 22, rx: 4, fill: "#c9a46a", stroke: "#9b7a46" });   // the base board
+  el("rect", { x: X(-9), y: Y(-8), width: 18, height: GROUND * -1 - 22 + 8, fill: "#b48c55" });                      // pivot post
+  el("rect", { x: X(ANCHOR[0] - 8), y: Y(ANCHOR[1] + 6), width: 16, height: ANCHOR[1] + 6 - GROUND - 22, fill: "#b48c55" });   // front post
+  const STOP = pt(150, REST - 6);
+  const band = el("line", { stroke: "#d6458f", "stroke-width": 5, "stroke-linecap": "round" });
+  const mech = el("g", {});        // the gears, cam or latch: redrawn each frame
+  const arm = el("g", {});
+  el("line", { x1: 0, y1: 0, x2: ARM, y2: 0, stroke: "#10233f", "stroke-width": 12, "stroke-linecap": "round" }, arm);
+  const tail = el("line", { x1: 0, y1: 0, x2: -TAIL, y2: 0, stroke: "#10233f", "stroke-width": 12, "stroke-linecap": "round" }, arm);
+  const roller = el("circle", { cx: -TAIL, cy: 0, r: 9, fill: "#fff", stroke: "#10233f", "stroke-width": 3 }, arm);
+  el("path", { d: `M${ARM - 30} 6 q 30 38 60 0`, fill: "#8a97a8", stroke: "#10233f", "stroke-width": 3 }, arm);   // the cup, on the side the arm swings towards
+  el("circle", { cx: 0, cy: 0, r: 8, fill: "#fff", stroke: "#10233f", "stroke-width": 3 });
+  set(svg.lastChild, { cx: X(0), cy: Y(0) });
+  el("circle", { cx: X(STOP[0]), cy: Y(STOP[1]), r: 10, fill: "#5b6b80" });                                         // stop bar (end on)
+  el("text", { x: X(STOP[0]) + 16, y: Y(STOP[1]) + 5, "font-size": 15, fill: "#5b6b80" }).textContent = "stop bar";
+  const ball = el("circle", { r: 13, fill: "#ff8c0f", stroke: "#b85d00", "stroke-width": 2 });
+  const trail = el("polyline", { fill: "none", stroke: "#ff8c0f", "stroke-width": 2, "stroke-dasharray": "4 6", opacity: 0.8 });
+
+  /* ---- State ---- */
+  let mode = "slip", phi = REST, omega = 0, free = false, motor = 0, clock = 0, slow = false, playing = true;
+  let flying = null, trailPts = [], step = 0, releasedAt = -9;
+
+  function bandStretch(a) {   // how much longer than at rest the rubber band is (0 to 1)
+    const at = function (d) { const p = pt(BAND_AT, d); return Math.hypot(p[0] - ANCHOR[0], p[1] - ANCHOR[1]); };
+    return Math.max(0, (at(a) - at(REST)) / (at(LOADED) - at(REST)));
+  }
+
+  /* ---- Each mechanism: given the motor (or the clock), how far back is the arm held? ---- */
+  // Slip gear: the big gear is on the arm; the small gear (on the motor) turns RATIO times as far.
+  // Its teeth cover just enough to pull the arm all the way back: RATIO × (LOADED − REST); the rest
+  // of it is the gap.
+  const BIG = 62, SMALL = 38, RATIO = BIG / SMALL, SG = pt(BIG + SMALL + 4, -55), TEETH = RATIO * (LOADED - REST);
+  function slipHold() {
+    const m = ((motor % 360) + 360) % 360;
+    step = m < TEETH ? 0 : !free ? 1 : clock - releasedAt < 1.4 ? 2 : 3;
+    return m < TEETH ? REST + m / RATIO : null;   // null: nothing holds the arm
+  }
+  // Snail cam: centre C; its radius grows from R0 to R1 as it turns, then drops at the step.
+  const C = [-5, -88];
+  const tailAt = function (a) { return pt(TAIL, a + 180); };
+  const dist = function (a) { const t = tailAt(a); return Math.hypot(t[0] - C[0], t[1] - C[1]); };
+  const R1 = dist(LOADED), R0 = dist(REST) - 14;
+  function camRadius(worldDeg) { const u = (((worldDeg - camTurn) % 360) + 360) % 360; return R0 + (R1 - R0) * u / 360; }
+  let camTurn = 0;
+  function camHold() {
+    camTurn = -motor;   // the cam turns clockwise
+    const f = function (a) { const t = tailAt(a); return camRadius(Math.atan2(t[1] - C[1], t[0] - C[0]) * 180 / Math.PI) - dist(a); };
+    if (f(REST) <= 0) { step = clock - releasedAt < 1.4 ? 2 : 3; return null; }
+    let lo = REST, hi = LOADED;
+    if (f(hi) > 0) return LOADED;
+    for (let i = 0; i < 30; i++) { const mid = (lo + hi) / 2; if (f(mid) > 0) lo = mid; else hi = mid; }
+    step = lo > LOADED - 6 ? 1 : 0;
+    return lo;
+  }
+  // Winch, latch and trigger: a 7-second routine
+  const SPOOL = [-235, -205], LATCH = [-150, -150];
+  let latchAngle = 200, slack = 0;
+  function latchHold() {
+    const c = clock % 7.5;
+    if (c < 3) { step = 0; latchAngle = 200; slack = 0; return REST + (LOADED - REST) * (c / 3); }
+    if (c < 3.6) { step = 1; latchAngle = 200 - 110 * (c - 3) / 0.6; slack = 0; return LOADED; }
+    if (c < 4.8) { step = 2; latchAngle = 90; slack = Math.min(1, (c - 3.6) / 0.8); return LOADED; }
+    step = 3; slack = 1;
+    latchAngle = c < 5.2 ? 90 + 110 * (c - 4.8) / 0.4 : 200;
+    return c < 5.0 ? LOADED : null;
+  }
+
+  /* ---- Drawing the mechanism ---- */
+  function gear(cx, cy, r, turn, teethFrom, teethTo, color) {
+    const n = Math.round(r / 4.2), parts = [];
+    for (let i = 0; i < n; i++) {
+      const a = 360 * i / n;
+      const rel = ((a % 360) + 360) % 360;
+      if (rel < teethFrom || rel >= teethTo) continue;
+      const w = 360 / n / 2.4, a1 = rad(a + turn - w), a2 = rad(a + turn + w);
+      parts.push(`M${cx + r * Math.cos(a1)} ${cy - r * Math.sin(a1)} L${cx + (r + 8) * Math.cos(a1)} ${cy - (r + 8) * Math.sin(a1)} L${cx + (r + 8) * Math.cos(a2)} ${cy - (r + 8) * Math.sin(a2)} L${cx + r * Math.cos(a2)} ${cy - r * Math.sin(a2)}`);
+    }
+    el("circle", { cx: cx, cy: cy, r: r, fill: color, "fill-opacity": 0.18, stroke: color, "stroke-width": 3 }, mech);
+    el("path", { d: parts.join(" "), fill: color, stroke: color, "stroke-width": 1 }, mech);
+    el("circle", { cx: cx, cy: cy, r: 5, fill: color }, mech);
+  }
+  function drawMech() {
+    mech.textContent = "";
+    if (mode === "slip") {
+      gear(X(0), Y(0), BIG, phi, 0, 360, "#0087ff");
+      const m = ((motor % 360) + 360) % 360;
+      // the small gear: its teeth are where the gears meet while it pulls; then its gap comes round
+      gear(X(SG[0]), Y(SG[1]), SMALL, 125 - m, 0, TEETH, "#ff8c0f");
+      el("text", { x: X(SG[0]) + 40, y: Y(SG[1]) + 30, "font-size": 15, fill: "#b85d00" }, mech).textContent = "slip gear (motor)";
+    }
+    if (mode === "cam") {
+      const pts = [];
+      for (let u = 0; u <= 360; u += 4) { const r = R0 + (R1 - R0) * u / 360, a = rad(u + camTurn); pts.push(`${X(C[0] + r * Math.cos(a))},${Y(C[1] + r * Math.sin(a))}`); }
+      el("polygon", { points: pts.join(" "), fill: "#2e9e4f", "fill-opacity": 0.2, stroke: "#2e9e4f", "stroke-width": 3 }, mech);
+      el("circle", { cx: X(C[0]), cy: Y(C[1]), r: 6, fill: "#2e9e4f" }, mech);
+      el("text", { x: X(C[0]) - 150, y: Y(C[1]) + 6, "font-size": 15, fill: "#1f6b38" }, mech).textContent = "snail cam (motor)";
+    }
+    if (mode === "latch") {
+      // spool and string
+      el("circle", { cx: X(SPOOL[0]), cy: Y(SPOOL[1]), r: 20, fill: "#fff", stroke: "#7b4fc9", "stroke-width": 3 }, mech);
+      const h = pt(14, -clock * 240);
+      el("line", { x1: X(SPOOL[0]), y1: Y(SPOOL[1]), x2: X(SPOOL[0] + h[0]), y2: Y(SPOOL[1] + h[1]), stroke: "#7b4fc9", "stroke-width": 4 }, mech);
+      const hook = pt(150, phi);
+      const mx = (SPOOL[0] + hook[0]) / 2, my = (SPOOL[1] + hook[1]) / 2 - slack * 70;
+      el("path", { d: `M${X(SPOOL[0])} ${Y(SPOOL[1])} Q ${X(mx)} ${Y(my)} ${X(hook[0])} ${Y(hook[1])}`, fill: "none", stroke: "#7b4fc9", "stroke-width": 2.5 }, mech);
+      el("text", { x: X(SPOOL[0]) - 30, y: Y(SPOOL[1]) + 40, "font-size": 15, fill: "#5a3a99" }, mech).textContent = "winch";
+      // latch: a hooked bar on a pivot; trigger string to the back
+      const tip = pt(130, latchAngle);   // long enough that, standing up, its hook goes over the pulled-back arm
+      el("line", { x1: X(LATCH[0]), y1: Y(LATCH[1]), x2: X(LATCH[0] + tip[0]), y2: Y(LATCH[1] + tip[1]), stroke: "#c23b3b", "stroke-width": 9, "stroke-linecap": "round" }, mech);
+      const hk = pt(16, latchAngle - 90);
+      el("line", { x1: X(LATCH[0] + tip[0]), y1: Y(LATCH[1] + tip[1]), x2: X(LATCH[0] + tip[0] + hk[0]), y2: Y(LATCH[1] + tip[1] + hk[1]), stroke: "#c23b3b", "stroke-width": 7, "stroke-linecap": "round" }, mech);
+      el("circle", { cx: X(LATCH[0]), cy: Y(LATCH[1]), r: 6, fill: "#c23b3b" }, mech);
+      el("line", { x1: X(LATCH[0]), y1: Y(LATCH[1]), x2: X(-330), y2: Y(-120), stroke: "#c23b3b", "stroke-width": 2, "stroke-dasharray": "5 4" }, mech);
+      el("text", { x: X(-345), y: Y(-105), "font-size": 15, fill: "#c23b3b" }, mech).textContent = step === 3 ? "pull! ←" : "trigger";
+      el("text", { x: X(LATCH[0]) + 12, y: Y(LATCH[1]) + 24, "font-size": 15, fill: "#c23b3b" }, mech).textContent = "latch";
+    }
+  }
+
+  /* ---- Moving ---- */
+  let last = performance.now();
+  function frame(now) {
+    let dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (!playing) dt = 0;
+    if (slow) dt *= 0.2;
+    clock += dt;
+    motor += dt * (mode === "slip" ? 75 : 55);   // degrees the motor turns each second
+    const hold = mode === "slip" ? slipHold() : mode === "cam" ? camHold() : latchHold();
+    if (hold !== null && (!free || hold >= phi - 0.5)) {   // the mechanism holds the arm (it's pulling it back)
+      phi = hold; omega = 0; free = false;
+    } else if (dt > 0) {                                     // free: the rubber band pulls it forward
+      if (!free) releasedAt = clock;
+      free = true;
+      omega -= dt * (900 + 4200 * bandStretch(phi));        // degrees per second, faster the more it's stretched
+      phi += omega * dt;
+      if (phi <= REST) {                                     // it hits the stop bar: the ball flies
+        if (!flying && omega < -150) {
+          const tipR = ARM - 15, a = rad(REST), speed = -omega * Math.PI / 180 * tipR * 0.3;
+          const side = pt(18, REST - 90);
+          flying = { x: tipR * Math.cos(a) + side[0], y: tipR * Math.sin(a) + side[1], vx: speed * Math.sin(a), vy: -speed * Math.cos(a) };
+          trailPts = [];
+        }
+        phi = REST; omega = 0;
+      }
+    }
+    if (flying && dt > 0) {
+      flying.vy -= 980 * dt; flying.x += flying.vx * dt; flying.y += flying.vy * dt;
+      trailPts.push(`${X(flying.x)},${Y(flying.y)}`);
+      if (flying.y < GROUND + 13) { flying.y = GROUND + 13; flying.vx = 0; flying.vy = 0; }
+    }
+    // the ball goes back in the cup when the arm is pulled back again
+    if (flying && !free && phi > REST + 20) { flying = null; trailPts = []; }
+
+    set(arm, { transform: `translate(${X(0)} ${Y(0)}) rotate(${-phi})` });
+    const showTail = mode === "cam";
+    tail.style.display = roller.style.display = showTail ? "" : "none";
+    const b = pt(BAND_AT, phi), s = bandStretch(phi);
+    set(band, { x1: X(ANCHOR[0]), y1: Y(ANCHOR[1]), x2: X(b[0]), y2: Y(b[1]), "stroke-width": 6 - 3 * s });
+    if (flying) set(ball, { cx: X(flying.x), cy: Y(flying.y) });
+    else { const c = pt(ARM - 15, phi), side = pt(18, phi - 90); set(ball, { cx: X(c[0] + side[0]), cy: Y(c[1] + side[1]) }); }
+    set(trail, { points: trailPts.join(" ") });
+    document.getElementById("meter").style.width = Math.round(s * 100) + "%";
+    drawMech();
+    document.querySelectorAll("#steps li").forEach(function (li, i) { li.classList.toggle("now", i === step); });
+    requestAnimationFrame(frame);
+  }
+
+  function setMode(m) {
+    mode = m; motor = 0; clock = 0; phi = REST; omega = 0; free = false; flying = null; trailPts = []; step = 0;
+    document.querySelectorAll("[data-mode]").forEach(function (b) { b.classList.toggle("on", b.dataset.mode === m); });
+    document.getElementById("steps").innerHTML = MODES[m].steps.map(function (s) { return "<li>" + s + "</li>"; }).join("");
+    document.getElementById("tip").textContent = MODES[m].tip;
+  }
+  document.querySelectorAll("[data-mode]").forEach(function (b) { b.onclick = function () { setMode(b.dataset.mode); }; });
+  const slowBtn = document.getElementById("slow"), play = document.getElementById("play");
+  slowBtn.onclick = function () { slow = !slow; slowBtn.classList.toggle("on", slow); };
+  play.onclick = function () { playing = !playing; play.textContent = playing ? "❚❚ Pause" : "▶ Play"; };
+  setMode(new URLSearchParams(location.search).get("mode") || "slip");
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+/* Shared look for the STEM unit's interactive pages (they're shown on slides in a frame).
+   The same colors and corners as Chalkline's tools (_extensions/classroom/ui/ui.css). */
+:root {
+  --ink: #10233f; --muted: #5b6b80; --line: #d6dee8; --soft: #f3f5f8; --surface: #fff;
+  --accent: #003477; --accent-hover: #0a4389; --focus: #0087ff; --ok: #23824a; --bad: #c23b3b;
+  --r-sm: 8px; --r: 10px;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  display: flex; flex-direction: column; gap: 10px; padding: 12px;
+  background: var(--surface); color: var(--ink);
+  font: 18px/1.35 "Source Sans 3", "Source Sans Pro", system-ui, sans-serif;
+}
+button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 16px;
+  border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); color: var(--ink);
+  font: inherit; font-weight: 600; cursor: pointer; box-shadow: 0 1px 2px rgba(16, 35, 63, 0.06);
+}
+button:hover { background: var(--soft); }
+button.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+button.primary:hover { background: var(--accent-hover); }
+button.on { border-color: var(--accent); background: #e6edf7; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.bar .grow { flex: 1; }
+.label { color: var(--muted); font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.box { border: 1px solid var(--line); border-radius: var(--r); background: var(--soft); }
+.note { color: var(--muted); font-size: 16px; }
+input[type=range] { accent-color: var(--accent); }
+
+/* Added in the VEX IQ Vocab copy (not in the Chalkline original): on phones, stack the picture above the panel. */
+@media (max-width: 700px) {
+  html, body { height: auto; }
+  body { padding: 8px; font-size: 16px; }
+  body .main { display: flex; flex-direction: column; }
+  body .main svg { flex: none; width: 100%; height: auto; aspect-ratio: 3 / 2; }
+  body .panel { overflow: visible; }
+}
