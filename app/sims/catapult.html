@@ -20,7 +20,7 @@
 <body>
   <div class="bar">
     <button data-mode="choo">Choo choo (standoffs)</button>
-    <button data-mode="cam">Snail cam</button>
+    <button data-mode="cam">Drop cam</button>
     <button data-mode="latch">Winch, latch and trigger</button>
     <span class="grow"></span>
     <button id="slow">Slow motion</button>
@@ -47,7 +47,7 @@
       choo   ("choo choo") a motor turns two large gears with 3 standoffs between them. A standoff
              pushes a bar on the arm (pulling the arm back) until it slides past the bar's end: then
              nothing holds the arm. (VEX IQ parts can't be cut, so there's no slip gear.)
-      cam    a motor turns a snail-shaped cam. It pushes the arm's short tail, slowly pulling the
+      cam    a motor turns a drop cam (snail-shaped; VEX calls it a drop cam). It pushes the arm's short tail, slowly pulling the
              arm back, then the tail falls off the cam's step.
       latch  wind a string onto a spool to pull the arm back, a latch hooks the arm, let the string
              go slack, then pull the trigger to open the latch.
@@ -74,11 +74,11 @@
       "<b>4. Again.</b> The next standoff comes round and catches the bar. Three standoffs: three shots each time the gears go round.",
     ], tip: "Teams often call this a “choo choo” launcher. It uses only normal VEX IQ parts: two large gears with 3 standoffs between them. The motor only ever turns one way: no switch, no trigger." },
     cam: { steps: [
-      "<b>1. Push back.</b> The motor turns the snail cam. As it turns, it gets wider and pushes the arm's tail, so the arm goes back and the rubber band stretches.",
+      "<b>1. Push back.</b> The motor turns the drop cam. As it turns, it gets wider and pushes the arm's tail, so the arm goes back and the rubber band stretches.",
       "<b>2. The step.</b> The tail reaches the cam's step, where it suddenly gets narrow…",
       "<b>3. Launch!</b> The tail falls off the step. The rubber band snaps the arm forward and the ball flies.",
       "<b>4. Again.</b> The cam keeps turning until it reaches the tail again.",
-    ], tip: "A snail cam turns round and round in one direction, like the choo choo. The step must be sharp, so the arm drops off cleanly." },
+    ], tip: "A drop cam (also called a snail cam, from its shape) turns round and round in one direction, like the choo choo. The step must be sharp, so the arm drops off cleanly." },
     latch: { steps: [
       "<b>1. Wind.</b> Turn the spool. The string pulls the arm back and stretches the rubber band.",
       "<b>2. Latch.</b> The latch swings in and hooks the arm.",
@@ -138,7 +138,7 @@
     step = hold !== null ? (hold > LOADED - 8 ? 1 : 0) : clock - chooFired < 0.8 ? 2 : clock < 0.8 ? 0 : 3;
     return hold;   // null: nothing holds the arm
   }
-  // Snail cam: centre C; its radius grows from R0 to R1 as it turns, then drops at the step.
+  // Drop cam: centre C; its radius grows from R0 to R1 as it turns, then drops at the step.
   const C = [-5, -88];
   const tailAt = function (a) { return pt(TAIL, a + 180); };
   const dist = function (a) { const t = tailAt(a); return Math.hypot(t[0] - C[0], t[1] - C[1]); };
@@ -200,7 +200,7 @@
       for (let u = 0; u <= 360; u += 4) { const r = R0 + (R1 - R0) * u / 360, a = rad(u + camTurn); pts.push(`${X(C[0] + r * Math.cos(a))},${Y(C[1] + r * Math.sin(a))}`); }
       el("polygon", { points: pts.join(" "), fill: "#2e9e4f", "fill-opacity": 0.2, stroke: "#2e9e4f", "stroke-width": 3 }, mech);
       el("circle", { cx: X(C[0]), cy: Y(C[1]), r: 6, fill: "#2e9e4f" }, mech);
-      el("text", { x: X(C[0]) - 150, y: Y(C[1]) + 6, "font-size": 15, fill: "#1f6b38" }, mech).textContent = "snail cam (motor)";
+      el("text", { x: X(C[0]) - 150, y: Y(C[1]) + 6, "font-size": 15, fill: "#1f6b38" }, mech).textContent = "drop cam (motor)";
     }
     if (mode === "latch") {
       // spool and string
