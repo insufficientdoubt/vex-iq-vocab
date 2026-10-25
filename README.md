@@ -1,5 +1,9 @@
 # VEX IQ Vocab
 
+> **Frozen (2026-10-25). This repo is no longer edited.** The vocab list, its app and the simulators now live in the school's (private) Robotics League course materials, in its `vocab/` folder, with this repo's full history. Make changes there, not here.
+>
+> The online app below stays up for now, so printed QR codes and links keep working. Later this site will become a redirect to the vocab app's new home.
+
 A bilingual (English / Simplified Chinese) vocabulary list and sentence-frame bank for middle-school VEX IQ robotics, built to be the single source for flashcards, Kahoots, handouts and other classroom materials.
 
 > **Status: scaffolded, not yet seeded.** See [PLAN.md](PLAN.md) for decisions, the data spec and the roadmap.

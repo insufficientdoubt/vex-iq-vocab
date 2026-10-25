@@ -1,5 +1,9 @@
 # VEX IQ Vocab — Project Plan
 
+> **Frozen (2026-10-25). This repo is no longer edited.** The vocab list, its app and the simulators now live in the school's (private) Robotics League course materials, in its `vocab/` folder, with this repo's full history. Make changes there, not here.
+>
+> The online app below stays up for now, so printed QR codes and links keep working. Later this site will become a redirect to the vocab app's new home.
+
 Status: **seeding** — Building (80), Coding (108) and Engineering (77) drafted, plus EDP (44), COMP (96) and SEASON (18, Level Up) from VEX's competition sources (GRSF library, Level Up game manual); all `status=draft`. Sentence frames to come. Live app: https://insufficientdoubt.github.io/vex-iq-vocab/
 
 This file records decisions, the spec, and how the work was done (§12). Update it when a decision changes. **New AI session? Read §12 first.**
